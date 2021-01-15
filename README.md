@@ -79,3 +79,8 @@ The base amount of subtokens is undecided. I guess zero, but new coins are minte
 
 ## Tools/Platform
 Aave, maybe UMA, ens, chainlink uniswap are all potentials with js as the frontend (probably react)
+
+### Interesting Links, similar projects
+
+https://github.com/ethereum/EIPs/blob/master/EIPS/eip-2917.md
+rDai
