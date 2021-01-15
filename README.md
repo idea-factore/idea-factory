@@ -36,28 +36,34 @@ functions:
 * Users can also contribute to the subtoken, which will give that user a certain amount of the subtoken based on voting by all holders of subtoken and LP's which voted for subtoken as well as the creator of subtoken. 
 * If the subtoken isn't going anywheres, LP's and holders of subtoken can vote to liquidate the subtoken and gain back money + interest (based on amount of time they staked subtoken?)
 
+Other functions or caveats:
+
+Base token value will be determined by
+
+
+      totalValueOfContributions/amountOfContributions
+Or something similar, not completly sure yet.
+
+Subtoken value will be a percent of the totalContributionvalue divided by the amount of votes, but will also take into account the voting power of said votes
+
+Subtokens can vote to liquidate for one reason:
+
+1) Project isn't going anywhere (this burns all tokens and gives money back to holders based on the amount of subtoken +interest
+
+But holders of the subtoken can "liqudate" their position by turning the subtoken back into x amount of base token. For certain scenarios, this provides a benefit but will overal be discouraged:
+1) The creator thinks their idea should be worth more: If the creator thinks that their idea is better than others, they can liqudate their subtokens back into base token, which increases the value of the base token. This has the impact that all subtokens can potentially increase their value. The creator can earn back those tokens by recontributing to their creation? Same with contributors, potentially? This doesn't burn those tokens (i guess) but swaps them and redistrubtes them back into the subtoken pool.
+
+The base amount of subtokens is undecided. I guess zero, but new coins are minted on voting and the creator and contributors are given a certain amount based on some magic algorithm
+
 * Uses Aave (duh), and probably chainlink or something idk, maybe ens
+
+
+
 ## Goals
 
 * Incentivize idea sharing and contributing
 * Help build ideas from the ground up, no matter whose idea it is
 
 ## Tools/Platform
-
-I haven't decided on tools or platform yet. Language will most likely be js
-
-
-### Helpful links
-
-https://www.steem.com/steem-whitepaper.pdf
-
-https://www.trufflesuite.com/docs/drizzle/quickstart
-
-https://github.com/HQ20/contracts
-
-https://github.com/dapphub/dappsys
-
-https://developers.steem.io/tutorials/#tutorials-recipes
-
-https://ethereum.org/en/developers/docs/apis/javascript/
+Aave, maybe UMA, ens, chainlink uniswap are all potentials
 
