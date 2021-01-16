@@ -1,7 +1,7 @@
 # idea-factory
 ### Another idea
 
-**Warning: rampblings below. proceed with caution**
+**Warning: ramblings below. proceed with caution**
 
 Protocol for storing "ideas" on blockchain, enabling funding, contributing, and promotion of ideas.
  
