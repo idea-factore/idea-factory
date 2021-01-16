@@ -714,7 +714,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 Create a new repo with the same name as this project and then:
 
 ```bash
-git remote add origin https://github.com/**YOUR_GITHUB_USERNAME**/**YOUR_COOL_PROJECT_NAME**.git
+git remote add origin https://github.com/**YOUR_GITHUB_USERNAME**/**YOUR_COOL_PROJECT_NAME**.YourContract
 git push -u origin master
 ```
 
