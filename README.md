@@ -12,6 +12,8 @@ For the scope of the marketmake hackathon, the project can simplified to this:
 A decentralized funding pool for startups using Aave and potentially other sponsers. The funding pool will be determined by the amount of collateral put into the governance token, IDEA. The price of IDEA will be roughly based on (totalAmountOfCollateral/totalLP's) to get an average collateral amount (subject to change). This will give LP's a certain amount of IDEA based on the collateral put in, with the base value of IDEA rising as higher amounts of collateral are deposited (i think).
 This collateral will then be distributed among startups, using a voting system. The exact details of this I haven't quite figured out yet. The thought process is that by depositing collateral into IDEA (using aave), LP's are granted a certain amount of votes, with voting power. LP's use these votes to distribute their collateral amoung startups. Startups will have a subtoken which will either express the worth of the idea to LP's, or the actual amount of collateral that the startup will receive from LP's. 
 
+This "subtoken" idea may be scraped completely, unsure
+
 
 
 One thing to think about, which is most likely outside the scope of this hack, is the exact mechanism of credit delegation to startups, as well as whether the funds are available immediately, or whether there is a certain "funding period" (much like gitcoin) where funds are only rewarded at the end of the funding. The reasoning for this is that, in the early stages of this when the amount of ideas are low, LP's will most likely either not have any ideas they like, or will change their mind quite often about how their collateral should be distrbuted. By allowing a funding period, we would then express value of an idea as potential collateral received, so that it is fine if it flucates. As well, the actual amount of subtokens wouldn't be distrbuted right away. Just some thoughts.
@@ -51,6 +53,24 @@ functions:
 * If the subtoken isn't going anywheres, LP's and holders of subtoken can vote to liquidate the subtoken and gain back money + interest (based on amount of time they staked subtoken?)
 
 * Uses Aave, and probably chainlink or something idk, maybe ens
+Other functions or caveats:
+
+Base token value will be determined by
+
+      totalValueOfContributions/amountOfContributions
+Or something similar, not completly sure yet.
+
+Subtoken value will be a percent of the totalContributionvalue divided by the amount of votes, but will also take into account the voting power of said votes
+
+Subtokens can vote to liquidate for one reason:
+
+1) Project isn't going anywhere (this burns all tokens and gives money back to holders based on the amount of subtoken +interest
+
+But holders of the subtoken can "liqudate" their position by turning the subtoken back into x amount of base token. For certain scenarios, this provides a benefit but will overal be discouraged:
+1) The creator thinks their idea should be worth more: If the creator thinks that their idea is better than others, they can liqudate their subtokens back into base token, which increases the value of the base token. This has the impact that all subtokens can potentially increase their value. The creator can earn back those tokens by recontributing to their creation? Same with contributors, potentially? This doesn't burn those tokens (i guess) but swaps them and redistrubtes them back into the subtoken pool.
+
+The base amount of subtokens is undecided. I guess zero, but new coins are minted on voting and the creator and contributors are given a certain amount based on some magic algorithm
+
 
 ## Goals
 
@@ -58,5 +78,9 @@ functions:
 * Help build ideas from the ground up, no matter whose idea it is
 
 ## Tools/Platform
+Aave, maybe UMA, ens, chainlink uniswap are all potentials with js as the frontend (probably react)
 
-I haven't decided on tools or platform yet. Language will most likely be js
+### Interesting Links, similar projects
+
+https://github.com/ethereum/EIPs/blob/master/EIPS/eip-2917.md
+rDai
