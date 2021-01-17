@@ -9,3 +9,13 @@ Contract implementation v0.01 :)
 * Ability for all users and LP's who have invested in a startup to liqudate the startup if they feel the projects goals aren't being met (decided through vote). In this case, LP's and users would gain their capital back, along with contributors (outside scope?), but startup creators would lose and could have some sort of debt.
 
 * some sort of credit delegation which im not sure about?
+
+
+
+Contract Structure:
+
+PoolCoordinator: contract to create pools, and add to pools
+IDEAMinter: contract to mint and deposit IDEA tokens to a user, based on the amount that they have added
+IDEA: contract for IDEA tokens. Inherits ERC20, ERC2917
+FundingCoordinator: contract to send collateral to proper ideas
+RewardPool: contract to store reward tokens and send them to proper users
