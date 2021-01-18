@@ -1,5 +1,47 @@
 # idea-factory
-### Another idea
+### High Level Overview
+Users create a pool.
+Pools represent whatever the user wants, but they should typically represent either:
+a) a specific problem to solve
+b) a category of problems to solve
+c) a specific idea that they want to create
+
+
+User connects a wallet to our site and deposits funds onto our site.
+
+These funds can be used in one of two (or more) key ways.
+
+These funds can be added to an standalone idea, which is a part of an empty pool.
+
+These funds can be added to an existing pool.
+
+Governance Token (name TBD, maybe FACTORY? with symbol FACT?) :
+This has a fluctuating value 
+This will enable users to vote on where liqudity goes, depending on the pool
+It also enables users to vote on liqudating an idea from the pool. Liqudation will return collateral to holders in form of either Governance or Lending Tokens
+
+
+Lending Token (IDEA token):
+This has a stable value
+Lending tokens are granted when a user adds funds (1:1).
+These tokens are then:
+
+a) added to a standalone idea  (i.e empty pool)
+
+b) Added to an existing pool (of ideas)
+
+
+Governance Tokens are minted based on either the percentage of IDEA tokens added versus the TVL to a specific pool or the TVL acroos entire platform
+Extra governance tokens are minted based on the time an IDEA token has been locked in and these are rewarded to:
+a) LP's
+b) idea creators
+c) idea contributors
+
+
+
+
+
+
 
 **Warning: ramblings below. proceed with caution**
 
@@ -38,11 +80,7 @@ Users will earn crypto based on:
 For the scope of the marketmake hackathon, the project can simplified to this:
 
 A decentralized funding pool for startups using Aave and potentially other sponsers. The funding pool will be determined by the amount of collateral put into the governance token, IDEA. The price of IDEA will be roughly based on (totalAmountOfCollateral/totalLP's) to get an average collateral amount (subject to change). This will give LP's a certain amount of IDEA based on the collateral put in, with the base value of IDEA rising as higher amounts of collateral are deposited (i think).
-This collateral will then be distributed among startups, using a voting system. The exact details of this I haven't quite figured out yet. The thought process is that by depositing collateral into IDEA (using aave), LP's are granted a certain amount of votes, with voting power. LP's use these votes to distribute their collateral amoung startups. Startups will have a subtoken which will either express the worth of the idea to LP's, or the actual amount of collateral that the startup will receive from LP's. 
-
-This "subtoken" idea may be scraped completely, unsure
-
-
+This collateral will then be distributed among startups, using a voting system. The exact details of this I haven't quite figured out yet. The thought process is that by depositing collateral into IDEA (using aave), LP's are granted a certain amount of votes, with voting power. LP's use these votes to distribute their collateral amoung startups.
 
 One thing to think about, which is most likely outside the scope of this hack, is the exact mechanism of credit delegation to startups, as well as whether the funds are available immediately, or whether there is a certain "funding period" (much like gitcoin) where funds are only rewarded at the end of the funding. The reasoning for this is that, in the early stages of this when the amount of ideas are low, LP's will most likely either not have any ideas they like, or will change their mind quite often about how their collateral should be distrbuted. By allowing a funding period, we would then express value of an idea as potential collateral received, so that it is fine if it flucates. As well, the actual amount of subtokens wouldn't be distrbuted right away. Just some thoughts.
 
