@@ -2,8 +2,11 @@
 ### High Level Overview
 Users create a pool.
 Pools represent whatever the user wants, but they should typically represent either:
+
 a) a specific problem to solve
+
 b) a category of problems to solve
+
 c) a specific idea that they want to create
 
 
@@ -16,14 +19,20 @@ These funds can be added to an standalone idea, which is a part of an empty pool
 These funds can be added to an existing pool.
 
 Governance Token (name TBD, maybe FACTORY? with symbol FACT?) :
+
 This has a fluctuating value 
+
 This will enable users to vote on where liqudity goes, depending on the pool
+
 It also enables users to vote on liqudating an idea from the pool. Liqudation will return collateral to holders in form of either Governance or Lending Tokens
 
 
 Lending Token (IDEA token):
+
 This has a stable value
+
 Lending tokens are granted when a user adds funds (1:1).
+
 These tokens are then:
 
 a) added to a standalone idea  (i.e empty pool)
@@ -33,8 +42,11 @@ b) Added to an existing pool (of ideas)
 
 Governance Tokens are minted based on either the percentage of IDEA tokens added versus the TVL to a specific pool or the TVL acroos entire platform
 Extra governance tokens are minted based on the time an IDEA token has been locked in and these are rewarded to:
+
 a) LP's
+
 b) idea creators
+
 c) idea contributors
 
 
