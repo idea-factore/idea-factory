@@ -35,6 +35,11 @@ contract IdeaInfo {
   // if we implement staking here, then we don't have any knowledge of who did the stak 
 
 }
+//TODO implement IERC2917 here. Think about how productivity is calculated. We could change productivity to be the amount of work done on an idea?
+//TODO think about a wallet contract? Or how to mimic a wallet
+//Since productivity should increase/decrease everytime a user stakes or liqudates an IDEA token.
+//THe reason for this is that we want to encourage staking tokens to ideas. 
+//Implemnt AAVE/ENS potentially chainlink and UMA as well
 contract IDEA is IERC2917 {
 
   uint tokenSupply;
@@ -78,6 +83,7 @@ contract IDEA is IERC2917 {
 
 
   //big part: staking. A holder stakes a certain amount of tokens to an idea
+  //TODO: Instead of staking directly to an idea, an IDEA holder instead stakes to a pool which is then staked to an idea, I think
   function stakeToIdea(uint amount, address user, address idea) public {
     IdeaInfo currentIdea = IdeaInfo(idea);
     currentIdea.stake(amount);

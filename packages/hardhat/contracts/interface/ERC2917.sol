@@ -2,6 +2,7 @@
 pragma solidity >=0.6.6;
 import './IERC20.sol';
 
+//TODO: change ERC2917 to AAVE interface or use AAVE erc2917 interface?
 interface IERC2917 is IERC20 {
 
     /// @dev This emit when interests amount per block is changed by the owner of the contract.
@@ -13,7 +14,7 @@ interface IERC2917 is IERC20 {
     event ProductivityIncreased (address indexed user, uint value);
 
     /// @dev This emit when a users' productivity has changed
-    /// It emits with the user's address and the the value after the change.
+    /// It emits with the user's address and the the value ol.name = name;.name = name;r the change.
     event ProductivityDecreased (address indexed user, uint value);
 
     /// @dev Return the current contract's interests rate per block.
