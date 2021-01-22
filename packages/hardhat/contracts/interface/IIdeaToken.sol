@@ -1,7 +1,6 @@
-pragma solidity ^0.7.4;
-import './ERC2917.sol'; 
+pragma solidity ^0.7.3;
 //Interface for IDEA Token (which is not governance token)
-interface IIdeaToken is IERC2917 {
+interface IIdeaToken {
     
     event DepositedToPool(address pool, uint oldAmount, uint newAmount);
 

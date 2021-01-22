@@ -1,8 +1,11 @@
 const { utils } = require("ethers");
 const fs = require("fs");
 const chalk = require("chalk");
+const web3 = require("web3");
 
 require("@nomiclabs/hardhat-waffle");
+
+require("@nomiclabs/hardhat-web3");
 
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 
@@ -48,7 +51,7 @@ module.exports = {
       */
     },
     rinkeby: {
-      url: "https://rinkeby.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad", //<---- YOUR INFURA ID! (or it won't work)
+      url:  "https://rinkeby.infura.io/v3/f3b6f907cdea4cf7a34c35aca0d12b76", //<---- YOUR INFURA ID! (or it won't work)
       accounts: {
         mnemonic: mnemonic(),
       },
@@ -93,13 +96,35 @@ module.exports = {
     },
   },
   solidity: {
-    version: "0.6.7",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200
+    compilers: [
+      {
+        version: "0.6.0" ,
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200
+          }
+        }
+      },
+      {
+        version: "0.6.2" ,
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200
+          }
+        }
+      },
+      {
+        version: "0.7.4" ,
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200
+          }
+        }
       }
-    }
+    ]
   },
 };
 
@@ -118,6 +143,34 @@ task("wallet", "Create a wallet (pk) link", async (_, { ethers }) => {
   console.log("🔗 http://localhost:3000/pk#"+privateKey)
 });
 
+task("connectContracts", "Connect Contracts to variables", async() => {
+  try {
+  const ethers = hre.ethers;
+  console.log('Got ethers');
+  const IFAddress = fs.readFileSync('./artifacts/IDEAFactory.address');
+  console.log('Read ideafactory.address');
+  const IDEAAddress = fs.readFileSync('./artifacts/IDEA.address');
+  console.log('read idea.address');
+  const PoolAddress = fs.readFileSync('./artifacts/PoolCoordinator.address');
+  console.log('read poolcoordinator.address');
+  const Factory = await ethers.getContractFactory("IDEAFactory");
+  console.log('Got factory');
+  const Idea = await ethers.getContractFactory("IDEA");
+  console.log('got idea');
+  const Pool = await ethers.getContractFactory("PoolCoordinator");
+  console.log('got pool');
+  const fact = await Factory.attach(IFAddress);
+  console.log('attached factory');
+  const idea = await Idea.attach(IDEAAddress);
+  console.log('attached idea');
+  const pool = await Pool.attach(PoolAddress);
+  console.log('attached pool');
+  } catch(e) {
+    console.log("Are you sure you ran `yarn compile` and then `yarn deploy`?");
+  }
+  console.log('Done attaching everything');
+  return;
+});
 
 task("fundedwallet", "Create a wallet (pk) link and fund it with deployer?")
   .addOptionalParam("amount", "Amount of ETH to send to wallet after generating")

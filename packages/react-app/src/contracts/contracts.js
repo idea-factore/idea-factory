@@ -1,1 +1,1 @@
-module.exports = ["idea-factory"];
+module.exports = ["IDEAFactory","PoolCoordinator"];
