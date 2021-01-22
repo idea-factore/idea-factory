@@ -24,6 +24,6 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - name: action-yarn
-        uses: comchangs/action-yarn@v0.1-beta
+      - name: NPM Worker
+        uses: mudlabs/npm-worker@v1.3.0
       
