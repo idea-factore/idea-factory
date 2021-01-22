@@ -10,7 +10,11 @@ const main = async () => {
   console.log("\n\n 📡 Deploying...\n");
 
 
-  const yourContract = await deploy("idea-factory") // <-- add in constructor args like line 16 vvvv
+  const idea = await deploy("IDEAFactory", ["somefile.json"]);
+  const ideaToken = await deploy("IDEA", [100000000]);
+  const PoolCoordinator = await deploy("PoolCoordinator", [idea.address]);
+
+   // <-- add in constructor args like line 16 vvvv
 
 
 
@@ -83,6 +87,8 @@ const abiEncodeArgs = (deployed, contractArgs) => {
   ) {
     return "";
   }
+  console.log("Trying to encode");
+  console.log(deployed.interface.deploy.inputs);
   const encoded = utils.defaultAbiCoder.encode(
     deployed.interface.deploy.inputs,
     contractArgs

@@ -1,4 +1,4 @@
-pragma solidity ^0.7.4;
+pragma solidity ^0.7.3;
 
 import './PoolCoordinator.sol';
 
@@ -13,24 +13,28 @@ contract Funder {
 
      mapping(address => User) public users;
      address factoryAddress; 
-
+     PoolCoordinator poolFactory;
+     constructor(address factory) {
+         factoryAddress = factory;
+     }
+    /**
      function depositToPool(address pool, uint256 amount, address origin) public returns(uint256) {
          //todo
          //require that the user has the amount they are trying to add to a pool
-         PoolCoordinator poolCoord = PoolCoordinator(factoryAddress);
+         poolFactory = PoolCoordinator(factoryAddress);
          User storage user = users[origin];
          user.exist = true;
          user.userAddress = origin;
-         bool isParent = poolCoord.mappedPools[pool].isParent;
+         bool isParent = true;
          if(isParent) {
-            CommonStructs.Pool storage depositPool = poolCoord.mappedPools[pool];
+            //CommonStructs.Pool storage depositPool = poolFactory.mappedPools(pool);
             depositPool.collateral = amount;
             depositPool.users.push(origin);
             user.collateralPerPool[pool] += amount;
             user.TVL += amount;
          } else {
-             for(uint i=0; i<=poolCoord.existingPools.length; i++) {
-                CommonStructs.Pool storage parent = poolCoord.mappedPools[poolCoord.existingPools[i]];
+             for(uint i=0; i<=poolFactory.existingPools.length; i++) {
+                CommonStructs.Pool storage parent = poolFactory.mappedPools[poolFactory.existingPools[i]];
                 CommonStructs.ChildPool storage child = parent.childPools[pool];
                 if(child.isSet) {
                     child.collateral += amount;
@@ -43,5 +47,5 @@ contract Funder {
 
             }
          }
-     } 
+     } */
 }
