@@ -99,13 +99,11 @@ function App(props) {
   //
 
   // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts,"idea-factory", "purpose")
-  console.log("🤗 purpose:",purpose)
-
+  const ideaFactory = useContractReader(readContracts,"IDEAFactory");
+  const poolCoordinator = useContractReader(readContracts, "PoolCoordinator");
   //📟 Listen for broadcast events
-  const setPurposeEvents = useEventListener(readContracts, "YourContract", "SetPurpose", localProvider, 1);
-  console.log("📟 SetPurpose events:",setPurposeEvents)
-
+  const factoryEvents = useEventListener(readContracts, "IDEAFactory", "mintedIdea", localProvider, 1);
+  console.log(factoryEvents);
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
   console.log("🏷 Resolved austingriffith.eth as:",addressFromENS)
@@ -137,7 +135,7 @@ function App(props) {
 
         <Menu style={{ textAlign:"center" }} selectedKeys={[route]} mode="horizontal">
           <Menu.Item key="/">
-            <Link onClick={()=>{setRoute("/")}} to="/">YourContract</Link>
+            <Link onClick={()=>{setRoute("/")}} to="/">idea-factory</Link>
           </Menu.Item>
           <Menu.Item key="/hints">
             <Link onClick={()=>{setRoute("/hints")}} to="/hints">Hints</Link>
@@ -158,13 +156,19 @@ function App(props) {
                 and give you a form to interact with it locally
             */}
             <Contract
-              name="YourContract"
+              name="IDEAFactory"
               signer={userProvider.getSigner()}
               provider={localProvider}
               address={address}
               blockExplorer={blockExplorer}
             />
-
+            <Contract
+              name="PoolCoordinator"
+              signer={userProvider.getSigner()}
+              provider={localProvider}
+              address={address}
+              blockExplorer={blockExplorer}
+            />
             { /* Uncomment to display and interact with an external contract (DAI on mainnet):
             <Contract
               name="DAI"
@@ -195,8 +199,7 @@ function App(props) {
               tx={tx}
               writeContracts={writeContracts}
               readContracts={readContracts}
-              purpose={purpose}
-              setPurposeEvents={setPurposeEvents}
+              events={factoryEvents}
             />
           </Route>
           <Route path="/subgraph">
