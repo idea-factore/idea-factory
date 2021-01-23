@@ -64,6 +64,7 @@ contract PoolCoordinator is IPoolFactory {
 
         Collateral per Parent vs Collateral Per child.
         When does it overlap vs when does it not overlap...
+        so we add child collateral to parent and thats it
      */
     //calculate voting power for user in pool
     function getVotingPower(address votingPool, bool isChild, address voter) public returns(uint256) {
@@ -84,7 +85,7 @@ contract PoolCoordinator is IPoolFactory {
                     collateralForPool = vote.collateralPerChildPool[votingPool];
                     console.log("Collateral for Voting Pool is ", collateralForPool);
                     totalCollateral = parent.childPools[votingPool].collateral;
-                    return collateralForPool/totalCollateral;
+                    return (collateralForPool/totalCollateral)*100;
 
                 }
             }
@@ -93,7 +94,7 @@ contract PoolCoordinator is IPoolFactory {
             parent = mappedPools[votingPool];
             collateralForPool = vote.collateralPerPool[votingPool];
             totalCollateral = parent.collateral;
-            return collateralForPool/totalCollateral;
+            return (collateralForPool/totalCollateral)*100;
 
         }
     }
@@ -173,13 +174,13 @@ contract PoolCoordinator is IPoolFactory {
          User storage user = users[origin];
          user.exist = true;
          user.userAddress = origin;
+         user.TVL += amount;
          _balanceOf += amount;
          if(mappedPools[pool].isParent) {
             CommonStructs.Pool storage depositPool = mappedPools[pool];
             depositPool.collateral += amount;
             depositPool.users.push(origin);
             user.collateralPerPool[pool] += amount;
-            user.TVL += amount;
          } else {
              for(uint i=0; i<=existingPools.length; i++) {
                 CommonStructs.Pool storage parent = mappedPools[existingPools[i].pool];
@@ -188,8 +189,9 @@ contract PoolCoordinator is IPoolFactory {
                     child.collateral += amount;
                     child.users.push(origin);
                     child.collateral += amount;
+                    parent.collateral += amount;
                     user.collateralPerChildPool[pool] += amount;
-                    user.TVL += amount;
+                    user.collateralPerPool[parent.pool] += amount;
                     break;
                 }
 
@@ -197,7 +199,7 @@ contract PoolCoordinator is IPoolFactory {
          }
          return amount;
      }
-    //amount is gov tokens, idea is idea duh
+    //amount is gov tokens, id is idea id
     function voteInPool(address votingPool, uint256 id, uint amount) public override returns(uint256) {
         //call get voting power
         uint256 votesToAdd = 0;
@@ -211,7 +213,7 @@ contract PoolCoordinator is IPoolFactory {
         if(!foundPool) {
             votesToAdd = getVotingPower(votingPool, true, msg.sender);
         }
-        factory.setVotes(votesToAdd, id);
+        factory.stakeIdea(votesToAdd, id, msg.sender);
         console.log("Added votes", votesToAdd, " to idea ", id);
         return votesToAdd;
     }

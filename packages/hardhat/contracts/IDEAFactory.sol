@@ -4,9 +4,9 @@ import './PoolCoordinator.sol';
 import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
 import 'hardhat/console.sol';
 
-//this represents a unique NFT idea
+//this represents a NFT idea
 contract IDEAFactory is ERC1155 {
-    
+    event mintedIdea(address owner, uint256 id, string name);
     string private _uri;
 
     CommonStructs.Idea[] public ideas;
@@ -20,6 +20,7 @@ contract IDEAFactory is ERC1155 {
     function mintIdea(string memory name, string memory description) public {
         console.log("Minting new idea with ", name, " and id", currentIdea);
         _mint(msg.sender , currentIdea, 1, "");
+        emit mintedIdea(msg.sender, currentIdea, name);
         CommonStructs.Idea memory idea = CommonStructs.Idea({
             id: currentIdea,
             name: name,
@@ -35,7 +36,11 @@ contract IDEAFactory is ERC1155 {
     }
 
 
-
+    function stakeIdea(uint256 stake, uint256 id, address sender) public {
+        console.log("Staking ", stake, " idea");
+        setVotes(stake, id);
+        _mint(sender, id, stake, "");
+    }
     function _incrementIdea() private {
         currentIdea++;
     }
