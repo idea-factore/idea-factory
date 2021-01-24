@@ -59,6 +59,24 @@ contract PoolCoordinator is IPoolFactory {
     constructor(address factoryAddress) {
         factory = IDEAFactory(factoryAddress);
     }
+
+
+    function getCollateral() public returns(uint256) {
+        return _balanceOf;
+    }
+
+    function getIdeas() public returns(uint256) {
+        uint256 ideas = 0;
+        for(uint i=0; i<existingPools.length; i++) {
+            CommonStructs.Pool storage parent = mappedPools[existingPools[i].pool];
+            if(parent.ideas.length != 0) {
+                ideas += parent.ideas.length;
+            }
+        }
+        console.log("Number of ideas are ", ideas);
+
+        return ideas;
+    }
     /**
         Next big question:
 

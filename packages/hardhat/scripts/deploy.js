@@ -10,9 +10,11 @@ const main = async () => {
   console.log("\n\n 📡 Deploying...\n");
 
 
-  const idea = await deploy("IDEAFactory", ["somefile.json"]);
-  const ideaToken = await deploy("IDEA", [100000000]);
-  const PoolCoordinator = await deploy("PoolCoordinator", [idea.address]);
+  const idea = await (await deploy("IDEAFactory", ["somefile.json"])).deployTransaction.wait();
+  const ideaToken = await (await deploy("IDEA", [1000])).deployTransaction.wait();
+  console.log(idea.address);
+  console.log(idea.contractAddress);
+  const PoolCoordinator = await deploy("PoolCoordinator", [idea.contractAddress]);
 
    // <-- add in constructor args like line 16 vvvv
 

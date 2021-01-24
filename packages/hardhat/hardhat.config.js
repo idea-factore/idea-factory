@@ -19,10 +19,10 @@ const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 */
 
 //
-// Select the network you want to deploy to here:
+// Select the network you want to deploy to here
 //
+const private = "961bf063813009b957ad517a9d772fb8c537fe4011806318567cd070ff942555"
 const defaultNetwork = "localhost";
-const private = "961bf063813009b957ad517a9d772fb8c537fe4011806318567cd070ff942555";
 
 function mnemonic() {
   try {
@@ -58,7 +58,7 @@ module.exports = {
       },
     },
     kovan: {
-      url: "https://kovan.infura.io/v3/f3b6f907cdea4cf7a34c35aca0d12b76", //<---- YOUR INFURA ID! (or it won't work)
+      url: "https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB", //<---- YOUR INFURA ID! (or it won't work)
       accounts: [`0x${private}`],
     },
     mainnet: {
@@ -68,7 +68,7 @@ module.exports = {
       },
     },
     ropsten: {
-      url: "https://ropsten.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad", //<---- YOUR INFURA ID! (or it won't work)
+      url: "https://ropsten.infura.io/v3/f3b6f907cdea4cf7a34c35aca0d12b76", //<---- YOUR INFURA ID! (or it won't work)
       accounts: {
         mnemonic: mnemonic(),
       },
