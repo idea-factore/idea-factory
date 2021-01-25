@@ -2,6 +2,7 @@ const { utils } = require("ethers");
 const fs = require("fs");
 const chalk = require("chalk");
 const web3 = require("web3");
+const yargs = require("yargs");
 
 require("@nomiclabs/hardhat-waffle");
 
@@ -22,7 +23,7 @@ const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 // Select the network you want to deploy to here
 //
 const private = "961bf063813009b957ad517a9d772fb8c537fe4011806318567cd070ff942555"
-const defaultNetwork = "localhost";
+const defaultNetwork = yargs.argv.kovan ? "kovan" : "localhost";
 
 function mnemonic() {
   try {
