@@ -1,7 +1,7 @@
 pragma solidity ^0.7.3;
 
 import './PoolCoordinator.sol';
-
+// Don't think we need this anymore
 contract Funder {
      struct User {
           address userAddress;

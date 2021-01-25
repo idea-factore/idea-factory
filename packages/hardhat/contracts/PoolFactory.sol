@@ -2,6 +2,9 @@ pragma solidity ^0.7.3;
 
 import './PoolCoordinator.sol';
 
+//Base contracts to create Pools with
+// should extend the functionality of these so that they hold most data for pools
+// and then in PoolCoordinator we can just hold references to these factories
 contract PoolFactory {
     CommonStructs.Pool public pool;
 

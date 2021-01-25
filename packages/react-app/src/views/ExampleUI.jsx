@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, List, Divider, Input, Card, DatePicker, Slider, Switch, Progress, Spin } from "antd";
 import { SyncOutlined } from '@ant-design/icons';
 import { Address, Balance } from "../components";
@@ -10,6 +10,11 @@ export default function ExampleUI({purpose, factoryEvents, address, mainnetProvi
 
   const [ideas, setIdea] = useState([]);
   const [currentIdea, setcurrentIdea] = useState("");
+  useEffect(() => {
+    console.log(factoryEvents);
+  }, [factoryEvents]);
+
+
   return (
     <div>
       {/*

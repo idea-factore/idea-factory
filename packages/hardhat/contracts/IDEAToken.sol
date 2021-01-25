@@ -9,7 +9,7 @@ import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 
 contract IDEA is ERC20 {
     //super basic token
-    constructor(uint256 initialSupply) public ERC20("Idea-factory", "IDEA") {
+    constructor(uint256 initialSupply) ERC20("Idea-factory", "IDEA") {
         _mint(msg.sender, initialSupply);
     }
 
