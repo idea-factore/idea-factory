@@ -5,6 +5,7 @@ import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
 import 'hardhat/console.sol';
 
 //this represents a NFT idea
+// this idea is minted for the creator of an idea and is rewarded to stakers
 contract IDEAFactory is ERC1155 {
     event mintedIdea(address owner, uint256 id, string name);
     string private _uri;
@@ -45,7 +46,8 @@ contract IDEAFactory is ERC1155 {
         currentIdea++;
     }
 
-    function findIdea(address idea) public returns(int id) {
+    /**
+    function findIdea(address idea) public view returns(int id) {
         for(uint256 i=0; i<=ideas.length; i++) {
             if(ideas[i].owner == idea) {
                 return int256(i);
@@ -53,20 +55,20 @@ contract IDEAFactory is ERC1155 {
         }
 
         return -1;
-    }
+    }*/
 
     function setVotes(uint256 votes, uint256 id) public {
-        ideas[id].votes = votes;
+        ideas[id].votes += votes;
     }
 
-    function getVotes(uint256 id) public returns(uint256){
+    function getVotes(uint256 id) public view returns(uint256){
         return ideas[id].votes;
     }
     function setName(string memory name, uint256 id) public {
         ideas[id].name = name;
     }
 
-    function getName(uint256 id) public returns(string memory){
+    function getName(uint256 id) public view returns(string memory){
         return ideas[id].name;
     }
 }

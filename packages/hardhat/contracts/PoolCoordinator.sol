@@ -5,6 +5,7 @@ import './IDEAFactory.sol';
 import './PoolFactory.sol';
 import 'hardhat/console.sol';
 
+// move these to seperate file
 library CommonStructs {
     struct Idea {
         uint256 id;
@@ -61,11 +62,11 @@ contract PoolCoordinator is IPoolFactory {
     }
 
 
-    function getCollateral() public returns(uint256) {
+    function getCollateral() public view returns(uint256) {
         return _balanceOf;
     }
 
-    function getIdeas() public returns(uint256) {
+    function getIdeas() public view returns(uint256) {
         uint256 ideas = 0;
         for(uint i=0; i<existingPools.length; i++) {
             CommonStructs.Pool storage parent = mappedPools[existingPools[i].pool];
@@ -77,16 +78,8 @@ contract PoolCoordinator is IPoolFactory {
 
         return ideas;
     }
-    /**
-        Next big question:
-
-        Collateral per Parent vs Collateral Per child.
-        When does it overlap vs when does it not overlap...
-        so we add child collateral to parent and thats it
-     */
     //calculate voting power for user in pool
-    function getVotingPower(address votingPool, bool isChild, address voter) public returns(uint256) {
-        // this will have to change based on how they added collateral
+    function getVotingPower(address votingPool, bool isChild, address voter) public view returns(uint256) {
         User storage vote = users[voter];
         CommonStructs.Pool storage parent;
         uint256 collateralForPool;
@@ -96,10 +89,7 @@ contract PoolCoordinator is IPoolFactory {
                 parent = mappedPools[existingPools[i].pool];
                 if(parent.childPools[votingPool].isSet) {
                     console.logString("Found child!");
-                    //calculate voting power for all users only in child pool
-                    //best practice for storing users?
-                    //we probably don't want to store users at a pool level
-                    //how do other projects calculate voting power for a user?
+                    //calculate voting power for user in child pool
                     collateralForPool = vote.collateralPerChildPool[votingPool];
                     console.log("Collateral for Voting Pool is ", collateralForPool);
                     totalCollateral = parent.childPools[votingPool].collateral;
@@ -131,7 +121,8 @@ contract PoolCoordinator is IPoolFactory {
         console.log("New pool created with address", address(poolFactory));
         return address(poolFactory);
     }
-    function updatePool(address pool) public {
+    /**
+    function updatePool(address pool) view public {
         //update pool data across contracts
         //I guess we need one for childPool as well
         require(mappedPools[pool].isParent, "This pool is not deinfed");
@@ -139,7 +130,7 @@ contract PoolCoordinator is IPoolFactory {
         //pass in data to update it with. Look up how to do this in solidity
 
 
-    }
+    }*/
     function addIdeaToPool(address pool, uint256 id) public override returns(bool) {
         CommonStructs.Pool storage currentPool = mappedPools[pool];
         currentPool.ideas.push(id);
@@ -184,16 +175,15 @@ contract PoolCoordinator is IPoolFactory {
         console.logString(parent.childPools[address(childPool)].name);
         return address(childPool); 
     }
+
     //Should deposit IDEA tokens?
-    function depositToPool(address pool, uint256 amount, address origin) public returns(uint256) {
+    function stakeToPool(address pool, uint256 amount, address origin) public returns(uint256) {
          //todo
          //require that the user has the amount they are trying to add to a pool
          //transfer ideas token to PoolCoordinator
          User storage user = users[origin];
          user.exist = true;
          user.userAddress = origin;
-         user.TVL += amount;
-         _balanceOf += amount;
          if(mappedPools[pool].isParent) {
             CommonStructs.Pool storage depositPool = mappedPools[pool];
             depositPool.collateral += amount;
@@ -206,7 +196,6 @@ contract PoolCoordinator is IPoolFactory {
                 if(child.isSet) {
                     child.collateral += amount;
                     child.users.push(origin);
-                    child.collateral += amount;
                     parent.collateral += amount;
                     user.collateralPerChildPool[pool] += amount;
                     user.collateralPerPool[parent.pool] += amount;
@@ -231,7 +220,7 @@ contract PoolCoordinator is IPoolFactory {
         if(!foundPool) {
             votesToAdd = getVotingPower(votingPool, true, msg.sender);
         }
-        factory.stakeIdea(votesToAdd, id, msg.sender);
+        factory.stakeIdea((votesToAdd*amount), id, msg.sender);
         console.log("Added votes", votesToAdd, " to idea ", id);
         return votesToAdd;
     }

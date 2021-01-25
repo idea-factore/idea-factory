@@ -11,7 +11,7 @@ interface IPoolFactory {
 
     function addIdeaToChild(address child, uint256 id) external;
 
-    function createSubPool(string memory name, string memory description, address parentPool) external returns(address);
+    function createChildPool(string memory name, string memory description, address parentPool) external returns(address);
 
     function voteInPool(address pool, uint256 id, uint256 amount) external returns(uint256);
 
