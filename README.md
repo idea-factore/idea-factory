@@ -88,8 +88,12 @@ rDai
 3. To deploy smart contracts to localhost, just run `yarn deploy`. To deploy smart contracts to kovan run `yarn deploy-kovan`
 4. If you want the smart contracts to redeploy automatically then run `yarn watch`. This also recompiles the frontend
 5. There are a couple of ways that you can test/interact with our contracts:
+
       a) The easiest way would be to run `yarn react-app:start`. This runs our react-app frontend which gives you access to all of the deployed contracts functions.
+      
       b) The other way would be to run `npx hardhat console` in the packages/hardhat folder and then do `const yourContract = ethers.getContractFactory("YourContract")` and
             `const contract = yourContract.attach("deployed address of contract from hardhat node")`
+            
       c) Or anyother way you can think of
+      
  **NOTE: not all of the yarn commands are merged yet. Will do that shortly**
