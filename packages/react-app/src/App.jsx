@@ -7,12 +7,13 @@ import { Row, Col, Button, Menu } from "antd";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useUserAddress } from "eth-hooks";
-import { useExchangePrice, useGasPrice, useUserProvider, useContractLoader, useContractReader, useEventListener, useBalance, useExternalContractLoader } from "./hooks";
+import { useExchangePrice, useGasPrice, useUserProvider, useContractLoader, useContractReader, useEventListener, useBalance, useExternalContractLoader, useCustomContractLoader } from "./hooks";
 import { Header, Account, Faucet, Ramp, Contract, GasGauge } from "./components";
 import { Transactor } from "./helpers";
 import { formatEther } from "@ethersproject/units";
 //import Hints from "./Hints";
 import { Hints, ExampleUI, Subgraph } from "./views"
+
 /*
     Welcome to 🏗 scaffold-eth !
 
@@ -31,7 +32,7 @@ import { Hints, ExampleUI, Subgraph } from "./views"
     You can also bring in contract artifacts in `constants.js`
     (and then use the `useExternalContractLoader()` hook!)
 */
-import { INFURA_ID, DAI_ADDRESS, DAI_ABI } from "./constants";
+import { INFURA_ID, DAI_ADDRESS, DAI_ABI, FACTORY_ABI, pool_abi } from "./constants";
 
 // 😬 Sorry for all the console logging 🤡
 const DEBUG = true
@@ -51,7 +52,8 @@ const localProviderUrl = "http://localhost:8545"; // for xdai: https://dai.poa.n
 // as you deploy to other networks you can set REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
 const localProviderUrlFromEnv = process.env.NODE_ENV == "production" ? "https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB" : localProviderUrl;
 if(DEBUG) console.log("🏠 Connecting to provider:", localProviderUrlFromEnv);
-const localProvider = new JsonRpcProvider(localProviderUrlFromEnv);
+const localProvider = new JsonRpcProvider("https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB");
+console.log("Our provider: ", localProvider);
 
 
 
@@ -99,11 +101,14 @@ function App(props) {
   //
 
   // keep track of a variable from the contract in the local React state:
-  const ideaFactory = useContractReader(readContracts,"IDEAFactory");
-  const poolCoordinator = useContractReader(readContracts, "PoolCoordinator");
+  //const ideaFactory = useContractReader(readContracts,"IDEAFactory");
+  //const poolCoordinator = useContractReader(readContracts, "PoolCoordinator");
   //📟 Listen for broadcast events
+  //console.log(factoryEvents);
+  const ideaFactory = useCustomContractLoader(localProvider, "0x864e68cb66eEA153C66c92a8213F22c03541CCf2");
+  const poolCoordinator = useCustomContractLoader(localProvider, "0x6EDF27db594D4c0803107E3ccF282ccbB7d36eF7");
   const factoryEvents = useEventListener(readContracts, "IDEAFactory", "mintedIdea", localProvider, 1);
-  console.log(factoryEvents);
+
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
   console.log("🏷 Resolved austingriffith.eth as:",addressFromENS)
@@ -157,6 +162,7 @@ function App(props) {
             */}
             <Contract
               name="IDEAFactory"
+              customContract={ideaFactory}
               signer={userProvider.getSigner()}
               provider={localProvider}
               address={address}
@@ -164,6 +170,7 @@ function App(props) {
             />
             <Contract
               name="PoolCoordinator"
+              customContract={poolCoordinator}
               signer={userProvider.getSigner()}
               provider={localProvider}
               address={address}
@@ -279,14 +286,11 @@ function App(props) {
   Web3 modal helps us "connect" external wallets:
 */
 const web3Modal = new Web3Modal({
-  // network: "mainnet", // optional
+  network: "kovan", // optional
   cacheProvider: true, // optional
   providerOptions: {
-    walletconnect: {
-      package: WalletConnectProvider, // required
-      options: {
-        infuraId: INFURA_ID,
-      },
+    injected: {
+      package: null, // required
     },
   },
 });
