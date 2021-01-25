@@ -79,3 +79,17 @@ Aave, maybe UMA, ens, chainlink uniswap are all potentials with js as the fronte
 
 https://github.com/ethereum/EIPs/blob/master/EIPS/eip-2917.md
 rDai
+
+
+# Running smart contracts and frontend
+
+1. clone repo and run `yarn install` or `npm install` whichever you prefer
+2. Next run `yarn chain`. This starts a local hardhat node. If you want to test contracts on kovan or mainnet you can run `yarn fork`. Right now this points to mainnet infura but I will change it to point to kovan alchemy.
+3. To deploy smart contracts to localhost, just run `yarn deploy`. To deploy smart contracts to kovan run `yarn deploy-kovan`
+4. If you want the smart contracts to redeploy automatically then run `yarn watch`. This also recompiles the frontend
+5. There are a couple of ways that you can test/interact with our contracts:
+      a) The easiest way would be to run `yarn react-app:start`. This runs our react-app frontend which gives you access to all of the deployed contracts functions.
+      b) The other way would be to run `npx hardhat console` in the packages/hardhat folder and then do `const yourContract = ethers.getContractFactory("YourContract")` and
+            `const contract = yourContract.attach("deployed address of contract from hardhat node")`
+      c) Or anyother way you can think of
+ **NOTE: not all of the yarn commands are merged yet. Will do that shortly**
