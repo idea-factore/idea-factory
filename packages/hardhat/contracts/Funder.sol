@@ -1,4 +1,4 @@
-pragma solidity ^0.7.3;
+pragma solidity ^0.6.0;
 
 import './PoolCoordinator.sol';
 // Don't think we need this anymore
@@ -13,8 +13,8 @@ contract Funder {
 
      mapping(address => User) public users;
      address factoryAddress; 
-     PoolCoordinator poolFactory;
-     constructor(address factory) {
+     PoolCoordinator poolFactory; 
+     constructor(address factory) public {
          factoryAddress = factory;
      }
     /**

@@ -1,4 +1,4 @@
-pragma solidity ^0.7.3;
+pragma solidity ^0.6.0;
 //Interface for IDEA Token (which is not governance token)
 interface IIdeaToken {
     

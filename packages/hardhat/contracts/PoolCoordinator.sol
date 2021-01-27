@@ -1,4 +1,4 @@
-pragma solidity ^0.7.3;
+pragma solidity ^0.6.0;
 
 import './interface/IPoolFactory.sol';
 import './IDEAFactory.sol';
@@ -57,7 +57,7 @@ contract PoolCoordinator is IPoolFactory {
 
     ExistingPools[] public existingPools;
     IDEAFactory factory;
-    constructor(address factoryAddress) {
+    constructor(address factoryAddress) public {
         factory = IDEAFactory(factoryAddress);
     }
 
@@ -160,7 +160,7 @@ contract PoolCoordinator is IPoolFactory {
         console.logString("done");
     }
 
-    function createSubPool(string memory name, string memory description, address parentPool) public override returns(address) {
+    function createChildPool(string memory name, string memory description, address parentPool) public override returns(address) {
         CommonStructs.Pool storage parent = mappedPools[parentPool];
         ChildPoolFactory childPool = new ChildPoolFactory(name, description, parentPool);
         CommonStructs.ChildPool storage child = parent.childPools[address(childPool)];

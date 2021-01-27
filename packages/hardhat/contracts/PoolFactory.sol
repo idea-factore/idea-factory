@@ -1,4 +1,4 @@
-pragma solidity ^0.7.3;
+pragma solidity ^0.6.0;
 
 import './PoolCoordinator.sol';
 
@@ -8,7 +8,7 @@ import './PoolCoordinator.sol';
 contract PoolFactory {
     CommonStructs.Pool public pool;
 
-    constructor(bytes32 name, bytes32 description) {
+    constructor(bytes32 name, bytes32 description) public {
         pool.name = name;
         pool.description = description;
         pool.pool = address(this);
@@ -18,7 +18,7 @@ contract PoolFactory {
 contract ChildPoolFactory {
     CommonStructs.ChildPool public childPool;
 
-    constructor(string memory name, string memory description, address parent) {
+    constructor(string memory name, string memory description, address parent) public {
         childPool.name = name;
         childPool.description = description;
         childPool.isSet = true;

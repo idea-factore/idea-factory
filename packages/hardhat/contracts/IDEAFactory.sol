@@ -1,4 +1,4 @@
-pragma solidity ^0.7.3;
+pragma solidity ^0.6.0;
 
 import './PoolCoordinator.sol';
 import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
@@ -14,7 +14,7 @@ contract IDEAFactory is ERC1155 {
 
     uint256 private currentIdea = 0;
 
-    constructor (string memory uri_) ERC1155(uri_) {
+    constructor (string memory uri_) public ERC1155(uri_) {
         _uri = uri_;
     }
 

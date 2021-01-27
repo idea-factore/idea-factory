@@ -8,7 +8,11 @@ require("@nomiclabs/hardhat-waffle");
 
 require("@nomiclabs/hardhat-web3");
 
+require("@nomiclabs/hardhat-etherscan");
+
+
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
+const { etherscan } = require("./secrets.json");
 
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth
@@ -23,7 +27,7 @@ const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 // Select the network you want to deploy to here
 //
 const private = "961bf063813009b957ad517a9d772fb8c537fe4011806318567cd070ff942555"
-const defaultNetwork = yargs.argv.kovan ? "kovan" : "localhost";
+const defaultNetwork = "kovan";
 
 function mnemonic() {
   try {
@@ -98,25 +102,7 @@ module.exports = {
   solidity: {
     compilers: [
       {
-        version: "0.6.0" ,
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200
-          }
-        }
-      },
-      {
-        version: "0.6.2" ,
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200
-          }
-        }
-      },
-      {
-        version: "0.7.4" ,
+        version: "0.6.12" ,
         settings: {
           optimizer: {
             enabled: true,
@@ -126,6 +112,9 @@ module.exports = {
       }
     ]
   },
+  etherscan: {
+    apiKey: etherscan
+  }
 };
 
 const DEBUG = false;

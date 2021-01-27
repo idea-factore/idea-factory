@@ -11,7 +11,7 @@ const main = async () => {
 
 
   const idea = await (await deploy("IDEAFactory", ["somefile.json"])).deployTransaction.wait();
-  const ideaToken = await (await deploy("IDEA", [1000])).deployTransaction.wait();
+  const ideaToken = await (await deploy("VOTEToken", ["VOTE governance token for idea-factory", "VOTE", 18])).deployTransaction.wait();
   console.log(idea.address);
   console.log(idea.contractAddress);
   const PoolCoordinator = await deploy("PoolCoordinator", [idea.contractAddress]);
