@@ -3,26 +3,16 @@ pragma solidity ^0.6.0;
 import './interface/IIdeaToken.sol';
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import '@uma/core/contracts/financial-templates/common/SyntheticToken.sol';
+import '@uma/core/contracts/financial-templates/common/TokenFactory.sol';
+import '@uma/core/contracts/financial-templates/expiring-multiparty/PricelessPositionManager.sol';
+import '@uma/core/contracts/financial-templates/common/WETH9.sol';
 
 //import "@openzeppelin/contracts/access/Ownable.sol"; //https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
 
 //Implemnt AAVE/ENS potentially chainlink and UMA as well
 
-contract VOTEToken is SyntheticToken, IIdeaToken {
+contract VOTEToken is IIdeaToken {
     //super basic tokenExpandedERC20(tokenName, tokenSymbol, tokenDecimals) nonReentrant() 
-    bool _deployed;
-    constructor(
-        string memory tokenName,
-        string memory tokenSymbol,
-        uint8 tokenDecimals
-    ) public SyntheticToken(tokenName, tokenSymbol, tokenDecimals) nonReentrant() {
-        _deployed = true;
-    }
-
-    function randomFunction() private {
-        _deployed = true;
-    }
-
     event DepositedToPool(address pool, uint oldAmount, uint newAmount);
 
 

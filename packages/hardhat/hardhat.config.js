@@ -10,6 +10,9 @@ require("@nomiclabs/hardhat-web3");
 
 require("@nomiclabs/hardhat-etherscan");
 
+require("@nomiclabs/hardhat-truffle5");
+
+
 
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 const { etherscan } = require("./secrets.json");
