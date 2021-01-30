@@ -108,7 +108,7 @@ function App(props) {
   const ideaFactory = useCustomContractLoader(localProvider, "0x864e68cb66eEA153C66c92a8213F22c03541CCf2");
   const poolCoordinator = useCustomContractLoader(localProvider, "0x6EDF27db594D4c0803107E3ccF282ccbB7d36eF7");
   const factoryEvents = useEventListener(readContracts, "IDEAFactory", "mintedIdea", localProvider, 1);
-
+  console.log(readContracts);
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
   console.log("🏷 Resolved austingriffith.eth as:",addressFromENS)
