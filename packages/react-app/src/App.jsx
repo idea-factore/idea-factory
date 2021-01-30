@@ -105,9 +105,13 @@ function App(props) {
   //const poolCoordinator = useContractReader(readContracts, "PoolCoordinator");
   //📟 Listen for broadcast events
   //console.log(factoryEvents);
-  const ideaFactory = useCustomContractLoader(localProvider, "0x864e68cb66eEA153C66c92a8213F22c03541CCf2");
-  const poolCoordinator = useCustomContractLoader(localProvider, "0x6EDF27db594D4c0803107E3ccF282ccbB7d36eF7");
+  let ideaFactory = useContractReader(readContracts,"IDEAFactory");
+  let poolCoordinator = useContractReader(readContracts, "PoolCoordinator");
   const factoryEvents = useEventListener(readContracts, "IDEAFactory", "mintedIdea", localProvider, 1);
+  if(process.env.NODE_ENV === "production") {
+      ideaFactory = useExternalContractLoader(localProvider, "0x864e68cb66eEA153C66c92a8213F22c03541CCf2", FACTORY_ABI);
+      poolCoordinator = useExternalContractLoader(localProvider, "0x6EDF27db594D4c0803107E3ccF282ccbB7d36eF7", pool_abi);
+  } 
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
