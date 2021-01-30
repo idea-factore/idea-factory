@@ -1,4 +1,5 @@
 pragma solidity ^0.6.0;
+pragma experimental ABIEncoderV2;
 
 import './interface/IPoolFactory.sol';
 import './IDEAFactory.sol';
@@ -29,7 +30,7 @@ library CommonStructs {
         bytes32 name;
         bytes32 description;
         uint256[] ideas;
-        mapping(address => ChildPool) childPools;
+        ChildPool[] childPools;
         address[] users;
         uint256 collateral;
         bool isParent;
@@ -45,6 +46,10 @@ contract PoolCoordinator is IPoolFactory {
           uint256 TVL;
           bool exist;
      }
+
+    //TODO get rid of struct and just make ExisitingPools[] into
+    // address[]
+    //If it is in this array it exists by default
     struct ExistingPools {
         address pool;
         bool exists;
@@ -78,6 +83,14 @@ contract PoolCoordinator is IPoolFactory {
 
         return ideas;
     }
+    function getPools() public view returns(ExistingPools[] memory) {
+        return existingPools;
+    }
+
+    function getPoolData(address pool) public returns(CommonStructs.Pool memory poolToReturn) {
+        CommonStructs.Pool storage  poolToReturn = mappedPools[pool];
+        return poolToReturn;
+    }
     //calculate voting power for user in pool
     function getVotingPower(address votingPool, bool isChild, address voter) public view returns(uint256) {
         User storage vote = users[voter];
@@ -87,15 +100,7 @@ contract PoolCoordinator is IPoolFactory {
         if(isChild) {
             for(uint i=0; i<=existingPools.length; i++) {
                 parent = mappedPools[existingPools[i].pool];
-                if(parent.childPools[votingPool].isSet) {
-                    console.logString("Found child!");
-                    //calculate voting power for user in child pool
-                    collateralForPool = vote.collateralPerChildPool[votingPool];
-                    console.log("Collateral for Voting Pool is ", collateralForPool);
-                    totalCollateral = parent.childPools[votingPool].collateral;
-                    return (collateralForPool/totalCollateral)*100;
-
-                }
+                //TOD Use new array for finding chil 
             }
         } else {
             //calculate voting power based on parent pool
@@ -146,16 +151,7 @@ contract PoolCoordinator is IPoolFactory {
                 console.log("Checking parent pool ", i, " for child");
                 CommonStructs.Pool storage parent = mappedPools[existingPools[i].pool];
                 console.log("Checking parent: ", parent.pool);
-                if(parent.childPools[child].isSet) {
-                        console.logString("found child!");
-                        CommonStructs.ChildPool storage pool = parent.childPools[child];
-                        pool.ideas.push(id);
-                        console.logString("added idea to child");
-                        console.log("Is it in child pool? ", factory.getName(pool.ideas[0]));
-                        parent.ideas.push(id);
-                        console.logString("added to parent");
-                        break;
-                }
+                //TODO
             }
         console.logString("done");
     }
@@ -163,17 +159,8 @@ contract PoolCoordinator is IPoolFactory {
     function createChildPool(string memory name, string memory description, address parentPool) public override returns(address) {
         CommonStructs.Pool storage parent = mappedPools[parentPool];
         ChildPoolFactory childPool = new ChildPoolFactory(name, description, parentPool);
-        CommonStructs.ChildPool storage child = parent.childPools[address(childPool)];
-        child.name = name;
-        child.description = description;
-        child.parentPool = parentPool;
-        child.users.push(msg.sender);
-        child.isSet = true; 
-        parent.users.push(msg.sender);
-        console.log("Created child pool with address ", address(childPool));
-        console.logString("Is child in parent?");
-        console.logString(parent.childPools[address(childPool)].name);
-        return address(childPool); 
+        //TODO
+        return parentPool;
     }
 
     //Should deposit IDEA tokens?
@@ -192,15 +179,7 @@ contract PoolCoordinator is IPoolFactory {
          } else {
              for(uint i=0; i<=existingPools.length; i++) {
                 CommonStructs.Pool storage parent = mappedPools[existingPools[i].pool];
-                CommonStructs.ChildPool storage child = parent.childPools[pool];
-                if(child.isSet) {
-                    child.collateral += amount;
-                    child.users.push(origin);
-                    parent.collateral += amount;
-                    user.collateralPerChildPool[pool] += amount;
-                    user.collateralPerPool[parent.pool] += amount;
-                    break;
-                }
+                //TODO
 
             }
          }

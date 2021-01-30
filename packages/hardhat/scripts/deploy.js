@@ -11,52 +11,30 @@ const ExpiringMultiParty = require("@uma/core/build/contracts/ExpiringMultiParty
 const web3 = require("web3");
 
 const main = async () => {
-  const network = config.defaultNetwork;
-  const actualNetwork = {
-    name: network,
-    chainId: 42,
-    ensAddress: "0xB66B2f307B6e46a6D038a85997B401aE87455772"
-  };
-  const account = config.networks[network].accounts[0];
-  const provider = await new ethers.providers.AlchemyProvider(actualNetwork, "MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB");
-  const wallet = await new ethers.Wallet(account, provider);
-  console.log("\n\n 📡 Deploying...\n");
-  //default price indentifier. Still really unsure whether we need our own or not
-  const priceFeedIdentifier = web3.utils.utf8ToHex("USDETH");
-  // default params besides syntheticName and symbol
-  const constructorParams = {
-    expirationTimestamp: '1706780800',
-    collateralAddress: "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
-    priceFeedIdentifier: priceFeedIdentifier,
-    syntheticName: 'idea-factory synthetic token kovan test deploy', 
-    syntheticSymbol: 'testVOTE', 
-    collateralRequirement: { rawValue: web3.utils.toWei("0.15") },
-    disputeBondPct: { rawValue: web3.utils.toWei("0.1") },
-    sponsorDisputeRewardPct: { rawValue: web3.utils.toWei("0.05")},
-    disputerDisputeRewardPct: { rawValue: web3.utils.toWei("0.2")},
-    minSponsorTokens: { rawValue: web3.utils.toWei("100")},
-    withdrawalLiveness: 7200,
-    liquidationLiveness: 7200,
-    financialProductLibraryAddress: Store.networks[42].address
-  }
-  console.log("Deploying UMA EMP...\n");
-  console.log(ExpiringMultiPartyCreator.networks[42].address)
-  console.log(account);
-  const empCreator = await ethers.getContractAt(ExpiringMultiPartyCreator.abi, ExpiringMultiPartyCreator.networks[42].address, wallet);
-  const test = await empCreator.tokenFactoryAddress(); 
-  console.log(test);
-  console.log("Calling createExpiringMultiParty");
-  console.log(empCreator);
-  console.log(constructorParams);
-  const result = await empCreator.createExpiringMultiParty(constructorParams);
-  console.log(result);
-  const emp = await new ethers.Contract(result.logs[0].args.expiringMultiPartyAddress, ExpiringMultiParty.abi);
+  // To deploy our synthetic just go to this address: 0x1082C1878FAeAC03310468A379cf4D159939FA42
+  // and connect your metamask account, go to write, and go to createExpiringMultiParty or whatever
+  // and enter the following parameters (with changes if needed)
+  /**
+   * {   expirationTimestamp: "1706780800",   
+   * collateralAddress: "0xbF7A7169562078c96f0eC1A8aFD6aE50f12e5A99",   
+   * priceFeedIdentifier: "0x555344455448",   
+   * syntheticName: "idea-factory synthetic token kovan test deploy",   
+   * syntheticSymbol: "testVOTE",   
+   * collateralRequirement: { rawValue: '1500000000000000000' },   
+   * disputeBondPct: { rawValue: '100000000000000000' },   
+   * sponsorDisputeRewardPct: { rawValue: '50000000000000000' },   
+   * disputerDisputeRewardPct: { rawValue: '200000000000000000' },   
+   * minSponsorTokens: { rawValue: '100000000000000000000' },   
+   * withdrawalLiveness: 7200,   
+   * liquidationLiveness: 7200,   
+   * excessTokenBeneficiary: '0x41AF40Eb92Bec4dD8DA77103597838b3dBBD3B6f' }
+   */
   const idea = await (await deploy("IDEAFactory", ["somefile.json"])).deployTransaction.wait();
   //const ideaToken = await (await deploy("VOTEToken", ["VOTE governance token for idea-factory", "VOTE", 18 ])).deployTransaction.wait();
   //const voteManager = await (await deploy("PricelessPositionManagerForVote", [ "1640995200", 7200, "0x462303f77a3f17Dbd95eb7bab412FE4937F9B9CB", ideaToken.contractAddress, 
                               //finder, padRight(utf8ToHex("USDETH"), 64), toWei("100"), ideaToken.contractAddress, finacialProduct])).deployTransaction.wait();
   //console.log(idea.address);
-  //console.log(idea.contractAddress);
+  //console.log(idea.contractAddress);{   expirationTimestamp: '1706780800',   collateralAddress: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',   priceFeedIdentifier: '0x555344455448',   syntheticName: 'idea-factory synthetic token kovan test deploy',   syntheticSymbol: 'testVOTE',   collateralRequirement: { rawValue: '150000000000000000' },   disputeBondPct: { rawValue: '100000000000000000' },   sponsorDisputeRewardPct: { rawValue: '50000000000000000' },   disputerDisputeRewardPct: { rawValue: '200000000000000000' }
   const PoolCoordinator = await deploy("PoolCoordinator", [idea.contractAddress]);
 
    // <-- add in constructor args like line 16 vvvv

@@ -12,7 +12,7 @@ import { Header, Account, Faucet, Ramp, Contract, GasGauge } from "./components"
 import { Transactor } from "./helpers";
 import { formatEther } from "@ethersproject/units";
 //import Hints from "./Hints";
-import { Hints, ExampleUI, Subgraph } from "./views"
+import { Hints, ExampleUI, Subgraph, Pools } from "./views"
 
 /*
     Welcome to 🏗 scaffold-eth !
@@ -52,7 +52,7 @@ const localProviderUrl = "http://localhost:8545"; // for xdai: https://dai.poa.n
 // as you deploy to other networks you can set REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
 const localProviderUrlFromEnv = process.env.NODE_ENV == "production" ? "https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB" : localProviderUrl;
 if(DEBUG) console.log("🏠 Connecting to provider:", localProviderUrlFromEnv);
-const localProvider = new JsonRpcProvider("https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB");
+const localProvider = new JsonRpcProvider(localProviderUrlFromEnv);
 console.log("Our provider: ", localProvider);
 
 
@@ -145,8 +145,8 @@ function App(props) {
           <Menu.Item key="/hints">
             <Link onClick={()=>{setRoute("/hints")}} to="/hints">Hints</Link>
           </Menu.Item>
-          <Menu.Item key="/exampleui">
-            <Link onClick={()=>{setRoute("/exampleui")}} to="/exampleui">ExampleUI</Link>
+          <Menu.Item key="/pools">
+            <Link onClick={()=>{setRoute("/pools")}} to="/pools">Pools</Link>
           </Menu.Item>
           <Menu.Item key="/subgraph">
             <Link onClick={()=>{setRoute("/subgraph")}} to="/subgraph">Subgraph</Link>
@@ -195,8 +195,8 @@ function App(props) {
               price={price}
             />
           </Route>
-          <Route path="/exampleui">
-            <ExampleUI
+          <Route path="/pools">
+            <Pools
               address={address}
               userProvider={userProvider}
               mainnetProvider={mainnetProvider}
