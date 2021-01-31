@@ -12,6 +12,14 @@ import '@uma/core/contracts/financial-templates/common/WETH9.sol';
 //Implemnt AAVE/ENS potentially chainlink and UMA as well
 
 contract VOTEToken is IIdeaToken {
+    using SafeMath for uint256;
+    string public name = 'IdeaVoteToken';
+    string public symbol = 'IVOTE';
+    uint256 public decimals = 18;
+    uint256 public tokenRate = 1000;
+    uint256 public totalSupply = 100e24;
+
+
     //super basic tokenExpandedERC20(tokenName, tokenSymbol, tokenDecimals) nonReentrant() 
     event DepositedToPool(address pool, uint oldAmount, uint newAmount);
 
@@ -32,4 +40,5 @@ contract VOTEToken is IIdeaToken {
     function depositCollateral(address receiver, uint amount) external override returns(bool) {}
 
     function withdrawCollateral(address withdrawer, uint amount) external override returns(address, uint) {}
+
 }

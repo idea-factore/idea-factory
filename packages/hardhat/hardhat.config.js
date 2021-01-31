@@ -15,7 +15,7 @@ require("@nomiclabs/hardhat-truffle5");
 
 
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
-const { etherscan } = require("./secrets.json");
+// const { etherscan } = require("./secrets.json");
 
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth
@@ -114,9 +114,6 @@ module.exports = {
         }
       }
     ]
-  },
-  etherscan: {
-    apiKey: etherscan
   }
 };
 
