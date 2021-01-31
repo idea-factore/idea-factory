@@ -101,12 +101,13 @@ function App(props) {
   //
 
   // keep track of a variable from the contract in the local React state:
-  //const ideaFactory = useContractReader(readContracts,"IDEAFactory");
-  //const poolCoordinator = useContractReader(readContracts, "PoolCoordinator");
+  const ideaFactoryLocal = useContractReader(readContracts,"IDEAFactory");
+  const poolCoordinatorLocal = useContractReader(readContracts, "PoolCoordinator");
+  //this should fail on local but I'm hoping it won't actually cause anything to break
+  const ideaFactoryKovan = useExternalContractLoader(localProvider, "0x864e68cb66eEA153C66c92a8213F22c03541CCf2", FACTORY_ABI);
+  const poolCoordinatorKovan = useExternalContractLoader(localProvider, "0x6EDF27db594D4c0803107E3ccF282ccbB7d36eF7", pool_abi);
   //📟 Listen for broadcast events
   //console.log(factoryEvents);
-  const ideaFactory = useCustomContractLoader(localProvider, "0x864e68cb66eEA153C66c92a8213F22c03541CCf2");
-  const poolCoordinator = useCustomContractLoader(localProvider, "0x6EDF27db594D4c0803107E3ccF282ccbB7d36eF7");
   const factoryEvents = useEventListener(readContracts, "IDEAFactory", "mintedIdea", localProvider, 1);
 
   /*
@@ -162,7 +163,7 @@ function App(props) {
             */}
             <Contract
               name="IDEAFactory"
-              customContract={ideaFactory}
+              customContract={process.env.NODE_ENV === "production" ? ideaFactoryKovan : ideaFactoryLocal}
               signer={userProvider.getSigner()}
               provider={localProvider}
               address={address}
@@ -170,7 +171,7 @@ function App(props) {
             />
             <Contract
               name="PoolCoordinator"
-              customContract={poolCoordinator}
+              customContract={process.env.NODE_ENV === "production" ? poolCoordinatorKovan : poolCoordinatorLocal}
               signer={userProvider.getSigner()}
               provider={localProvider}
               address={address}

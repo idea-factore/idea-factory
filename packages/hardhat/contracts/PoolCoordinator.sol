@@ -87,7 +87,7 @@ contract PoolCoordinator is IPoolFactory {
         return existingPools;
     }
 
-    function getPoolData(address pool) public returns(CommonStructs.Pool memory poolToReturn) {
+    function getPoolData(address pool) public view returns(CommonStructs.Pool memory poolToReturn) {
         CommonStructs.Pool storage  poolToReturn = mappedPools[pool];
         return poolToReturn;
     }
