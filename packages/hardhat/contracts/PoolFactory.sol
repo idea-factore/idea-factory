@@ -1,5 +1,5 @@
 pragma solidity ^0.6.0;
-
+pragma experimental ABIEncoderV2;
 import './PoolCoordinator.sol';
 
 //Base contracts to create Pools with
@@ -22,11 +22,17 @@ contract ChildPoolFactory {
         childPool.name = name;
         childPool.description = description;
         childPool.isSet = true;
-        childPool.parentPool = parent;
+        childPool.child = address(this);
     }
 
     function getAddress() public view returns(address) {
         return address(this);
     }
+
+    function getData() public view returns(CommonStructs.ChildPool memory childPool) {
+        return childPool;
+    }
+
+
 
 }

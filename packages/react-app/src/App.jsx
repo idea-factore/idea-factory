@@ -108,7 +108,8 @@ function App(props) {
   const poolCoordinatorKovan = useExternalContractLoader(localProvider, "0x6EDF27db594D4c0803107E3ccF282ccbB7d36eF7", pool_abi);
   //📟 Listen for broadcast events
   //console.log(factoryEvents);
-  const factoryEvents = useEventListener(readContracts, "IDEAFactory", "mintedIdea", localProvider, 1);
+  // listen for all events? And get refreshed data? 
+  const createdPool = useEventListener(readContracts, "PoolCoordinator", "createdPool", localProvider, 1);
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
@@ -207,7 +208,7 @@ function App(props) {
               tx={tx}
               writeContracts={writeContracts}
               readContracts={readContracts}
-              events={factoryEvents}
+              events={createdPool}
             />
           </Route>
           <Route path="/subgraph">

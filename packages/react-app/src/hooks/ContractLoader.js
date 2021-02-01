@@ -42,6 +42,7 @@ export default function useContractLoader(providerOrSigner) {
             accumulator[contractName] = loadContract(contractName, signer);
             return accumulator;
           }, {});
+          console.log("setting contracts", newContracts);
           setContracts(newContracts);
         } catch (e) {
           console.log("ERROR LOADING CONTRACTS!!", e);

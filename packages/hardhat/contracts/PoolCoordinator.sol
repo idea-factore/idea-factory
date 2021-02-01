@@ -16,7 +16,7 @@ library CommonStructs {
         uint256 votes;
     }
     struct ChildPool {
-        address parentPool;
+        address child;
         string name;
         string description;
         uint256[] ideas;
@@ -54,7 +54,7 @@ contract PoolCoordinator is IPoolFactory {
         address pool;
         bool exists;
     }
-
+    event createdPool(address pool);
     uint256 _balanceOf;
     mapping(address => User) public users;
 
@@ -91,26 +91,6 @@ contract PoolCoordinator is IPoolFactory {
         CommonStructs.Pool storage  poolToReturn = mappedPools[pool];
         return poolToReturn;
     }
-    //calculate voting power for user in pool
-    function getVotingPower(address votingPool, bool isChild, address voter) public view returns(uint256) {
-        User storage vote = users[voter];
-        CommonStructs.Pool storage parent;
-        uint256 collateralForPool;
-        uint256 totalCollateral;
-        if(isChild) {
-            for(uint i=0; i<=existingPools.length; i++) {
-                parent = mappedPools[existingPools[i].pool];
-                //TOD Use new array for finding chil 
-            }
-        } else {
-            //calculate voting power based on parent pool
-            parent = mappedPools[votingPool];
-            collateralForPool = vote.collateralPerPool[votingPool];
-            totalCollateral = parent.collateral;
-            return (collateralForPool/totalCollateral)*100;
-
-        }
-    }
     function createPool(bytes32 name, bytes32 description) public override returns(address) {
         PoolFactory poolFactory = new PoolFactory(name, description);
 
@@ -124,6 +104,7 @@ contract PoolCoordinator is IPoolFactory {
 
         existingPools.push(ExistingPools(address(poolFactory), true));
         console.log("New pool created with address", address(poolFactory));
+        emit createdPool((address(poolFactory)));
         return address(poolFactory);
     }
     /**
@@ -160,9 +141,10 @@ contract PoolCoordinator is IPoolFactory {
         CommonStructs.Pool storage parent = mappedPools[parentPool];
         ChildPoolFactory childPool = new ChildPoolFactory(name, description, parentPool);
         //TODO
-        return parentPool;
+        parent.childPools.push(childPool.getData());
+        return childPool.getAddress();
     }
-
+    // what's the difference between this and stakeToIdea?
     //Should deposit IDEA tokens?
     function stakeToPool(address pool, uint256 amount, address origin) public returns(uint256) {
          //todo
@@ -180,28 +162,25 @@ contract PoolCoordinator is IPoolFactory {
              for(uint i=0; i<=existingPools.length; i++) {
                 CommonStructs.Pool storage parent = mappedPools[existingPools[i].pool];
                 //TODO
-
+                bool found = false;
+                for(uint j=0; j<=parent.childPools.length; j++) {
+                    CommonStructs.ChildPool storage child = parent.childPools[j];
+                    if(child.child == pool) {
+                        child.collateral += amount;
+                        child.users.push(origin);
+                        user.collateralPerChildPool[pool] += amount;
+                        found = true;
+                        break;
+                    }
+                }
+                if(found) break; 
             }
          }
          return amount;
      }
     //amount is gov tokens, id is idea id
     function voteInPool(address votingPool, uint256 id, uint amount) public override returns(uint256) {
-        //call get voting power
-        uint256 votesToAdd = 0;
-        bool foundPool;
-        for(uint i=0; i<existingPools.length; i++) {
-            if(existingPools[i].pool == votingPool) {
-                votesToAdd = getVotingPower(votingPool, false, msg.sender);
-                foundPool = true;
-            }
-         }
-        if(!foundPool) {
-            votesToAdd = getVotingPower(votingPool, true, msg.sender);
-        }
-        factory.stakeIdea((votesToAdd*amount), id, msg.sender);
-        console.log("Added votes", votesToAdd, " to idea ", id);
-        return votesToAdd;
+        
     }
 
     function transferCollateral(address receiver, uint amount) public override returns(bool) {
