@@ -1,11 +1,14 @@
+pragma solidity ^0.6.0;
+
+
 import './VOTEToken.sol';
 
 
 contract VoteTokenSale {
 
-	VOTEToken public token;
+	  VOTEToken public token;
+    address public owner;
 
-	address public owner;
    	uint256 public tokensBought;
    	uint256 public etherRaised;
    	uint256 public tokenRate = 1000;
@@ -17,8 +20,6 @@ contract VoteTokenSale {
    	}
 
    	constructor() public {
-   		totalSupply = 100e24;
-   		owner = msg.sender;
    	}
    	
 

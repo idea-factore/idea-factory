@@ -13,11 +13,19 @@ import '@uma/core/contracts/financial-templates/common/WETH9.sol';
 
 contract VOTEToken is IIdeaToken {
     using SafeMath for uint256;
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+        mapping(address => uint256) balances;
+
     string public name = 'IdeaVoteToken';
     string public symbol = 'IVOTE';
     uint256 public decimals = 18;
     uint256 public tokenRate = 1000;
-    uint256 public totalSupply = 100e24;
+    uint256 public totalSupply_ = 100e24;
+
+    constructor () public IIdeaToken() {
+      totalSupply_ = 100e24;
+   }
 
 
     //super basic tokenExpandedERC20(tokenName, tokenSymbol, tokenDecimals) nonReentrant() 
@@ -41,4 +49,19 @@ contract VOTEToken is IIdeaToken {
 
     function withdrawCollateral(address withdrawer, uint amount) external override returns(address, uint) {}
 
+    function transfer(address _to, uint256 _value) public returns (bool) {
+      require(_value <= balances[msg.sender]);
+      require(_to != address(0));
+      balances[msg.sender] = balances[msg.sender].sub(_value);
+      balances[_to] = balances[_to].add(_value);
+      emit Transfer(msg.sender, _to, _value);
+      return true;
+   }
+
+    function buyTokens(address _receiver, uint256 _amount) public  {
+      require(_receiver != address(0));
+      require(_amount > 0);
+      transfer(_receiver, _amount);
+   }
+ 
 }
