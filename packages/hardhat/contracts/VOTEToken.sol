@@ -13,20 +13,26 @@ import '@uma/core/contracts/financial-templates/common/WETH9.sol';
 
 contract VOTEToken is IIdeaToken {
     using SafeMath for uint256;
-    event Transfer(address indexed from, address indexed to, uint256 value);
-
-        mapping(address => uint256) balances;
 
     string public name = 'IdeaVoteToken';
     string public symbol = 'IVOTE';
+    address public owner;
     uint256 public decimals = 18;
     uint256 public tokenRate = 1000;
-    uint256 public totalSupply_ = 100e24;
+    
 
-    constructor () public IIdeaToken() {
-      totalSupply_ = 100e24;
-   }
+    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
+    event Transfer(address indexed from, address indexed to, uint tokens);
+    mapping(address => uint256) balances;
+    mapping(address => mapping (address => uint256)) allowed;
+    uint256 totalSupply_;
 
+    
+    constructor(uint256 total) public {
+      totalSupply_ = total;
+      owner = msg.sender;
+      balances[msg.sender] = totalSupply_;
+    }
 
     //super basic tokenExpandedERC20(tokenName, tokenSymbol, tokenDecimals) nonReentrant() 
     event DepositedToPool(address pool, uint oldAmount, uint newAmount);
@@ -49,19 +55,37 @@ contract VOTEToken is IIdeaToken {
 
     function withdrawCollateral(address withdrawer, uint amount) external override returns(address, uint) {}
 
-    function transfer(address _to, uint256 _value) public returns (bool) {
-      require(_value <= balances[msg.sender]);
-      require(_to != address(0));
-      balances[msg.sender] = balances[msg.sender].sub(_value);
-      balances[_to] = balances[_to].add(_value);
-      emit Transfer(msg.sender, _to, _value);
-      return true;
-   }
+    function totalSupply() public view returns (uint256) {
+      return totalSupply_;
+    }
 
-    function buyTokens(address _receiver, uint256 _amount) public  {
-      require(_receiver != address(0));
-      require(_amount > 0);
-      transfer(_receiver, _amount);
-   }
+    function balanceOf(address tokenOwner) public view returns (uint256) {
+        return balances[tokenOwner];
+    }
+    function transfer(address receiver, uint256 numTokens) public returns (bool) {
+        require(numTokens <= balances[msg.sender]);
+        balances[msg.sender] = balances[msg.sender].sub(numTokens);
+        balances[receiver] = balances[receiver].add(numTokens);
+        emit Transfer(msg.sender, receiver, numTokens);
+        return true;
+    }
+    function approve(address delegate, uint256 numTokens) public returns (bool) {
+        allowed[msg.sender][delegate] = numTokens;
+        emit Approval(msg.sender, delegate, numTokens);
+        return true;
+    }
+    function allowance(address owner, address delegate) public  view returns (uint) {
+        return allowed[owner][delegate];
+    }
+    function transferFrom(address owner, address buyer, uint256 numTokens) public returns (bool) {
+        require(numTokens <= balances[owner]);
+        require(numTokens <= allowed[owner][msg.sender]);
+        balances[owner] = balances[owner].sub(numTokens);
+        allowed[owner][msg.sender] = allowed[owner][msg.sender].sub(numTokens);
+        balances[buyer] = balances[buyer].add(numTokens);
+        emit Transfer(owner, buyer, numTokens);
+        return true;
+    }
+
  
 }

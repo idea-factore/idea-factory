@@ -38,7 +38,7 @@ const main = async () => {
   const PoolCoordinator = await deploy("PoolCoordinator", [idea.contractAddress]);
 
    // <-- add in constructor args like line 16 vvvv
-  const voteTokenSale = await deploy("VoteTokenSale");
+  const voteTokenSale = await deploy("VoteTokenSale", [idea.contractAddress]);
 
 
 
