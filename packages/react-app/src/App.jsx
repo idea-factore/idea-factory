@@ -105,12 +105,15 @@ function App(props) {
   //const poolCoordinator = useContractReader(readContracts, "PoolCoordinator");
   //📟 Listen for broadcast events
   //console.log(factoryEvents);
-  const voteTokenSale = useCustomContractLoader(localProvider,
-  "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0");
-  const ideaFactory = useCustomContractLoader(localProvider, "0x864e68cb66eEA153C66c92a8213F22c03541CCf2");
-  const poolCoordinator = useCustomContractLoader(localProvider, "0x6EDF27db594D4c0803107E3ccF282ccbB7d36eF7");
-  const factoryEvents = useEventListener(readContracts, "IDEAFactory", "mintedIdea", localProvider, 1);
 
+  const ideaFactoryLocal = useContractReader(readContracts,"IDEAFactory");
+  const poolCoordinatorLocal = useContractReader(readContracts, "PoolCoordinator");
+  const voteTokenSale = useContractReader(readContracts, "VoteTokenSale");
+
+  const factoryEvents = useEventListener(readContracts, "IDEAFactory", "mintedIdea", localProvider, 1);
+  //this should fail on local but I'm hoping it won't actually cause anything to break
+  const ideaFactoryKovan = useExternalContractLoader(localProvider, "0x864e68cb66eEA153C66c92a8213F22c03541CCf2", FACTORY_ABI);
+  const poolCoordinatorKovan = useExternalContractLoader(localProvider, "0x6EDF27db594D4c0803107E3ccF282ccbB7d36eF7", pool_abi);
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
   console.log("🏷 Resolved austingriffith.eth as:",addressFromENS)
@@ -172,7 +175,7 @@ function App(props) {
             />
             <Contract
               name="IDEAFactory"
-              customContract={ideaFactory}
+              customContract={process.env.NODE_ENV === "production" ? ideaFactoryKovan : ideaFactoryLocal}
               signer={userProvider.getSigner()}
               provider={localProvider}
               address={address}
@@ -180,7 +183,7 @@ function App(props) {
             />
             <Contract
               name="PoolCoordinator"
-              customContract={poolCoordinator}
+              customContract={process.env.NODE_ENV === "production" ? poolCoordinatorKovan : poolCoordinatorLocal}
               signer={userProvider.getSigner()}
               provider={localProvider}
               address={address}
