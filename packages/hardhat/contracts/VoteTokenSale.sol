@@ -10,7 +10,7 @@ contract VoteTokenSale {
 
     event Bought(uint256 amount);
     event Sold(uint256 amount);
-    
+
     address public owner;
 
    	uint256 public tokensBought;
@@ -24,8 +24,7 @@ contract VoteTokenSale {
    	}
 
    	constructor(address _tokenAddress) public {
-      owner = _tokenAddress;
-      token = new VOTEToken(totalSupply);
+      token = new VOTEToken("VoteToken", "IVTE", 18);
    	}
    	
 
@@ -39,9 +38,11 @@ contract VoteTokenSale {
 
 
     function buyVoteToken() payable public {
-        uint256 amountTobuy;
-        uint256 etherUsed = msg.value;
-        amountTobuy = etherUsed * tokenRate;
+        uint256 amountTobuy = msg.value;
+        uint256 tokenBalance = token.balanceOf(address(this));
+
+        require(amountTobuy > 0, "You need to send some ether");
+        require(amountTobuy <= tokenBalance, "Not enough tokens in the reserve");
 
         // Send Vote tokens to buyer
         token.transfer(msg.sender, amountTobuy);
@@ -49,6 +50,6 @@ contract VoteTokenSale {
 
         // keep track of token sales and eth deposits
         tokensBought += amountTobuy;
-        etherRaised += etherUsed;
+        etherRaised += amountTobuy;
     }
 }
