@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Button, List, Divider, Input, Card, Layout, Menu, PageHeader, Modal, Form } from "antd";
 import { SyncOutlined } from '@ant-design/icons';
 import { Address, Balance } from "../components";
 import { parseEther, formatEther } from "@ethersproject/units";
 import { parseBytes32String, formatBytes32String} from "@ethersproject/strings";
+import Meta from "antd/lib/card/Meta";
 
 const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
     const [form] = Form.useForm();
@@ -54,6 +56,7 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
     const { Header, Content, Footer, Sider } = Layout;
     const [pools, setPools] = useState([]); 
     const [visible, setVisible] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const getPools = () => {readContracts.PoolCoordinator.getPools().then(res => {
         const data = res.map(pool => {
@@ -62,12 +65,11 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
         Promise.allSettled(data).then((result) => {
             console.log("Got result ", result);
             setPools(result);
-            console.log("set pools");
-            console.log(pools);
         });
     })};
     useEffect(() => {
         getPools();
+        setLoading(false);
     }, [events]);
     const createPool = (values) => {
         console.log('Received values of form: ', values);
@@ -105,10 +107,19 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
                 dataSource={pools}
                 renderItem={item => (
                     <List.Item>
-                        <List.Item.Meta
-                        title={parseBytes32String(item.value.name)}
-                        description={parseBytes32String(item.value.description)}
-                        />
+                        <Card 
+                          loading={loading}
+                          actions={[
+                            <Link to={`/childpools/${item.value.pool}`} key="view">
+                              <Button>View Children</Button>
+                            </Link>
+                          ]}
+                        >
+                          <Meta
+                            title={parseBytes32String(item.value.name)}
+                            description={parseBytes32String(item.value.description)}
+                          />
+                        </Card>
                     </List.Item>
                 )}
                 />

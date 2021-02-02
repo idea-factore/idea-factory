@@ -55,6 +55,7 @@ contract PoolCoordinator is IPoolFactory {
         bool exists;
     }
     event createdPool(address pool);
+    event createdChildPool(address childPool);
     uint256 _balanceOf;
     mapping(address => User) public users;
 
@@ -90,6 +91,11 @@ contract PoolCoordinator is IPoolFactory {
     function getPoolData(address pool) public view returns(CommonStructs.Pool memory poolToReturn) {
         CommonStructs.Pool storage  poolToReturn = mappedPools[pool];
         return poolToReturn;
+    }
+
+    function getChildPools(address pool) public view returns(CommonStructs.ChildPool[] memory childPools) {
+        CommonStructs.Pool storage parent = mappedPools[pool];
+        return parent.childPools; 
     }
     function createPool(bytes32 name, bytes32 description) public override returns(address) {
         PoolFactory poolFactory = new PoolFactory(name, description);
@@ -128,28 +134,36 @@ contract PoolCoordinator is IPoolFactory {
 
     function addIdeaToChild (address child, uint256 id) public override {
         console.logString("Adding idea to child pool which also adds to parent");
+        bool found = false;
         for(uint i=0; i<existingPools.length; i++) {
                 console.log("Checking parent pool ", i, " for child");
                 CommonStructs.Pool storage parent = mappedPools[existingPools[i].pool];
                 console.log("Checking parent: ", parent.pool);
-                //TODO
-            }
+                for(uint j=0; j<parent.childPools.length; j++) {
+                    if(parent.childPools[j].child == child) {
+                        CommonStructs.ChildPool storage currentChild = parent.childPools[j];
+                        currentChild.ideas.push(id);
+                        found = true;
+                        break;
+                    }
+                }
+                if(found) break;
+        }
         console.logString("done");
     }
 
     function createChildPool(string memory name, string memory description, address parentPool) public override returns(address) {
         CommonStructs.Pool storage parent = mappedPools[parentPool];
         ChildPoolFactory childPool = new ChildPoolFactory(name, description, parentPool);
-        //TODO
         parent.childPools.push(childPool.getData());
+        emit createdChildPool(childPool.getAddress());
         return childPool.getAddress();
     }
-    // what's the difference between this and stakeToIdea?
-    //Should deposit IDEA tokens?
-    function stakeToPool(address pool, uint256 amount, address origin) public returns(uint256) {
+    //all this does is add collateral to a pool
+    function stakeToIdea(address pool, uint256 amount, address origin, uint256 idea) public returns(uint256) {
          //todo
          //require that the user has the amount they are trying to add to a pool
-         //transfer ideas token to PoolCoordinator
+         //Deposit VOTE tokens to IDEA synthetic
          User storage user = users[origin];
          user.exist = true;
          user.userAddress = origin;
@@ -158,10 +172,10 @@ contract PoolCoordinator is IPoolFactory {
             depositPool.collateral += amount;
             depositPool.users.push(origin);
             user.collateralPerPool[pool] += amount;
+            factory.stakeIdea(amount, idea, origin);
          } else {
              for(uint i=0; i<=existingPools.length; i++) {
                 CommonStructs.Pool storage parent = mappedPools[existingPools[i].pool];
-                //TODO
                 bool found = false;
                 for(uint j=0; j<=parent.childPools.length; j++) {
                     CommonStructs.ChildPool storage child = parent.childPools[j];
@@ -169,6 +183,10 @@ contract PoolCoordinator is IPoolFactory {
                         child.collateral += amount;
                         child.users.push(origin);
                         user.collateralPerChildPool[pool] += amount;
+                        parent.collateral += amount;
+                        parent.users.push(origin);
+                        user.collateralPerPool[parent.pool] += amount;
+                        factory.stakeIdea(amount, idea, origin);
                         found = true;
                         break;
                     }
@@ -178,10 +196,6 @@ contract PoolCoordinator is IPoolFactory {
          }
          return amount;
      }
-    //amount is gov tokens, id is idea id
-    function voteInPool(address votingPool, uint256 id, uint amount) public override returns(uint256) {
-        
-    }
 
     function transferCollateral(address receiver, uint amount) public override returns(bool) {
 

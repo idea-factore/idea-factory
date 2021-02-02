@@ -12,7 +12,7 @@ import { Header, Account, Faucet, Ramp, Contract, GasGauge } from "./components"
 import { Transactor } from "./helpers";
 import { formatEther } from "@ethersproject/units";
 //import Hints from "./Hints";
-import { Hints, ExampleUI, Subgraph, Pools } from "./views"
+import { Hints, ExampleUI, Subgraph, Pools, ChildPool } from "./views"
 
 /*
     Welcome to 🏗 scaffold-eth !
@@ -209,6 +209,18 @@ function App(props) {
               writeContracts={writeContracts}
               readContracts={readContracts}
               events={createdPool}
+            />
+          </Route>
+          <Route path="/childpools/:address">
+            <ChildPool
+              userProvider={userProvider}
+              mainnetProvider={mainnetProvider}
+              localProvider={localProvider}
+              yourLocalBalance={yourLocalBalance}
+              price={price}
+              tx={tx}
+              writeContracts={writeContracts}
+              readContracts={readContracts}
             />
           </Route>
           <Route path="/subgraph">
