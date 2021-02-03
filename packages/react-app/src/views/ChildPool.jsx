@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, List, Divider, Input, Card, Layout, Menu, PageHeader, Modal, Form } from "antd";
+import { Button, List, Divider, Input, Card, Layout, Menu, PageHeader, Modal, Form, Tag } from "antd";
 import { SyncOutlined } from '@ant-design/icons';
 import { Address, Balance } from "../components";
 import { parseEther, formatEther } from "@ethersproject/units";
@@ -58,15 +58,27 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
     const { Header, Content, Footer, Sider } = Layout;
     const [visible, setVisible] = useState(false);
     const [childPools, setChildPool] = useState([]);
+    const [category, setCategory] = useState({});
 
     const createdChildPool = useEventListener(readContracts, "PoolCoordinator", "createdChildPool", localProvider, 1);
     useEffect(() => {
+      const data = readContracts.PoolCoordinator.getPoolData(address).then(data =>{ return {...data}});
+      Promise.resolve(data).then(result => {
+        console.log("Got data ", result)
+        setCategory(result);
+      })
+    }, [])
+    useEffect(() => {
         readContracts.PoolCoordinator.getChildPools(address).then(res => {
-            console.log("Got child pools: ", res);
+          const data = res.map(pool => {
+            console.log(pool.child);
+            return readContracts.PoolCoordinator.getChildPoolData(pool.child).then(data =>{ return {...data}});
+        });
         })
-    }, [createdChildPool]);
+      }, [createdChildPool]);
     const createChildPool = (values) => {
         readContracts.PoolCoordinator.createChildPool(values.name, values.description, address); 
+        setVisible(false);
     }
     return (
         <Layout>
@@ -80,7 +92,7 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
     <Layout>
       <Content>
             <PageHeader
-                onBack={() => null}
+                onBack={() => window.history.back()}
                 title="Child Pools"
                 subTitle={
                     <Button 
@@ -92,6 +104,10 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
                       New Child Pool
                     </Button>
                 }
+                tags={ category.name !== undefined && 
+                      
+                    <Tag color="blue">Category: {parseBytes32String(category.name)}</Tag>
+                }
             />
             <List
             grid={{ gutter: 16, column: 4 }}
@@ -99,10 +115,11 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
             renderItem={item => (
                 <List.Item>
                     <Card >
-                      <Meta
-                        title={parseBytes32String(item.value.name)}
-                        description={parseBytes32String(item.value.description)}
+                      <Card.Meta
+                        title={item.value.name}
+                        description={item.value.description}
                       />
+                       <p>{`${item.value.name} has ${item.value.ideas.length} ideas`}</p>
                     </Card>
                 </List.Item>
             )}

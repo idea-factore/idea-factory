@@ -63,6 +63,8 @@ contract PoolCoordinator is IPoolFactory {
 
     ExistingPools[] public existingPools;
     IDEAFactory factory;
+    address[] add;
+    uint256[] ideas;
     constructor(address factoryAddress) public {
         factory = IDEAFactory(factoryAddress);
     }
@@ -96,6 +98,21 @@ contract PoolCoordinator is IPoolFactory {
     function getChildPools(address pool) public view returns(CommonStructs.ChildPool[] memory childPools) {
         CommonStructs.Pool storage parent = mappedPools[pool];
         return parent.childPools; 
+    }
+
+    function getChildPoolData(address pool) public view returns(CommonStructs.ChildPool memory childPool) {
+        bool found = false;
+        for(uint i=0;i<existingPools.length; i++) {
+            CommonStructs.Pool storage parent = mappedPools[existingPools[i].pool];
+            for(uint j=0; j<parent.childPools.length; j++) {
+                CommonStructs.ChildPool storage childPool = parent.childPools[j];
+                found = childPool.child == pool;
+                console.logString("found child pool");
+                if(found) return childPool; 
+            }
+        }
+        console.log("found? ", found);
+        return childPool; 
     }
     function createPool(bytes32 name, bytes32 description) public override returns(address) {
         PoolFactory poolFactory = new PoolFactory(name, description);
@@ -155,7 +172,7 @@ contract PoolCoordinator is IPoolFactory {
     function createChildPool(string memory name, string memory description, address parentPool) public override returns(address) {
         CommonStructs.Pool storage parent = mappedPools[parentPool];
         ChildPoolFactory childPool = new ChildPoolFactory(name, description, parentPool);
-        parent.childPools.push(childPool.getData());
+        parent.childPools.push(CommonStructs.ChildPool(childPool.getAddress(), name, description, ideas, add, 0, true));
         emit createdChildPool(childPool.getAddress());
         return childPool.getAddress();
     }

@@ -89,7 +89,7 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
         <Layout>
           <Content>
                 <PageHeader
-                    onBack={() => null}
+                    onBack={() => window.history.back()}
                     title="Categories"
                     subTitle={
                         <Button 
