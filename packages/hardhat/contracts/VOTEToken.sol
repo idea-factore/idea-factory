@@ -12,9 +12,26 @@ import '@uma/core/contracts/financial-templates/common/WETH9.sol';
 //Implemnt AAVE/ENS potentially chainlink and UMA as well
 
 contract VOTEToken is IIdeaToken {
+    using SafeMath for uint256;
     //super basic tokenExpandedERC20(tokenName, tokenSymbol, tokenDecimals) nonReentrant() 
     event DepositedToPool(address pool, uint oldAmount, uint newAmount);
 
+    event Transfer(address indexed from, address indexed to, uint tokens);
+
+    mapping(address => uint256) balances;
+
+    function balanceOf(address tokenOwner) public view returns (uint256) {
+      return balances[tokenOwner];
+    }
+
+    function transfer(address sender, address receiver, uint256 numTokens) public returns (bool) {
+        // this is the ERC20 transfer function, does UMA have their own?
+        require(numTokens <= balances[sender]);
+        balances[sender] = balances[sender].sub(numTokens);
+        balances[receiver] = balances[receiver].add(numTokens);
+        emit Transfer(sender, receiver, numTokens);
+        return true;
+    }
 
     //mint governance tokens based on liqudity provided to pool
     function mintGovernanceTokens(address sender, uint liquidity, address pool) external override returns(uint) {}

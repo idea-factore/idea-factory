@@ -189,7 +189,7 @@ contract PoolCoordinator is IPoolFactory {
             depositPool.collateral += amount;
             depositPool.users.push(origin);
             user.collateralPerPool[pool] += amount;
-            factory.stakeIdea(amount, idea, origin);
+            factory.stakeIdea(amount, idea, origin, pool);
          } else {
              for(uint i=0; i<=existingPools.length; i++) {
                 CommonStructs.Pool storage parent = mappedPools[existingPools[i].pool];
@@ -203,7 +203,7 @@ contract PoolCoordinator is IPoolFactory {
                         parent.collateral += amount;
                         parent.users.push(origin);
                         user.collateralPerPool[parent.pool] += amount;
-                        factory.stakeIdea(amount, idea, origin);
+                        factory.stakeIdea(amount, idea, origin, pool);
                         found = true;
                         break;
                     }

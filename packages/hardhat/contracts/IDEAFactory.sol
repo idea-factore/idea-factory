@@ -15,6 +15,7 @@ contract IDEAFactory is ERC1155 {
     uint256 private currentIdea = 0;
 
     constructor (string memory uri_) public ERC1155(uri_) {
+        // todo: need to declare VoteToken here
         _uri = uri_;
     }
 
@@ -37,8 +38,9 @@ contract IDEAFactory is ERC1155 {
     }
 
 
-    function stakeIdea(uint256 stake, uint256 id, address sender) public {
+    function stakeIdea(uint256 stake, uint256 id, address sender, address pool) public {
         console.log("Staking ", stake, " idea");
+        // todo: transfer with function: voteToken.transfer(sender, pool, stake)
         setVotes(stake, id);
         _mint(sender, id, stake, "");
     }
