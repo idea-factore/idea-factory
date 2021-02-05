@@ -8,7 +8,7 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useUserAddress } from "eth-hooks";
 import { useExchangePrice, useGasPrice, useUserProvider, useContractLoader, useContractReader, useEventListener, useBalance, useExternalContractLoader, useCustomContractLoader } from "./hooks";
-import { Header, Account, Faucet, Ramp, Contract, GasGauge } from "./components";
+import { Header, Account, Faucet, Ramp, Contract, GasGauge, TokenBalance } from "./components";
 import { Transactor } from "./helpers";
 import { formatEther } from "@ethersproject/units";
 //import Hints from "./Hints";
@@ -32,7 +32,7 @@ import { Hints, ExampleUI, Subgraph, Pools, ChildPool } from "./views"
     You can also bring in contract artifacts in `constants.js`
     (and then use the `useExternalContractLoader()` hook!)
 */
-import { INFURA_ID, DAI_ADDRESS, DAI_ABI, FACTORY_ABI, pool_abi, VOTE_ABI} from "./constants";
+import { INFURA_ID, FACTORY_ABI, pool_abi, VOTE_ABI, TOKEN_ABI} from "./constants";
 
 // 😬 Sorry for all the console logging 🤡
 const DEBUG = true
@@ -52,7 +52,7 @@ const localProviderUrl = "http://localhost:8545"; // for xdai: https://dai.poa.n
 // as you deploy to other networks you can set REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
 const localProviderUrlFromEnv = process.env.NODE_ENV == "production" ? "https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB" : localProviderUrl;
 if(DEBUG) console.log("🏠 Connecting to provider:", localProviderUrlFromEnv);
-const localProvider = new JsonRpcProvider(localProviderUrlFromEnv);
+const localProvider = new JsonRpcProvider("https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB");
 console.log("Our provider: ", localProvider);
 
 
@@ -70,7 +70,6 @@ function App(props) {
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
   const userProvider = useUserProvider(injectedProvider, localProvider);
   const address = useUserAddress(userProvider);
-
   // The transactor wraps transactions and provides notificiations
   const tx = Transactor(userProvider, gasPrice)
 
@@ -103,10 +102,10 @@ function App(props) {
   // keep track of a variable from the contract in the local React state:
   const ideaFactoryLocal = useContractReader(readContracts,"IDEAFactory");
   const poolCoordinatorLocal = useContractReader(readContracts, "PoolCoordinator");
-  const voteToken = useExternalContractLoader(localProvider, "0x1b7413521C008Ff01272D486790B7E6B948105d5", VOTE_ABI);
+  const voteToken = useExternalContractLoader(localProvider, "0xcE04a6dE48a45398836ddA9555b2cAC68e3D705c", VOTE_ABI);
   //this should fail on local but I'm hoping it won't actually cause anything to break
   const ideaFactoryKovan = useExternalContractLoader(localProvider, "0x864e68cb66eEA153C66c92a8213F22c03541CCf2", FACTORY_ABI);
-  const poolCoordinatorKovan = useExternalContractLoader(localProvider, "0x6EDF27db594D4c0803107E3ccF282ccbB7d36eF7", pool_abi);
+  const poolCoordinatorKovan = useExternalContractLoader(localProvider, "0x8371A926f3D0efb7B45149B689B0A7B8C7B9e6B4", pool_abi);
   //📟 Listen for broadcast events
   //console.log(factoryEvents);
   // listen for all events? And get refreshed data? 
@@ -165,6 +164,14 @@ function App(props) {
                 and give you a form to interact with it locally
             */}
             <Contract
+                name="VOTE"
+                customContract={voteToken}
+                signer={userProvider.getSigner()}
+                provider={localProvider}
+                address={address}
+                blockExplorer={blockExplorer}
+              />
+            <Contract
               name="IDEAFactory"
               customContract={process.env.NODE_ENV === "production" ? ideaFactoryKovan : ideaFactoryLocal}
               signer={userProvider.getSigner()}
@@ -181,15 +188,7 @@ function App(props) {
               blockExplorer={blockExplorer}
             />
             {
-              process.env.NODE_ENV === "production" && 
-              <Contract
-                name="VOTE"
-                customContract={voteToken}
-                signer={userProvider.getSigner()}
-                provider={localProvider}
-                address={address}
-                blockExplorer={blockExplorer}
-              />
+              process.env.NODE_ENV === "production" && <p> Vote</p> 
             }
           </Route>
           <Route path="/hints">
@@ -210,7 +209,7 @@ function App(props) {
               price={price}
               tx={tx}
               writeContracts={writeContracts}
-              readContracts={readContracts}
+              poolCoordinator={poolCoordinatorKovan}
               events={createdPool}
             />
           </Route>
@@ -224,6 +223,7 @@ function App(props) {
               tx={tx}
               writeContracts={writeContracts}
               readContracts={readContracts}
+              poolCoordinator={poolCoordinatorKovan}
             />
           </Route>
           <Route path="/subgraph">
@@ -250,7 +250,10 @@ function App(props) {
            loadWeb3Modal={loadWeb3Modal}
            logoutOfWeb3Modal={logoutOfWeb3Modal}
            blockExplorer={blockExplorer}
+           voteToken={voteToken}
+           isMenu={true}
          />
+
       </div>
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}

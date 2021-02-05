@@ -16,7 +16,7 @@ export default function Transactor(provider, gasPrice, etherscan) {
       const network = await provider.getNetwork();
       console.log("network", network);
       const options = {
-        dappId: "0b58206a-f3c0-4701-a62f-73c7243e8c77", // GET YOUR OWN KEY AT https://account.blocknative.com
+        dappId: "0ba645e5-505a-4e64-98dd-955d9f24e3a2", // GET YOUR OWN KEY AT https://account.blocknative.com
         system: "ethereum",
         networkId: network.chainId,
         // darkMode: Boolean, // (default: false)
@@ -24,6 +24,7 @@ export default function Transactor(provider, gasPrice, etherscan) {
           console.log("HANDLE TX", txInformation);
         },
       };
+      console.log(options);
       const notify = Notify(options);
 
       let etherscanNetwork = "";

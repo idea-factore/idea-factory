@@ -15,19 +15,19 @@ const main = async () => {
   // and connect your metamask account, go to write, and go to createExpiringMultiParty or whatever
   // and enter the following parameters (with changes if needed)
   /**
-   * {   expirationTimestamp: "1706780800",   
-   * collateralAddress: "0xbF7A7169562078c96f0eC1A8aFD6aE50f12e5A99",   
-   * priceFeedIdentifier: "0x555344455448",   
-   * syntheticName: "idea-factory synthetic token kovan test deploy",   
-   * syntheticSymbol: "testVOTE",   
-   * collateralRequirement: { rawValue: '1500000000000000000' },   
-   * disputeBondPct: { rawValue: '100000000000000000' },   
-   * sponsorDisputeRewardPct: { rawValue: '50000000000000000' },   
-   * disputerDisputeRewardPct: { rawValue: '200000000000000000' },   
-   * minSponsorTokens: { rawValue: '100000000000000000000' },   
-   * withdrawalLiveness: 7200,   
-   * liquidationLiveness: 7200,   
-   * excessTokenBeneficiary: '0x41AF40Eb92Bec4dD8DA77103597838b3dBBD3B6f' }
+   {   expirationTimestamp: "1706780800",   
+   collateralAddress: "0xC4375B7De8af5a38a93548eb8453a498222C4fF2",   
+   priceFeedIdentifier: "0x555344455448",   
+   syntheticName: "idea-factory voteFeb",   
+   syntheticSymbol: "VOTEFEB21",   
+   collateralRequirement: { rawValue: '1500000000000000000' },   
+   disputeBondPct: { rawValue: '100000000000000000' },   
+   sponsorDisputeRewardPct: { rawValue: '50000000000000000' },   
+   disputerDisputeRewardPct: { rawValue: '200000000000000000' },   
+   minSponsorTokens: { rawValue: '100000000000000000000' },   
+   withdrawalLiveness: 7200,   
+   liquidationLiveness: 7200,   
+   excessTokenBeneficiary: '0x41AF40Eb92Bec4dD8DA77103597838b3dBBD3B6f' }
    */
   const idea = await (await deploy("IDEAFactory", ["somefile.json"])).deployTransaction.wait();
   //const ideaToken = await (await deploy("VOTEToken", ["VOTE governance token for idea-factory", "VOTE", 18 ])).deployTransaction.wait();

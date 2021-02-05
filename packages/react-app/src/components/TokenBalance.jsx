@@ -4,9 +4,7 @@ import { useTokenBalance } from "eth-hooks";
 
 export default function TokenBalance(props) {
   const [dollarMode, setDollarMode] = useState(true);
-
-  const tokenContract = props.contracts && props.contracts[props.name];
-  const balance = useTokenBalance(tokenContract, props.address, 1777);
+  const balance = useTokenBalance(props.contract, props.address, 1777);
 
   let floatBalance = parseFloat("0.00");
 

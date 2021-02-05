@@ -171,6 +171,7 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
               const args = functionInfo.inputs.map((input) => {
                 const key = functionInfo.name + "_" + input.name + "_" + input.type + "_" + innerIndex++
                 let value = form[key]
+                console.log(input.baseType);
                 if(input.baseType=="array"){
                   value = JSON.parse(value)
                 } else if(input.type === "bool"){
@@ -182,7 +183,7 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
                 }
                 return value
               });
-
+              console.log("Function args are ", args);
               let result
               if(functionInfo.stateMutability === "view"||functionInfo.stateMutability === "pure"){
                 const returned = await contractFunction(...args)
@@ -192,7 +193,7 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
                 if (txValue) {
                   overrides.value = txValue; // ethers.utils.parseEther()
                 }
-
+                console.log("Calling function");
                 // console.log("Running with extras",extras)
                 const returned = await tx(contractFunction(...args, overrides));
                 result = tryToDisplay(returned);

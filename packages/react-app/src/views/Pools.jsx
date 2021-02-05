@@ -58,9 +58,9 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    const getPools = () => {readContracts.PoolCoordinator.getPools().then(res => {
+    const getPools = () => {poolCoordinator.getPools().then(res => {
         const data = res.map(pool => {
-            return readContracts.PoolCoordinator.getPoolData(pool.pool).then(data =>{ return {...data}});
+            return poolCoordinator.getPoolData(pool.pool).then(data =>{ return {...data}});
         });
         Promise.allSettled(data).then((result) => {
             console.log("Got result ", result);
@@ -74,7 +74,8 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
     const createPool = (values) => {
         console.log('Received values of form: ', values);
         setVisible(false);
-        readContracts.PoolCoordinator.createPool(formatBytes32String(values.name), formatBytes32String(values.description));
+        console.log(userProvider.getSigner());
+        poolCoordinator.connect(userProvider.getSigner()).createPool(formatBytes32String(values.name), formatBytes32String(values.description));
     }
     //Add card for pool showing the amount of VOTE staked in the pool. When a Card is clicked take them to child pool page
     return(

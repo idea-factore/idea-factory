@@ -16,12 +16,15 @@ export default function useExternalContractLoader(provider, address, ABI, option
           // we need to check to see if this provider has a signer or not
           let signer;
           const accounts = await provider.listAccounts();
+          console.log(accounts);
           if (accounts && accounts.length > 0) {
             signer = provider.getSigner();
-          } else {
+          } 
+          else {
             signer = provider;
           }
-
+          console.log(signer);
+          console.log(address);
           const customContract = new Contract(address, ABI, signer);
           if(optionalBytecode) customContract.bytecode = optionalBytecode
 

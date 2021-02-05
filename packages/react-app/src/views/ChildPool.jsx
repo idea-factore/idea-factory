@@ -53,7 +53,7 @@ const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
     );
   };
 
-export default function ChildPools({purpose, events, mainnetProvider, userProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, poolCoordinator }) {
+export default function ChildPools({purpose, events, mainnetProvider, userProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, poolCoordinator}) {
     const { address } = useParams();
     const { Header, Content, Footer, Sider } = Layout;
     const [visible, setVisible] = useState(false);
@@ -62,22 +62,25 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
 
     const createdChildPool = useEventListener(readContracts, "PoolCoordinator", "createdChildPool", localProvider, 1);
     useEffect(() => {
-      const data = readContracts.PoolCoordinator.getPoolData(address).then(data =>{ return {...data}});
+      const data = poolCoordinator.getPoolData(address).then(data =>{ return {...data}});
       Promise.resolve(data).then(result => {
         console.log("Got data ", result)
         setCategory(result);
       })
     }, [])
     useEffect(() => {
-        readContracts.PoolCoordinator.getChildPools(address).then(res => {
+        poolCoordinator.getChildPools(address).then(res => {
           const data = res.map(pool => {
-            console.log(pool.child);
-            return readContracts.PoolCoordinator.getChildPoolData(pool.child).then(data =>{ return {...data}});
+            return poolCoordinator.getChildPoolData(pool.child).then(data =>{ return {...data}});
+          });
+          Promise.allSettled(data).then((result) => {
+            console.log("Got result ", result);
+            setChildPool(result);
         });
         })
       }, [createdChildPool]);
     const createChildPool = (values) => {
-        readContracts.PoolCoordinator.createChildPool(values.name, values.description, address); 
+        poolCoordinator.connect(userProvider.getSigner()).createChildPool(values.name, values.description, address); 
         setVisible(false);
     }
     return (
