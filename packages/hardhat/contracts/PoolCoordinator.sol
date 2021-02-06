@@ -5,6 +5,7 @@ import './interface/IPoolFactory.sol';
 import './IDEAFactory.sol';
 import './PoolFactory.sol';
 import 'hardhat/console.sol';
+import './VOTEToken.sol';
 
 // move these to seperate file
 library CommonStructs {
@@ -39,6 +40,7 @@ library CommonStructs {
 }
 
 contract PoolCoordinator is IPoolFactory {
+    using SafeMath for uint256;
     struct User {
           address userAddress;
           mapping(address => uint256) collateralPerChildPool;
@@ -56,6 +58,8 @@ contract PoolCoordinator is IPoolFactory {
     }
     event createdPool(address pool);
     event createdChildPool(address childPool);
+    event Bought(uint256 amount);
+
     uint256 _balanceOf;
     mapping(address => User) public users;
 
@@ -63,10 +67,18 @@ contract PoolCoordinator is IPoolFactory {
 
     ExistingPools[] public existingPools;
     IDEAFactory factory;
+
+    VOTEToken public voteToken;
+    address poolCoordinatorAddress;
+    uint256 public tokensBought;
+    uint256 public etherRaised;
+
     address[] add;
     uint256[] ideas;
     constructor(address factoryAddress) public {
         factory = IDEAFactory(factoryAddress);
+        poolCoordinatorAddress = factoryAddress;
+        voteToken = new VOTEToken(100e12);
     }
 
 
@@ -190,6 +202,9 @@ contract PoolCoordinator is IPoolFactory {
             depositPool.users.push(origin);
             user.collateralPerPool[pool] += amount;
             factory.stakeIdea(amount, idea, origin, pool);
+
+            // transfer Vote tokens held by poolcoordinator to the pool
+            tranferVoteTokenToPool(origin, pool, amount);
          } else {
              for(uint i=0; i<=existingPools.length; i++) {
                 CommonStructs.Pool storage parent = mappedPools[existingPools[i].pool];
@@ -204,6 +219,10 @@ contract PoolCoordinator is IPoolFactory {
                         parent.users.push(origin);
                         user.collateralPerPool[parent.pool] += amount;
                         factory.stakeIdea(amount, idea, origin, pool);
+
+                        // transfer Vote tokens held by poolcoordinator to the right pool
+                        tranferVoteTokenToPool(origin, pool, amount);
+
                         found = true;
                         break;
                     }
@@ -213,6 +232,65 @@ contract PoolCoordinator is IPoolFactory {
          }
          return amount;
      }
+
+     /* steps to test
+     1. create pool, get pool address
+     2. mint idea 0, add idea 0 to pool address
+     3. send eth to pool coordinator with sendPaymentToPool()
+     4. validate vote balance of user with getVoteTokenBalance(myAddress)
+     5. send vote to pools either by stakeToIdea or tranferVoteTokenToPool
+     6. validate vote balance of pool with getVoteTokenBalance(poolAddress)
+     */
+
+     // inner mapping of who controls vote tokens held by pool coordinator
+    mapping(address => uint256) balancesInPoolCoordinator;
+
+    // if private, then function can only be called within stakeToIdea, which requires a pool to have an idea
+    // if public, then users can also add vote tokens to pools even if there is no idea 
+    function tranferVoteTokenToPool(address sender, address receiver, uint256 amount) public {
+        require(amount <= balancesInPoolCoordinator[sender]);
+        balancesInPoolCoordinator[sender] = balancesInPoolCoordinator[sender].sub(amount);
+        balancesInPoolCoordinator[receiver] = balancesInPoolCoordinator[receiver].add(amount);
+    }
+
+    // return vote token balance stored for each user inside pool coordinator
+    // can be used to get vote token balance assigned to user or individual pools
+    function getVoteTokenBalance(address addr) public view returns (uint256) {
+      return balancesInPoolCoordinator[addr];
+    }
+
+    function getVoteBalanceOfPoolCoordinator() public view returns (uint256) {
+        return voteToken.balanceOf(poolCoordinatorAddress);
+    }
+
+    fallback () external payable {
+        sendPaymentToPool();
+    }    
+
+    // this function receives Ether from the caller, and sends Vote tokens to pool coordinator
+    // pool coordinator holds tokens on behalf of caller in balancesInPoolCoordinator
+    // all units are in WEI, todo: convert to ETH decimals
+    function sendPaymentToPool() payable public {
+        uint256 amountTobuy = msg.value;
+        uint256 tokenBalance = voteToken.balanceOf(address(this));
+
+        require(amountTobuy > 0, "You need to send some ether");
+        require(amountTobuy <= tokenBalance, "Not enough tokens in the reserve");
+
+        // Send Vote tokens from VoteToken contract to pool coordinator
+        voteToken.sendVotesToPoolCoordinator(poolCoordinatorAddress, amountTobuy);
+
+        // keep track of user holdings inside balancesInPoolCoordinator
+        balancesInPoolCoordinator[msg.sender] += amountTobuy;
+
+        console.log("balancesInPoolCoordinator[msg.sender]: ", balancesInPoolCoordinator[msg.sender]);
+
+        emit Bought(amountTobuy);
+        // keep track of vote token sales and eth deposits, right now they are 1:1 ratio
+        tokensBought += amountTobuy;
+        etherRaised += amountTobuy;
+    }
+
 
     function transferCollateral(address receiver, uint amount) public override returns(bool) {
 
