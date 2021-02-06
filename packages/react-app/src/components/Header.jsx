@@ -1,5 +1,6 @@
 import React from "react";
 import { PageHeader } from "antd";
+import image from "../../public/3e15bceff0d3d48cda0040168ad997e6.png";
 
 export default function Header() {
   return (
@@ -7,7 +8,7 @@ export default function Header() {
       <PageHeader
         title="Idea Factory"
         subTitle="Decentralized Funding Pools for Ideas"
-        avatar={{src: "../../public/3e15bceff0d3d48cda0040168ad997e6.png"}}
+        avatar={{src: image}}
         style={{ cursor: "pointer" }}
       />
     </a>
