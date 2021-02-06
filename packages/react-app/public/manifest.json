@@ -1,10 +1,10 @@
 {
-  "short_name": "Scaffold-Eth App",
+  "short_name": "idea-factory App",
   "start_url": ".",
-  "name": "Create Eth App Sample",
+  "name": "Web App for Idea Factory",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "3e15bceff0d3d48cda0040168ad997e6_Ti8_icon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
