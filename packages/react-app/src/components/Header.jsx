@@ -7,7 +7,7 @@ export default function Header() {
       <PageHeader
         title="Idea Factory"
         subTitle="Decentralized Funding Pools for Ideas"
-        avatar={{src: "%PUBLIC_URL%/3e15bceff0d3d48cda0040168ad997e6.png"}}
+        avatar={{src: "/3e15bceff0d3d48cda0040168ad997e6.png"}}
         style={{ cursor: "pointer" }}
       />
     </a>
