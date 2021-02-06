@@ -3,10 +3,10 @@ import { PageHeader } from "antd";
 
 export default function Header() {
   return (
-    <a href="https://github.com/austintgriffith/scaffold-eth" target="_blank" rel="noopener noreferrer">
+    <a href="https://twitter.com/Ideafactoryidea" target="_blank" rel="noopener noreferrer">
       <PageHeader
-        title="🏗 scaffold-eth"
-        subTitle="forkable Ethereum dev stack focused on fast product iteration"
+        title="Idea Factory"
+        subTitle="Decentralized Funding Pools for Ideas"
         style={{ cursor: "pointer" }}
       />
     </a>
