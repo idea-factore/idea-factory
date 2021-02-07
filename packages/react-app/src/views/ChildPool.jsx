@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Button, List, Divider, Input, Card, Layout, Menu, PageHeader, Modal, Form, Tag, Popover} from "antd";
+import { Link } from "react-router-dom";
+import { Button, List, Divider, Input, Card, Layout, Menu, PageHeader, Modal, Form, Tag, Dropdown, InputNumber } from "antd";
 import { EllipsisOutlined } from '@ant-design/icons';
 import { Address, Balance } from "../components";
 import { parseEther, formatEther } from "@ethersproject/units";
@@ -52,23 +53,85 @@ const PoolCreateForm = ({ visible, onCreate, onCancel }) => {
       </Modal>
     );
   };
-  const menu = (
-    <Menu>
-      <Menu.Item key="1">
-        View Ideas
-      </Menu.Item>
-      <Menu.Item key="2">
-        Add Idea
-      </Menu.Item>
-    </Menu>
-  );
+  const IdeaCreateForm = ({ visible, onCreate, onCancel }) => {
+    const [form] = Form.useForm();
+    return (
+      <Modal
+        visible={visible}
+        title="Create a new Idea"
+        okText="Create"
+        cancelText="Cancel"
+        onCancel={onCancel}
+        onOk={() => {
+          form
+            .validateFields()
+            .then((values) => {
+              form.resetFields();
+              onCreate(values);
+            })
+            .catch((info) => {
+              console.log('Validate Failed:', info);
+            });
+        }}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          name="form_in_modal"
+        >
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[
+              {
+                required: true,
+                message: 'Please add a name for the idea',
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item name="description" label="Description">
+            <Input type="textarea" />
+          </Form.Item>
+          <Form.Item 
+            name="stake" 
+            label="VOTE tokens"
+            rules={[
+              {
+                required: true,
+                message: 'You must submit vote tokens in order to create an idea'
+              }
+            ]}
+          >
+            <InputNumber min={0.001} />
+          </Form.Item>
+        </Form>
+      </Modal>
+    );
+  };
 
 export default function ChildPools({purpose, events, mainnetProvider, userProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, poolCoordinator}) {
     const { address } = useParams();
     const { Header, Content, Footer, Sider } = Layout;
     const [visible, setVisible] = useState(false);
+    const [visibleIdea, setVisibleIdea] = useState(false);
     const [childPools, setChildPool] = useState([]);
     const [category, setCategory] = useState({});
+
+
+    const menu = (child) => {
+      return (<Menu>
+        <Menu.Item key="1">
+          <Link to={`/ideas/${child}`} key="view">
+            <Button>View Ideas</Button>                   
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="2">
+          <Button onClick={() => {setVisibleIdea(true)}}>Add Idea</Button>
+        </Menu.Item>
+      </Menu>
+    )};
 
     const createdChildPool = useEventListener(readContracts, "PoolCoordinator", "createdChildPool", localProvider, 1);
     useEffect(() => {
@@ -94,6 +157,15 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
         setVisible(false);
     }
 
+    const createdIdea = (values) => {
+      console.log("Created idea with ", values);
+      //call PoolCoordinator to mint idea and pass in the amount of vote tokens
+      //this will deposit vote tokens to pool coordinator from the current user
+      //this will mint a new idea, and add that amount of votes to the idea
+      //this will set the inital value of an idea. For now, we will just pretend that 1 VOTE==1 dollar
+      setVisibleIdea(false);
+    }
+
     //todo Change popover to dropdown and add notifications on success or failure
     //implement idea view page and idea add
     return (
@@ -103,6 +175,13 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
             onCreate={createChildPool}
             onCancel={() => {
             setVisible(false);
+            }}
+        />
+        <IdeaCreateForm
+            visible={visibleIdea}
+            onCreate={createdIdea}
+            onCancel={() => {
+            setVisibleIdea(false);
             }}
         />
     <Layout>
@@ -132,9 +211,7 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
                 <List.Item>
                     <Card
                       extra={
-                        <Popover content={menu} trigger="click">
-                          <EllipsisOutlined />
-                        </Popover>
+                        <Dropdown.Button icon={<EllipsisOutlined />} overlay={menu(item.value.child)} trigger={["click"]}/>
                       }
                       title={item.value.name}
                     >

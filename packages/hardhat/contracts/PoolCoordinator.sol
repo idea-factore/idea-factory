@@ -16,12 +16,14 @@ library CommonStructs {
         uint256 votes;
     }
     struct ChildPool {
+        address parent;
         address child;
         string name;
         string description;
         uint256[] ideas;
         address[] users;
         uint256 collateral;
+        uint256 lastPrice;
         bool isSet;
     }
 
@@ -33,6 +35,7 @@ library CommonStructs {
         ChildPool[] childPools;
         address[] users;
         uint256 collateral;
+        uint256 lastPrice;
         bool isParent;
     }
 
@@ -60,8 +63,8 @@ contract PoolCoordinator is IPoolFactory {
     mapping(address => User) public users;
 
     mapping(address => CommonStructs.Pool) public mappedPools;
-
     ExistingPools[] public existingPools;
+    ChildPool[] public childPools;
     IDEAFactory factory;
     address[] add;
     uint256[] ideas;
@@ -172,7 +175,8 @@ contract PoolCoordinator is IPoolFactory {
     function createChildPool(string memory name, string memory description, address parentPool) public override returns(address) {
         CommonStructs.Pool storage parent = mappedPools[parentPool];
         ChildPoolFactory childPool = new ChildPoolFactory(name, description, parentPool);
-        parent.childPools.push(CommonStructs.ChildPool(childPool.getAddress(), name, description, ideas, add, 0, true));
+        parent.childPools.push(CommonStructs.ChildPool(parentPool, childPool.getAddress(), name, description, ideas, add, 0, 0, true));
+        childPools.push(CommonStructs.ChildPool(parentPool, childPool.getAddress(), name, description, ideas, add, 0, 0, true));
         emit createdChildPool(childPool.getAddress());
         return childPool.getAddress();
     }
@@ -191,12 +195,10 @@ contract PoolCoordinator is IPoolFactory {
             user.collateralPerPool[pool] += amount;
             factory.stakeIdea(amount, idea, origin);
          } else {
-             for(uint i=0; i<=existingPools.length; i++) {
-                CommonStructs.Pool storage parent = mappedPools[existingPools[i].pool];
-                bool found = false;
-                for(uint j=0; j<=parent.childPools.length; j++) {
-                    CommonStructs.ChildPool storage child = parent.childPools[j];
+                for(uint i=0; j<=childPools.length; i++) {
+                    CommonStructs.ChildPool storage child = childPools[i];
                     if(child.child == pool) {
+                        CommonStructs.Pool storage parent = mappedPools[child.parentPool];
                         child.collateral += amount;
                         child.users.push(origin);
                         user.collateralPerChildPool[pool] += amount;
@@ -204,12 +206,9 @@ contract PoolCoordinator is IPoolFactory {
                         parent.users.push(origin);
                         user.collateralPerPool[parent.pool] += amount;
                         factory.stakeIdea(amount, idea, origin);
-                        found = true;
                         break;
                     }
                 }
-                if(found) break; 
-            }
          }
          return amount;
      }

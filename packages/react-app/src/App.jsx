@@ -13,7 +13,7 @@ import { Header, Account, Faucet, Ramp, Contract, GasGauge, TokenBalance } from 
 import { Transactor } from "./helpers";
 import { formatEther } from "@ethersproject/units";
 //import Hints from "./Hints";
-import { Hints, ExampleUI, Subgraph, Pools, ChildPool } from "./views"
+import { Hints, ExampleUI, Subgraph, Pools, ChildPool, Ideas } from "./views"
 
 /*
     Welcome to 🏗 scaffold-eth !
@@ -199,6 +199,18 @@ function App(props) {
               price={price}
               tx={tx}
               poolCoordinator={poolCoordinatorKovan}
+            />
+          </Route>
+          <Route path="/ideas/:address">
+            <Ideas
+              userProvider={userProvider}
+              mainnetProvider={mainnetProvider}
+              localProvider={localProvider}
+              yourLocalBalance={yourLocalBalance}
+              price={price}
+              tx={tx}
+              poolCoordinator={poolCoordinatorKovan}
+              ideaFactory={ideaFactoryKovan}
             />
           </Route>
         </Switch>
