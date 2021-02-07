@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button, List, Divider, Input, Card, Layout, Menu, PageHeader, Modal, Form } from "antd";
+import { Button, List, Divider, Input, Card, Layout, Menu, PageHeader, Modal, Form, notification } from "antd";
 import { SyncOutlined } from '@ant-design/icons';
 import { Address, Balance } from "../components";
 import { parseEther, formatEther } from "@ethersproject/units";
@@ -75,7 +75,19 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
         console.log('Received values of form: ', values);
         setVisible(false);
         console.log(userProvider.getSigner());
+        try { 
         poolCoordinator.connect(userProvider.getSigner()).createPool(formatBytes32String(values.name), formatBytes32String(values.description));
+        notification.success({
+          message: "Success!",
+          description: `The category, ${formatBytes32String(values.name)} was created successfully`
+        });
+        } catch(e) {
+          console.log("oh noes! something broke :(");
+          notification.error({
+            message: 'Error: Something broke',
+            description: `Something went wrong while trying to create the category ${formatBytes32String(values.name)}`
+          })
+        }
     }
     //Add card for pool showing the amount of VOTE staked in the pool. When a Card is clicked take them to child pool page
     return(

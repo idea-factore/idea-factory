@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, List, Divider, Input, Card, Layout, Menu, PageHeader, Modal, Form, Tag } from "antd";
-import { SyncOutlined } from '@ant-design/icons';
+import { Button, List, Divider, Input, Card, Layout, Menu, PageHeader, Modal, Form, Tag, Popover} from "antd";
+import { EllipsisOutlined } from '@ant-design/icons';
 import { Address, Balance } from "../components";
 import { parseEther, formatEther } from "@ethersproject/units";
 import { parseBytes32String, formatBytes32String} from "@ethersproject/strings";
 import { useParams } from "react-router-dom";
 import { useEventListener } from "../hooks";
 //TODO: Move this into component
-const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
+const PoolCreateForm = ({ visible, onCreate, onCancel }) => {
     const [form] = Form.useForm();
     return (
       <Modal
@@ -52,6 +52,16 @@ const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
       </Modal>
     );
   };
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">
+        View Ideas
+      </Menu.Item>
+      <Menu.Item key="2">
+        Add Idea
+      </Menu.Item>
+    </Menu>
+  );
 
 export default function ChildPools({purpose, events, mainnetProvider, userProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, poolCoordinator}) {
     const { address } = useParams();
@@ -83,9 +93,12 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
         poolCoordinator.connect(userProvider.getSigner()).createChildPool(values.name, values.description, address); 
         setVisible(false);
     }
+
+    //todo Change popover to dropdown and add notifications on success or failure
+    //implement idea view page and idea add
     return (
         <Layout>
-        <CollectionCreateForm
+        <PoolCreateForm
             visible={visible}
             onCreate={createChildPool}
             onCancel={() => {
@@ -117,12 +130,18 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
             dataSource={childPools}
             renderItem={item => (
                 <List.Item>
-                    <Card >
+                    <Card
+                      extra={
+                        <Popover content={menu} trigger="click">
+                          <EllipsisOutlined />
+                        </Popover>
+                      }
+                      title={item.value.name}
+                    >
                       <Card.Meta
-                        title={item.value.name}
-                        description={item.value.description}
+                        title={item.value.description}
+                        description={`${item.value.name} has ${item.value.ideas.length} ideas`}
                       />
-                       <p>{`${item.value.name} has ${item.value.ideas.length} ideas`}</p>
                     </Card>
                 </List.Item>
             )}

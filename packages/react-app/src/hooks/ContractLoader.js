@@ -3,8 +3,8 @@
 import { Contract } from "@ethersproject/contracts";
 import { useState, useEffect } from "react";
 
-const loadContract = (contractName, signer) => {
-  const newContract = new Contract(
+const loadContract = async (contractName, signer) => {
+  const newContract = await new Contract(
     require(`../contracts/${contractName}.address.js`),
     require(`../contracts/${contractName}.abi.js`),
     signer,
@@ -21,6 +21,7 @@ export default function useContractLoader(providerOrSigner) {
   const [contracts, setContracts] = useState();
   useEffect(() => {
     async function loadContracts() {
+      console.log(providerOrSigner);
       if (typeof providerOrSigner !== "undefined") {
         try {
           // we need to check to see if this providerOrSigner has a signer or not
@@ -38,7 +39,7 @@ export default function useContractLoader(providerOrSigner) {
 
           const contractList = require("../contracts/contracts.js");
 
-          const newContracts = contractList.reduce((accumulator, contractName) => {
+          const newContracts = await contractList.reduce((accumulator, contractName) => {
             accumulator[contractName] = loadContract(contractName, signer);
             return accumulator;
           }, {});

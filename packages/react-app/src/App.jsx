@@ -3,9 +3,10 @@ import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
 import "antd/dist/antd.css";
 import {  JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import "./App.css";
-import { Row, Col, Button, Menu } from "antd";
+import { Row, Col, Button, Menu, Typography, Steps } from "antd";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import { ethers } from "ethers";
 import { useUserAddress } from "eth-hooks";
 import { useExchangePrice, useGasPrice, useUserProvider, useContractLoader, useContractReader, useEventListener, useBalance, useExternalContractLoader, useCustomContractLoader } from "./hooks";
 import { Header, Account, Faucet, Ramp, Contract, GasGauge, TokenBalance } from "./components";
@@ -39,6 +40,9 @@ const DEBUG = true
 
 // 🔭 block explorer URL
 const blockExplorer = "https://etherscan.io/" // for xdai: "https://blockscout.com/poa/xdai/"
+const { Paragraph, Title } = Typography;
+
+const { Step } = Steps;
 
 // 🛰 providers
 if(DEBUG) console.log("📡 Connecting to Mainnet Ethereum");
@@ -52,19 +56,24 @@ const localProviderUrl = "http://localhost:8545"; // for xdai: https://dai.poa.n
 // as you deploy to other networks you can set REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
 const localProviderUrlFromEnv = process.env.NODE_ENV == "production" ? "https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB" : localProviderUrl;
 if(DEBUG) console.log("🏠 Connecting to provider:", localProviderUrlFromEnv);
-const localProvider = new JsonRpcProvider("https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB");
+const localProvider = new ethers.providers.JsonRpcProvider("https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB");
 console.log("Our provider: ", localProvider);
 
 
 
 function App(props) {
+
   const [injectedProvider, setInjectedProvider] = useState();
+  const [step, setStep] = useState(0);
+
+  const onChange = current => {
+    setStep(current);
+  };
   /* 💵 this hook will get the price of ETH from 🦄 Uniswap: */
   const price = useExchangePrice(mainnetProvider); //1 for xdai
 
   /* 🔥 this hook will get the price of Gas from ⛽️ EtherGasStation */
   const gasPrice = useGasPrice("fast"); //1000000000 for xdai
-
   // For more hooks, check out 🔗eth-hooks at: https://www.npmjs.com/package/eth-hooks
 
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
@@ -82,6 +91,7 @@ function App(props) {
   if(DEBUG) console.log("💵 yourMainnetBalance",yourMainnetBalance?formatEther(yourMainnetBalance):"...")
 
   // Load in your local 📝 contract and read a value from it:
+  console.log("Loading contrats");
   const readContracts = useContractLoader(localProvider)
   if(DEBUG) console.log("📝 readContracts",readContracts)
 
@@ -100,8 +110,6 @@ function App(props) {
   //
 
   // keep track of a variable from the contract in the local React state:
-  const ideaFactoryLocal = useContractReader(readContracts,"IDEAFactory");
-  const poolCoordinatorLocal = useContractReader(readContracts, "PoolCoordinator");
   const voteToken = useExternalContractLoader(localProvider, "0xcE04a6dE48a45398836ddA9555b2cAC68e3D705c", VOTE_ABI);
   //this should fail on local but I'm hoping it won't actually cause anything to break
   const ideaFactoryKovan = useExternalContractLoader(localProvider, "0x864e68cb66eEA153C66c92a8213F22c03541CCf2", FACTORY_ABI);
@@ -111,6 +119,7 @@ function App(props) {
   // listen for all events? And get refreshed data? 
   const createdPool = useEventListener(readContracts, "PoolCoordinator", "createdPool", localProvider, 1);
   console.log(voteToken);
+  console.log(poolCoordinatorKovan);
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
@@ -145,59 +154,28 @@ function App(props) {
           <Menu.Item key="/">
             <Link onClick={()=>{setRoute("/")}} to="/">idea-factory</Link>
           </Menu.Item>
-          <Menu.Item key="/hints">
-            <Link onClick={()=>{setRoute("/hints")}} to="/hints">Hints</Link>
-          </Menu.Item>
           <Menu.Item key="/pools">
             <Link onClick={()=>{setRoute("/pools")}} to="/pools">Pools</Link>
-          </Menu.Item>
-          <Menu.Item key="/subgraph">
-            <Link onClick={()=>{setRoute("/subgraph")}} to="/subgraph">Subgraph</Link>
           </Menu.Item>
         </Menu>
 
         <Switch>
           <Route exact path="/">
-            {/*
-                🎛 this scaffolding is full of commonly used components
-                this <Contract/> component will automatically parse your ABI
-                and give you a form to interact with it locally
-            */}
-            <Contract
-                name="VOTE"
-                customContract={voteToken}
-                signer={userProvider.getSigner()}
-                provider={localProvider}
-                address={address}
-                blockExplorer={blockExplorer}
-              />
-            <Contract
-              name="IDEAFactory"
-              customContract={process.env.NODE_ENV === "production" ? ideaFactoryKovan : ideaFactoryLocal}
-              signer={userProvider.getSigner()}
-              provider={localProvider}
-              address={address}
-              blockExplorer={blockExplorer}
-            />
-            <Contract
-              name="PoolCoordinator"
-              customContract={process.env.NODE_ENV === "production" ? poolCoordinatorKovan : poolCoordinatorLocal}
-              signer={userProvider.getSigner()}
-              provider={localProvider}
-              address={address}
-              blockExplorer={blockExplorer}
-            />
-            {
-              process.env.NODE_ENV === "production" && <p> Vote</p> 
-            }
-          </Route>
-          <Route path="/hints">
-            <Hints
-              address={address}
-              yourLocalBalance={yourLocalBalance}
-              mainnetProvider={mainnetProvider}
-              price={price}
-            />
+            <Title level={3}>Welcome to the Idea Factory App!</Title>
+            <Paragraph>
+            This is a temporary "home" page because of an issue where we can't wait for the provider to load.
+            </Paragraph>
+            <Paragraph>
+            A fix for this is to update to latest react version and use suspense but this is a hack and that's a lot of work
+            </Paragraph>
+            <Paragraph>
+            To start, follow to short guide below. In the future iterations, this will be a lot more interactive!
+            </Paragraph>
+            <Steps current={step} onChange={onChange}>
+              <Step title="Step 1" description="First, Add some VOTE tokens using Wrapped Ether" />
+              <Step title="Step 2" description="Next, Click on the Pool tab and Browse Ideas or Add your own" />
+              <Step title="Step 3" description="Last but not lest, VOTE for ideas you like using your tokens." />
+            </Steps>
           </Route>
           <Route path="/pools">
             <Pools
@@ -208,7 +186,6 @@ function App(props) {
               yourLocalBalance={yourLocalBalance}
               price={price}
               tx={tx}
-              writeContracts={writeContracts}
               poolCoordinator={poolCoordinatorKovan}
               events={createdPool}
             />
@@ -221,17 +198,7 @@ function App(props) {
               yourLocalBalance={yourLocalBalance}
               price={price}
               tx={tx}
-              writeContracts={writeContracts}
-              readContracts={readContracts}
               poolCoordinator={poolCoordinatorKovan}
-            />
-          </Route>
-          <Route path="/subgraph">
-            <Subgraph
-            subgraphUri={props.subgraphUri}
-            tx={tx}
-            writeContracts={writeContracts}
-            mainnetProvider={mainnetProvider}
             />
           </Route>
         </Switch>
@@ -255,48 +222,6 @@ function App(props) {
          />
 
       </div>
-
-      {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
-       <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
-         <Row align="middle" gutter={[4, 4]}>
-           <Col span={8}>
-             <Ramp price={price} address={address} />
-           </Col>
-
-           <Col span={8} style={{ textAlign: "center", opacity: 0.8 }}>
-             <GasGauge gasPrice={gasPrice} />
-           </Col>
-           <Col span={8} style={{ textAlign: "center", opacity: 1 }}>
-             <Button
-               onClick={() => {
-                 window.open("https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA");
-               }}
-               size="large"
-               shape="round"
-             >
-               <span style={{ marginRight: 8 }} role="img" aria-label="support">
-                 💬
-               </span>
-               Support
-             </Button>
-           </Col>
-         </Row>
-
-         <Row align="middle" gutter={[4, 4]}>
-           <Col span={24}>
-             {
-
-               /*  if the local provider has a signer, let's show the faucet:  */
-               localProvider && localProvider.connection && localProvider.connection.url && localProvider.connection.url.indexOf("localhost")>=0 && !process.env.REACT_APP_PROVIDER && price > 1 ? (
-                 <Faucet localProvider={localProvider} price={price} ensProvider={mainnetProvider}/>
-               ) : (
-                 ""
-               )
-             }
-           </Col>
-         </Row>
-       </div>
-
     </div>
   );
 }

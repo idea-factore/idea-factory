@@ -25,7 +25,7 @@ export default function useExternalContractLoader(provider, address, ABI, option
           }
           console.log(signer);
           console.log(address);
-          const customContract = new Contract(address, ABI, signer);
+          const customContract = await new Contract(address, ABI, signer);
           if(optionalBytecode) customContract.bytecode = optionalBytecode
 
           setContract(customContract);
