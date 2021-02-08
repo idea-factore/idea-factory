@@ -111,7 +111,7 @@ const PoolCreateForm = ({ visible, onCreate, onCancel }) => {
     );
   };
 
-export default function ChildPools({purpose, events, mainnetProvider, userProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, poolCoordinator}) {
+export default function ChildPools({purpose, events, mainnetProvider, userProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, poolCoordinator, ideaFactory }) {
     const { address } = useParams();
     const { Header, Content, Footer, Sider } = Layout;
     const [visible, setVisible] = useState(false);
@@ -132,8 +132,11 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
         </Menu.Item>
       </Menu>
     )};
-
-    const createdChildPool = useEventListener(readContracts, "PoolCoordinator", "createdChildPool", localProvider, 1);
+    poolCoordinator.on("createdChildPool", listener);
+    const listener= (event) => {
+      console.log("event happened");
+      return event;
+    }
     useEffect(() => {
       const data = poolCoordinator.getPoolData(address).then(data =>{ return {...data}});
       Promise.resolve(data).then(result => {
@@ -151,7 +154,7 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
             setChildPool(result);
         });
         })
-      }, [createdChildPool]);
+      }, [listener]);
     const createChildPool = (values) => {
         poolCoordinator.connect(userProvider.getSigner()).createChildPool(values.name, values.description, address); 
         setVisible(false);
@@ -159,6 +162,10 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
 
     const createdIdea = (values) => {
       console.log("Created idea with ", values);
+      ideaFactory.connect(userProvider.getSigner()).mintIdea(values.name, values.description, values.stake).then(result => {
+        console.log(result);
+
+      })
       //call PoolCoordinator to mint idea and pass in the amount of vote tokens
       //this will deposit vote tokens to pool coordinator from the current user
       //this will mint a new idea, and add that amount of votes to the idea

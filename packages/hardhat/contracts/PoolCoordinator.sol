@@ -64,7 +64,7 @@ contract PoolCoordinator is IPoolFactory {
 
     mapping(address => CommonStructs.Pool) public mappedPools;
     ExistingPools[] public existingPools;
-    ChildPool[] public childPools;
+    CommonStructs.ChildPool[] public childPools;
     IDEAFactory factory;
     address[] add;
     uint256[] ideas;
@@ -195,10 +195,10 @@ contract PoolCoordinator is IPoolFactory {
             user.collateralPerPool[pool] += amount;
             factory.stakeIdea(amount, idea, origin);
          } else {
-                for(uint i=0; j<=childPools.length; i++) {
+                for(uint i=0; i<=childPools.length; i++) {
                     CommonStructs.ChildPool storage child = childPools[i];
                     if(child.child == pool) {
-                        CommonStructs.Pool storage parent = mappedPools[child.parentPool];
+                        CommonStructs.Pool storage parent = mappedPools[child.parent];
                         child.collateral += amount;
                         child.users.push(origin);
                         user.collateralPerChildPool[pool] += amount;

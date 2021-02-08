@@ -112,12 +112,11 @@ function App(props) {
   // keep track of a variable from the contract in the local React state:
   const voteToken = useExternalContractLoader(localProvider, "0xcE04a6dE48a45398836ddA9555b2cAC68e3D705c", VOTE_ABI);
   //this should fail on local but I'm hoping it won't actually cause anything to break
-  const ideaFactoryKovan = useExternalContractLoader(localProvider, "0x864e68cb66eEA153C66c92a8213F22c03541CCf2", FACTORY_ABI);
-  const poolCoordinatorKovan = useExternalContractLoader(localProvider, "0x8371A926f3D0efb7B45149B689B0A7B8C7B9e6B4", pool_abi);
+  const ideaFactoryKovan = useExternalContractLoader(localProvider, "0xc928807aa4d06Fae3fA3B5E341C3Dc7b5cDe3746", FACTORY_ABI);
+  const poolCoordinatorKovan = useExternalContractLoader(localProvider, "0x4a712D7e833d5a18dD2Ea7098eA5946522EdB189", pool_abi);
   //📟 Listen for broadcast events
   //console.log(factoryEvents);
   // listen for all events? And get refreshed data? 
-  const createdPool = useEventListener(readContracts, "PoolCoordinator", "createdPool", localProvider, 1);
   console.log(voteToken);
   console.log(poolCoordinatorKovan);
 
@@ -184,10 +183,10 @@ function App(props) {
               mainnetProvider={mainnetProvider}
               localProvider={localProvider}
               yourLocalBalance={yourLocalBalance}
+              readContracts={readContracts}
               price={price}
               tx={tx}
               poolCoordinator={poolCoordinatorKovan}
-              events={createdPool}
             />
           </Route>
           <Route path="/childpools/:address">
@@ -196,9 +195,11 @@ function App(props) {
               mainnetProvider={mainnetProvider}
               localProvider={localProvider}
               yourLocalBalance={yourLocalBalance}
+              readContracts={readContracts}
               price={price}
               tx={tx}
               poolCoordinator={poolCoordinatorKovan}
+              ideaFactory={ideaFactoryKovan}
             />
           </Route>
           <Route path="/ideas/:address">
