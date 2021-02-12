@@ -568,6 +568,25 @@ export const pool_abi = [
       {
         "indexed": false,
         "internalType": "address",
+        "name": "child",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "idea",
+        "type": "uint256"
+      }
+    ],
+    "name": "addedIdeaToChild",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "childPool",
         "type": "address"
       }
@@ -586,6 +605,31 @@ export const pool_abi = [
       }
     ],
     "name": "createdPool",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "idea",
+        "type": "uint256"
+      }
+    ],
+    "name": "stakedToIdea",
     "type": "event"
   },
   {

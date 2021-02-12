@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button, List, Divider, Input, Card, Layout, Menu, PageHeader, Modal, Form, notification } from "antd";
-import { SyncOutlined } from '@ant-design/icons';
-import { Address, Balance } from "../components";
-import { parseEther, formatEther } from "@ethersproject/units";
+import { Button, List, Input, Card, Layout, Menu, PageHeader, Modal, Form, notification } from "antd";
 import { parseBytes32String, formatBytes32String} from "@ethersproject/strings";
-import { useEventListener } from "../hooks";
 import Meta from "antd/lib/card/Meta";
 
 const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
@@ -58,8 +54,12 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
     const [pools, setPools] = useState([]); 
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [event, setEvent] = useState({});
 
-    const createdPool = useEventListener(readContracts, "PoolCoordinator", "createdPool", localProvider, 1);
+    const listener= (event) => {
+      setEvent(event);
+    }
+    poolCoordinator.on("createdPool", listener);
     const getPools = () => {poolCoordinator.getPools().then(res => {
         const data = res.map(pool => {
             return poolCoordinator.getPoolData(pool.pool).then(data =>{ return {...data}});
@@ -70,9 +70,10 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
         });
     })};
     useEffect(() => {
+        console.log(userProvider.getSigner());
         getPools();
         setLoading(false);
-    }, [createdPool]);
+    }, [event]);
     const createPool = (values) => {
         console.log('Received values of form: ', values);
         setVisible(false);

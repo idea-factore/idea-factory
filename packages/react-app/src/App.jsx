@@ -1,19 +1,16 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, Suspense } from "react";
 import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
 import "antd/dist/antd.css";
-import {  JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
+import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import "./App.css";
-import { Row, Col, Button, Menu, Typography, Steps } from "antd";
+import { Menu, Typography, Steps } from "antd";
 import Web3Modal from "web3modal";
-import WalletConnectProvider from "@walletconnect/web3-provider";
-import { ethers } from "ethers";
 import { useUserAddress } from "eth-hooks";
-import { useExchangePrice, useGasPrice, useUserProvider, useContractLoader, useContractReader, useEventListener, useBalance, useExternalContractLoader, useCustomContractLoader } from "./hooks";
-import { Header, Account, Faucet, Ramp, Contract, GasGauge, TokenBalance } from "./components";
+import { useExchangePrice, useGasPrice, useUserProvider, useContractLoader, useBalance, useExternalContractLoader } from "./hooks";
+import { Header, Account } from "./components";
 import { Transactor } from "./helpers";
 import { formatEther } from "@ethersproject/units";
 //import Hints from "./Hints";
-import { Hints, ExampleUI, Subgraph, Pools, ChildPool, Ideas } from "./views"
 
 /*
     Welcome to 🏗 scaffold-eth !
@@ -56,10 +53,12 @@ const localProviderUrl = "http://localhost:8545"; // for xdai: https://dai.poa.n
 // as you deploy to other networks you can set REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
 const localProviderUrlFromEnv = process.env.NODE_ENV == "production" ? "https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB" : localProviderUrl;
 if(DEBUG) console.log("🏠 Connecting to provider:", localProviderUrlFromEnv);
-const localProvider = new ethers.providers.JsonRpcProvider("https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB");
+const localProvider = new JsonRpcProvider("https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB");
 console.log("Our provider: ", localProvider);
 
-
+const Pools = React.lazy(() => import('./views/Pools'));
+const ChildPool = React.lazy(() => import('./views/ChildPool'));
+const Ideas = React.lazy(() => import ('./views/Ideas'));
 
 function App(props) {
 
@@ -112,8 +111,8 @@ function App(props) {
   // keep track of a variable from the contract in the local React state:
   const voteToken = useExternalContractLoader(localProvider, "0xcE04a6dE48a45398836ddA9555b2cAC68e3D705c", VOTE_ABI);
   //this should fail on local but I'm hoping it won't actually cause anything to break
-  const ideaFactoryKovan = useExternalContractLoader(localProvider, "0xc928807aa4d06Fae3fA3B5E341C3Dc7b5cDe3746", FACTORY_ABI);
-  const poolCoordinatorKovan = useExternalContractLoader(localProvider, "0x4a712D7e833d5a18dD2Ea7098eA5946522EdB189", pool_abi);
+  const ideaFactoryKovan = useExternalContractLoader(localProvider, "0xDC2Dc46Fd6b88046E4991592d4990907036D44ac", FACTORY_ABI);
+  const poolCoordinatorKovan = useExternalContractLoader(localProvider, "0xd27eba6EF46077FC8F50854FbCd0B1Fe9c4cE889", pool_abi);
   //📟 Listen for broadcast events
   //console.log(factoryEvents);
   // listen for all events? And get refreshed data? 
@@ -176,6 +175,7 @@ function App(props) {
               <Step title="Step 3" description="Last but not lest, VOTE for ideas you like using your tokens." />
             </Steps>
           </Route>
+          <Suspense fallback={<div>Loading...</div>}>
           <Route path="/pools">
             <Pools
               address={address}
@@ -204,6 +204,7 @@ function App(props) {
           </Route>
           <Route path="/ideas/:address">
             <Ideas
+              userAddress={address}
               userProvider={userProvider}
               mainnetProvider={mainnetProvider}
               localProvider={localProvider}
@@ -214,6 +215,7 @@ function App(props) {
               ideaFactory={ideaFactoryKovan}
             />
           </Route>
+          </Suspense>
         </Switch>
       </BrowserRouter>
 

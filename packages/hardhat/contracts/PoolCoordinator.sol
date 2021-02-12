@@ -59,6 +59,8 @@ contract PoolCoordinator is IPoolFactory {
     }
     event createdPool(address pool);
     event createdChildPool(address childPool);
+    event addedIdeaToChild(address child, uint256 idea);
+    event stakedToIdea(address user, uint256 amount, uint256 idea);
     uint256 _balanceOf;
     mapping(address => User) public users;
 
@@ -163,6 +165,8 @@ contract PoolCoordinator is IPoolFactory {
                     if(parent.childPools[j].child == child) {
                         CommonStructs.ChildPool storage currentChild = parent.childPools[j];
                         currentChild.ideas.push(id);
+                        currentChild.users.push(msg.sender);
+                        parent.users.push(msg.sender);
                         found = true;
                         break;
                     }
@@ -170,6 +174,7 @@ contract PoolCoordinator is IPoolFactory {
                 if(found) break;
         }
         console.logString("done");
+        emit addedIdeaToChild(child, id);
     }
 
     function createChildPool(string memory name, string memory description, address parentPool) public override returns(address) {
@@ -210,6 +215,7 @@ contract PoolCoordinator is IPoolFactory {
                     }
                 }
          }
+         emit stakedToIdea(origin, amount, idea);
          return amount;
      }
 

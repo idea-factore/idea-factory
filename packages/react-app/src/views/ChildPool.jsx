@@ -2,11 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button, List, Divider, Input, Card, Layout, Menu, PageHeader, Modal, Form, Tag, Dropdown, InputNumber } from "antd";
 import { EllipsisOutlined } from '@ant-design/icons';
-import { Address, Balance } from "../components";
-import { parseEther, formatEther } from "@ethersproject/units";
 import { parseBytes32String, formatBytes32String} from "@ethersproject/strings";
 import { useParams } from "react-router-dom";
-import { useEventListener } from "../hooks";
 //TODO: Move this into component
 const PoolCreateForm = ({ visible, onCreate, onCancel }) => {
     const [form] = Form.useForm();
@@ -118,6 +115,8 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
     const [visibleIdea, setVisibleIdea] = useState(false);
     const [childPools, setChildPool] = useState([]);
     const [category, setCategory] = useState({});
+    const [event, setEvent]=useState({});
+    const [currentPool, setCurrentPool] = useState()
 
 
     const menu = (child) => {
@@ -128,15 +127,16 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
           </Link>
         </Menu.Item>
         <Menu.Item key="2">
-          <Button onClick={() => {setVisibleIdea(true)}}>Add Idea</Button>
+          <Button onClick={() => {setVisibleIdea(true); setCurrentPool(child);}}>Add Idea</Button>
         </Menu.Item>
       </Menu>
     )};
-    poolCoordinator.on("createdChildPool", listener);
     const listener= (event) => {
-      console.log("event happened");
-      return event;
+      console.log("Event happened: ", event)
+      setEvent(event);
     }
+    poolCoordinator.on("createdChildPool", listener);
+    poolCoordinator.on("addedIdeaToChild", listener);
     useEffect(() => {
       const data = poolCoordinator.getPoolData(address).then(data =>{ return {...data}});
       Promise.resolve(data).then(result => {
@@ -154,7 +154,7 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
             setChildPool(result);
         });
         })
-      }, [listener]);
+      }, [event]);
     const createChildPool = (values) => {
         poolCoordinator.connect(userProvider.getSigner()).createChildPool(values.name, values.description, address); 
         setVisible(false);
@@ -162,10 +162,14 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
 
     const createdIdea = (values) => {
       console.log("Created idea with ", values);
-      ideaFactory.connect(userProvider.getSigner()).mintIdea(values.name, values.description, values.stake).then(result => {
-        console.log(result);
-
-      })
+      const result = ideaFactory.connect(userProvider.getSigner()).mintIdea(values.name, values.description, values.stake).then(res => {
+        res.wait(1).then(res2 => {
+          ideaFactory.queryFilter("mintedIdea", res2.blockHash).then(idea => {
+            console.log("Got idea ", idea[0].args.id.toNumber());
+            poolCoordinator.connect(userProvider.getSigner()).addIdeaToChild(currentPool, idea[0].args.id.toNumber());
+          })
+        })
+      });
       //call PoolCoordinator to mint idea and pass in the amount of vote tokens
       //this will deposit vote tokens to pool coordinator from the current user
       //this will mint a new idea, and add that amount of votes to the idea

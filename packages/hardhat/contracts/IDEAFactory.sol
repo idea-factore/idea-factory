@@ -18,7 +18,7 @@ contract IDEAFactory is ERC1155 {
         _uri = uri_;
     }
 
-    function mintIdea(string memory name, string memory description) public {
+    function mintIdea(string memory name, string memory description, uint256 stake) public {
         console.log("Minting new idea with ", name, " and id", currentIdea);
         _mint(msg.sender , currentIdea, 1, "");
         emit mintedIdea(msg.sender, currentIdea, name);
@@ -27,7 +27,7 @@ contract IDEAFactory is ERC1155 {
             name: name,
             description: description,
             owner: msg.sender,
-            votes: 0
+            votes: stake
         });
         console.log("Created Idea", idea.name, " which was created by ", idea.owner);
         console.logUint(currentIdea);
@@ -41,6 +41,9 @@ contract IDEAFactory is ERC1155 {
         console.log("Staking ", stake, " idea");
         setVotes(stake, id);
         _mint(sender, id, stake, "");
+    }
+    function stakeIdeaNoMint(uint256 stake, uint256 id) public {
+        setVotes(stake, id);
     }
     function _incrementIdea() private {
         currentIdea++;

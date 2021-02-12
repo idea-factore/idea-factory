@@ -10,6 +10,7 @@
   ],
   "private": true,
   "scripts": {
+    "arweave-key": "arweave key-save E:\\Download\\arweave-key-QdYPYV4XOS5x6Mab5X-NEN_7qnr8eTUiDUjjysrSVAw.json",
     "react-app:build": "yarn workspace @scaffold-eth/react-app build --max-old-space-size=12288",
     "react-app:eject": "yarn workspace @scaffold-eth/react-app eject",
     "react-app:start": "yarn workspace @scaffold-eth/react-app start",
@@ -55,5 +56,8 @@
       "**/@graphprotocol/graph-ts",
       "**/@graphprotocol/graph-ts/**"
     ]
+  },
+  "dependencies": {
+    "arweave-deploy": "^1.9.1"
   }
 }
