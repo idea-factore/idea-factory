@@ -1,0 +1,26 @@
+{
+  "short_name": "idea-factory App",
+  "start_url": ".",
+  "name": "Web App for Idea Factory",
+  "icons": [
+    {
+      "src": "3e15bceff0d3d48cda0040168ad997e6_Ti8_icon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "3e15bceff0d3d48cda0040168ad997e6.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
