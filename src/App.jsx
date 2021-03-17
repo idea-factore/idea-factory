@@ -6,7 +6,7 @@ import "./App.css";
 import { Menu, Typography, Steps } from "antd";
 import Web3Modal from "web3modal";
 import { useUserAddress } from "eth-hooks";
-import { useExchangePrice, useGasPrice, useUserProvider, useContractLoader, useBalance, useExternalContractLoader } from "./hooks";
+import { useGasPrice, useUserProvider, useContractLoader, useBalance, useExternalContractLoader } from "./hooks";
 import { Header, Account } from "./components";
 import { Transactor } from "./helpers";
 import { formatEther } from "@ethersproject/units";
@@ -51,9 +51,9 @@ const mainnetProvider = new JsonRpcProvider("https://mainnet.infura.io/v3/"+INFU
 // 🏠 Your local provider is usually pointed at your local blockchain
 const localProviderUrl = "http://localhost:8545"; // for xdai: https://dai.poa.network
 // as you deploy to other networks you can set REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
-const localProviderUrlFromEnv = process.env.NODE_ENV == "production" ? "https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB" : localProviderUrl;
+const localProviderUrlFromEnv = process.env.NODE_ENV == "production" ? "https://rpc-mumbai.maticvigil.com/" : localProviderUrl;
 if(DEBUG) console.log("🏠 Connecting to provider:", localProviderUrlFromEnv);
-const localProvider = new JsonRpcProvider("https://eth-kovan.alchemyapi.io/v2/MXViLblblc2XCNPjX4FMsvJ2wXDNgIRB");
+const localProvider = new JsonRpcProvider("https://rpc-mumbai.maticvigil.com/");
 console.log("Our provider: ", localProvider);
 
 const Pools = React.lazy(() => import('./views/Pools'));
@@ -68,8 +68,6 @@ function App(props) {
   const onChange = current => {
     setStep(current);
   };
-  /* 💵 this hook will get the price of ETH from 🦄 Uniswap: */
-  const price = useExchangePrice(mainnetProvider); //1 for xdai
 
   /* 🔥 this hook will get the price of Gas from ⛽️ EtherGasStation */
   const gasPrice = useGasPrice("fast"); //1000000000 for xdai
@@ -109,10 +107,10 @@ function App(props) {
   //
 
   // keep track of a variable from the contract in the local React state:
-  const voteToken = useExternalContractLoader(localProvider, "0xcE04a6dE48a45398836ddA9555b2cAC68e3D705c", VOTE_ABI);
+  //const voteToken = useExternalContractLoader(localProvider, "0xcE04a6dE48a45398836ddA9555b2cAC68e3D705c", VOTE_ABI);
   //this should fail on local but I'm hoping it won't actually cause anything to break
-  const ideaFactoryKovan = useExternalContractLoader(localProvider, "0xDC2Dc46Fd6b88046E4991592d4990907036D44ac", FACTORY_ABI);
-  const poolCoordinatorKovan = useExternalContractLoader(localProvider, "0xd27eba6EF46077FC8F50854FbCd0B1Fe9c4cE889", pool_abi);
+  const ideaFactoryKovan = useExternalContractLoader(localProvider, "0x3d56083D8A42326caf31FfdE98A9A112D6080176", FACTORY_ABI);
+  const poolCoordinatorKovan = useExternalContractLoader(localProvider, "0x2B193D5016981EEEbd3F663aC7ecA52e85d31325", pool_abi);
   //📟 Listen for broadcast events
   //console.log(factoryEvents);
   // listen for all events? And get refreshed data? 
@@ -158,6 +156,7 @@ function App(props) {
           <Route exact path="/">
             <Title level={3}>Welcome to the Idea Factory App!</Title>
             <Paragraph>
+            Now Deployed to MATIC (Polygon)!
             This is a temporary "home" page because of an issue where we can't wait for the provider to load.
             </Paragraph>
             <Paragraph>
@@ -181,7 +180,6 @@ function App(props) {
               localProvider={localProvider}
               yourLocalBalance={yourLocalBalance}
               readContracts={readContracts}
-              price={price}
               tx={tx}
               poolCoordinator={poolCoordinatorKovan}
             />
@@ -193,7 +191,6 @@ function App(props) {
               localProvider={localProvider}
               yourLocalBalance={yourLocalBalance}
               readContracts={readContracts}
-              price={price}
               tx={tx}
               poolCoordinator={poolCoordinatorKovan}
               ideaFactory={ideaFactoryKovan}
@@ -206,7 +203,6 @@ function App(props) {
               mainnetProvider={mainnetProvider}
               localProvider={localProvider}
               yourLocalBalance={yourLocalBalance}
-              price={price}
               tx={tx}
               poolCoordinator={poolCoordinatorKovan}
               ideaFactory={ideaFactoryKovan}
@@ -224,12 +220,10 @@ function App(props) {
            localProvider={localProvider}
            userProvider={userProvider}
            mainnetProvider={mainnetProvider}
-           price={price}
            web3Modal={web3Modal}
            loadWeb3Modal={loadWeb3Modal}
            logoutOfWeb3Modal={logoutOfWeb3Modal}
            blockExplorer={blockExplorer}
-           voteToken={voteToken}
            isMenu={true}
          />
 
@@ -243,7 +237,6 @@ function App(props) {
   Web3 modal helps us "connect" external wallets:
 */
 const web3Modal = new Web3Modal({
-  network: "kovan", // optional
   cacheProvider: true, // optional
   providerOptions: {
     injected: {
