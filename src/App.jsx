@@ -10,26 +10,6 @@ import { useGasPrice, useUserProvider, useContractLoader, useBalance, useExterna
 import { Header, Account } from "./components";
 import { Transactor } from "./helpers";
 import { formatEther } from "@ethersproject/units";
-//import Hints from "./Hints";
-
-/*
-    Welcome to 🏗 scaffold-eth !
-
-    Code:
-    https://github.com/austintgriffith/scaffold-eth
-
-    Support:
-    https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA
-    or DM @austingriffith on twitter or telegram
-
-    You should get your own Infura.io ID and put it in `constants.js`
-    (this is your connection to the main Ethereum network for ENS etc.)
-
-
-    📡 EXTERNAL CONTRACTS:
-    You can also bring in contract artifacts in `constants.js`
-    (and then use the `useExternalContractLoader()` hook!)
-*/
 import { INFURA_ID, FACTORY_ABI, pool_abi, VOTE_ABI, TOKEN_ABI} from "./constants";
 
 // 😬 Sorry for all the console logging 🤡
@@ -95,29 +75,10 @@ function App(props) {
   // If you want to make 🔐 write transactions to your contracts, use the userProvider:
   const writeContracts = useContractLoader(userProvider)
   if(DEBUG) console.log("🔐 writeContracts",writeContracts)
-
-  // EXTERNAL CONTRACT EXAMPLE:
-  //
-  // If you want to bring in the mainnet DAI contract it would look like:
-  //const mainnetDAIContract = useExternalContractLoader(mainnetProvider, DAI_ADDRESS, DAI_ABI)
-  //console.log("🥇DAI contract on mainnet:",mainnetDAIContract)
-  //
-  // Then read your DAI balance like:
-  //const myMainnetBalance = useContractReader({DAI: mainnetDAIContract},"DAI", "balanceOf",["0x34aA3F359A9D614239015126635CE7732c18fDF3"])
-  //
-
-  // keep track of a variable from the contract in the local React state:
   //const voteToken = useExternalContractLoader(localProvider, "0xcE04a6dE48a45398836ddA9555b2cAC68e3D705c", VOTE_ABI);
   //this should fail on local but I'm hoping it won't actually cause anything to break
   const ideaFactoryKovan = useExternalContractLoader(localProvider, "0x3d56083D8A42326caf31FfdE98A9A112D6080176", FACTORY_ABI);
   const poolCoordinatorKovan = useExternalContractLoader(localProvider, "0x2B193D5016981EEEbd3F663aC7ecA52e85d31325", pool_abi);
-  //📟 Listen for broadcast events
-  //console.log(factoryEvents);
-  // listen for all events? And get refreshed data? 
-  /*
-  const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
-  console.log("🏷 Resolved austingriffith.eth as:",addressFromENS)
-  */
 
   const loadWeb3Modal = useCallback(async () => {
     const provider = await web3Modal.connect();
@@ -137,8 +98,6 @@ function App(props) {
 
   return (
     <div className="App">
-
-      {/* ✏️ Edit the header and change the title to your project name */}
       <Header />
 
       <BrowserRouter>
