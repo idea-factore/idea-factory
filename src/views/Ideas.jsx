@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Button, List, Divider, Input, Card, Layout, Menu, PageHeader, Modal, Form, Tag, Dropdown, Statistic, InputNumber } from "antd";
+import { Button, List, Card, Layout, PageHeader, Form, Statistic, InputNumber } from "antd";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useParams } from "react-router-dom";
 
-export default function Ideas({userProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, poolCoordinator, ideaFactory, userAddress }) {
+export default function Ideas({userProvider, poolCoordinator, ideaFactory, userAddress }) {
     const { address } = useParams();
     const { Header, Content, Footer, Sider } = Layout;
     const [ideas, setIdea] = useState([]);

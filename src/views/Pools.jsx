@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Link } from "react-router-dom";
-import { Button, List, Input, Card, Layout, Menu, PageHeader, Modal, Form, notification } from "antd";
+import { Button, List, Input, Card, Layout, PageHeader, Modal, Form, notification, Spin } from "antd";
 import { parseBytes32String, formatBytes32String} from "@ethersproject/strings";
 import Meta from "antd/lib/card/Meta";
 
@@ -70,14 +70,12 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
         });
     })};
     useEffect(() => {
-        console.log(userProvider.getSigner());
         getPools();
         setLoading(false);
     }, [event]);
     const createPool = (values) => {
         console.log('Received values of form: ', values);
         setVisible(false);
-        console.log(userProvider.getSigner());
         try { 
         poolCoordinator.connect(userProvider.getSigner()).createPool(formatBytes32String(values.name), formatBytes32String(values.description));
         notification.success({
@@ -94,6 +92,7 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
     }
     //Add card for pool showing the amount of VOTE staked in the pool. When a Card is clicked take them to child pool page
     return(
+
         <Layout>
             <CollectionCreateForm
                 visible={visible}

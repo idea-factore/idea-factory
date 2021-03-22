@@ -10,7 +10,7 @@ import { useGasPrice, useUserProvider, useContractLoader, useBalance, useExterna
 import { Header, Account } from "./components";
 import { Transactor } from "./helpers";
 import { formatEther } from "@ethersproject/units";
-import { INFURA_ID, FACTORY_ABI, pool_abi, VOTE_ABI, TOKEN_ABI} from "./constants";
+import { INFURA_ID, FACTORY_ABI, pool_abi } from "./constants";
 
 // 😬 Sorry for all the console logging 🤡
 const DEBUG = true
@@ -116,13 +116,13 @@ function App(props) {
             <Title level={3}>Welcome to the Idea Factory App!</Title>
             <Paragraph>
             Now Deployed to MATIC (Polygon)!
-            This is a temporary "home" page because of an issue where we can't wait for the provider to load.
+            Issue fixed maybe?
             </Paragraph>
             <Paragraph>
             A fix for this is to update to latest react version and use suspense but this is a hack and that's a lot of work
             </Paragraph>
             <Paragraph>
-            To start, follow to short guide below. In the future iterations, this will be a lot more interactive!
+            To start, follow to short guide below. In future iterations, this will be a lot more interactive!
             </Paragraph>
             <Steps current={step} onChange={onChange}>
               <Step title="Step 1" description="First, Add some VOTE tokens using Wrapped Ether" />
@@ -130,7 +130,6 @@ function App(props) {
               <Step title="Step 3" description="Last but not lest, VOTE for ideas you like using your tokens." />
             </Steps>
           </Route>
-          <Suspense fallback={<div>Loading...</div>}>
           <Route path="/pools">
             <Pools
               address={address}
@@ -167,7 +166,6 @@ function App(props) {
               ideaFactory={ideaFactoryKovan}
             />
           </Route>
-          </Suspense>
         </Switch>
       </BrowserRouter>
 

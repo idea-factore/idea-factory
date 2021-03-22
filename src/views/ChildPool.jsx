@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button, List, Divider, Input, Card, Layout, Menu, PageHeader, Modal, Form, Tag, Dropdown, InputNumber } from "antd";
+import { Button, List, Input, Card, Layout, Menu, PageHeader, Modal, Form, Tag, Dropdown, InputNumber } from "antd";
 import { EllipsisOutlined } from '@ant-design/icons';
-import { parseBytes32String, formatBytes32String} from "@ethersproject/strings";
+import { parseBytes32String } from "@ethersproject/strings";
 import { useParams } from "react-router-dom";
 //TODO: Move this into component
 const PoolCreateForm = ({ visible, onCreate, onCancel }) => {
