@@ -5,6 +5,7 @@ import { EllipsisOutlined } from '@ant-design/icons';
 import { parseBytes32String } from "@ethersproject/strings";
 import { useParams } from "react-router-dom";
 //TODO: Move this into component
+//TODO: Change contract calls to effector effects or events
 const PoolCreateForm = ({ visible, onCreate, onCancel }) => {
     const [form] = Form.useForm();
     return (
