@@ -3,7 +3,7 @@ import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
 import "antd/dist/antd.css";
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import "./App.css";
-import { Menu, Typography, Steps } from "antd";
+import { Menu, Typography, Steps, Spin } from "antd";
 import Web3Modal from "web3modal";
 import { useUserAddress } from "eth-hooks";
 import { useGasPrice, useUserProvider, useContractLoader, useBalance, useExternalContractLoader } from "./hooks";
@@ -11,6 +11,8 @@ import { Header, Account } from "./components";
 import { Transactor } from "./helpers";
 import { formatEther } from "@ethersproject/units";
 import { INFURA_ID, FACTORY_ABI, pool_abi } from "./constants";
+import {loadContractFx, $contracts } from './models/contracts/index';
+import { useStore } from "effector-react";
 
 // 😬 Sorry for all the console logging 🤡
 const DEBUG = true
@@ -44,7 +46,7 @@ function App(props) {
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [step, setStep] = useState(0);
-
+  const contracts = useStore($contracts);
   const onChange = current => {
     setStep(current);
   };
@@ -66,9 +68,9 @@ function App(props) {
   // just plug in different 🛰 providers to get your balance on different chains:
   const yourMainnetBalance = useBalance(mainnetProvider, address);
   if(DEBUG) console.log("💵 yourMainnetBalance",yourMainnetBalance?formatEther(yourMainnetBalance):"...")
-
+/**
   // Load in your local 📝 contract and read a value from it:
-  console.log("Loading contrats");
+  console.log("Loading contracts");
   const readContracts = useContractLoader(localProvider)
   if(DEBUG) console.log("📝 readContracts",readContracts)
 
@@ -77,14 +79,21 @@ function App(props) {
   if(DEBUG) console.log("🔐 writeContracts",writeContracts)
   //const voteToken = useExternalContractLoader(localProvider, "0xcE04a6dE48a45398836ddA9555b2cAC68e3D705c", VOTE_ABI);
   //this should fail on local but I'm hoping it won't actually cause anything to break
-  const ideaFactoryKovan = useExternalContractLoader(localProvider, "0x3d56083D8A42326caf31FfdE98A9A112D6080176", FACTORY_ABI);
-  const poolCoordinatorKovan = useExternalContractLoader(localProvider, "0x2B193D5016981EEEbd3F663aC7ecA52e85d31325", pool_abi);
+  */
+
+
 
   const loadWeb3Modal = useCallback(async () => {
     const provider = await web3Modal.connect();
     setInjectedProvider(new Web3Provider(provider));
   }, [setInjectedProvider]);
-
+  
+  useEffect(() => {
+    //load contracts once on page load
+    //this should be fine, because if a new contract is deployed, we have to manually change the address and abi, etc
+    loadContractFx({provider: localProvider, address: "0x3d56083D8A42326caf31FfdE98A9A112D6080176", ABI: FACTORY_ABI, name: 'ideaFactory'});
+    loadContractFx({provider: localProvider, address: "0x2B193D5016981EEEbd3F663aC7ecA52e85d31325", ABI: pool_abi, name: 'poolCoordinator'});
+  }, []);
   useEffect(() => {
     if (web3Modal.cachedProvider) {
       loadWeb3Modal();
@@ -116,10 +125,6 @@ function App(props) {
             <Title level={3}>Welcome to the Idea Factory App!</Title>
             <Paragraph>
             Now Deployed to MATIC (Polygon)!
-            Issue fixed maybe?
-            </Paragraph>
-            <Paragraph>
-            A fix for this is to update to latest react version and use suspense but this is a hack and that's a lot of work
             </Paragraph>
             <Paragraph>
             To start, follow to short guide below. In future iterations, this will be a lot more interactive!
@@ -130,31 +135,35 @@ function App(props) {
               <Step title="Step 3" description="Last but not lest, VOTE for ideas you like using your tokens." />
             </Steps>
           </Route>
+          <Suspense fallback={<Spin />}>
           <Route path="/pools">
-            <Pools
-              address={address}
-              userProvider={userProvider}
-              mainnetProvider={mainnetProvider}
-              localProvider={localProvider}
-              yourLocalBalance={yourLocalBalance}
-              readContracts={readContracts}
-              tx={tx}
-              poolCoordinator={poolCoordinatorKovan}
-            />
+            { contracts.poolCoordinator && 
+              <Pools
+                address={address}
+                userProvider={userProvider}
+                mainnetProvider={mainnetProvider}
+                localProvider={localProvider}
+                yourLocalBalance={yourLocalBalance}
+                tx={tx}
+                poolCoordinator={contracts.poolCoordinator}
+              />
+            }
           </Route>
           <Route path="/childpools/:address">
+          { contracts.poolCoordinator && contracts.ideaFactory &&
             <ChildPool
               userProvider={userProvider}
               mainnetProvider={mainnetProvider}
               localProvider={localProvider}
               yourLocalBalance={yourLocalBalance}
-              readContracts={readContracts}
               tx={tx}
-              poolCoordinator={poolCoordinatorKovan}
-              ideaFactory={ideaFactoryKovan}
+              poolCoordinator={contracts.poolCoordinator}
+              ideaFactory={contracts.ideaFactory}
             />
+          }
           </Route>
           <Route path="/ideas/:address">
+          { contracts.poolCoordinator && contracts.ideaFactory && 
             <Ideas
               userAddress={address}
               userProvider={userProvider}
@@ -162,10 +171,12 @@ function App(props) {
               localProvider={localProvider}
               yourLocalBalance={yourLocalBalance}
               tx={tx}
-              poolCoordinator={poolCoordinatorKovan}
-              ideaFactory={ideaFactoryKovan}
+              poolCoordinator={contracts.poolCoordinator}
+              ideaFactory={contracts.ideaFactory}
             />
+          }
           </Route>
+          </Suspense>
         </Switch>
       </BrowserRouter>
 
