@@ -3,7 +3,11 @@ import { Link } from "react-router-dom";
 import { Button, List, Input, Card, Layout, PageHeader, Modal, Form, notification, Spin } from "antd";
 import { parseBytes32String, formatBytes32String} from "@ethersproject/strings";
 import Meta from "antd/lib/card/Meta";
-
+/**
+ * TODO:
+ * Move form into component
+ * Monitor events with effector
+ */
 const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
     const [form] = Form.useForm();
     return (
@@ -61,6 +65,8 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
     }
     poolCoordinator.on("createdPool", listener);
     const getPools = () => {poolCoordinator.getPools().then(res => {
+        console.log("Tried to get pools");
+        console.log(res);
         const data = res.map(pool => {
             return poolCoordinator.getPoolData(pool.pool).then(data =>{ return {...data}});
         });

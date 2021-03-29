@@ -2,18 +2,18 @@ import React, { useState } from "react";
 import { Button, Input, Modal, Form } from "antd";
 import Address from "./Address";
 import TokenBalance from "./TokenBalance";
-import Wallet from "./Wallet";
 import { useExternalContractLoader } from "../hooks";
 import { parseUnits } from "@ethersproject/units";
 import { TOKEN_ABI } from "../constants";
 
+//rework this completely most likely.
 const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
   const [form] = Form.useForm();
   return (
     <Modal
       visible={visible}
-      title="Create a new category"
-      okText="Create"
+      title="Add Tokens"
+      okText="Add"
       cancelText="Cancel"
       onCancel={onCancel}
       onOk={() => {
@@ -51,7 +51,7 @@ export default function Account({
   userProvider,
   localProvider,
   mainnetProvider,
-  price,
+  wallet,
   minimized,
   web3Modal,
   loadWeb3Modal,
@@ -60,6 +60,7 @@ export default function Account({
   voteToken,
   isMenu
 }) {
+  const blockNumber = wallet.getBlockNumber()
   const [visible, setVisible] = useState(false);
   const modalButtons = [];
   const tokenKovan = useExternalContractLoader(localProvider, "0xF792BcAa0c7cfFac6BDcBC5C647Ffe91758283FA", TOKEN_ABI);
@@ -105,9 +106,22 @@ export default function Account({
     ""
   ) : (
     <span>
-      {address ? <Address value={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} /> : "Connecting..."}
       <TokenBalance address={address} contract={tokenKovan} />
-      <Wallet address={address} provider={userProvider} ensProvider={mainnetProvider} price={price} />
+      <h1>Wallet</h1>
+      {wallet.status === 'connected' ? (
+        <div>
+          <div>Account: {wallet.account}</div>
+          <div>Balance: {wallet.balance}</div>
+          <button onClick={() => wallet.reset()}>disconnect</button>
+        </div>
+      ) : (
+        <div>
+          Connect:
+          <button onClick={() => wallet.connect()}>MetaMask</button>
+          <button onClick={() => wallet.connect('frame')}>Frame</button>
+          <button onClick={() => wallet.connect('portis')}>Portis</button>
+        </div>
+      )}
     </span>
   );
 

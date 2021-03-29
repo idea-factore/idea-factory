@@ -3,6 +3,7 @@ import { Contract } from "@ethersproject/contracts";
 
 loadContractFx.use(async ({provider, address, ABI, name}) => {
     //load contract
+    console.log("loading contract ", name);
     if (typeof provider !== "undefined" && address && ABI) {
         try {
           // we need to check to see if this provider has a signer or not
@@ -23,7 +24,12 @@ loadContractFx.use(async ({provider, address, ABI, name}) => {
         }
     }
 });
-
+const unsub = loadContractFx.watch(payload => {
+  console.log("Load contract called with ", payload);
+});
+loadContractFx.doneData.watch(payload => {
+  console.log("Contract loaded: ", payload);
+})
 $contracts.on(
     loadContractFx.doneData,
     (state, params) => ({

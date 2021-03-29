@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { UseWalletProvider } from "use-wallet";
 import "./index.css";
 import './models/init';
 import App from "./App";
@@ -12,8 +13,10 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 ReactDOM.render(
+  <UseWalletProvider chainId={80001}>
   <ApolloProvider client={client}>
     <App subgraphUri={subgraphUri}/>
-  </ApolloProvider>,
+  </ApolloProvider>
+  </UseWalletProvider>,
   document.getElementById("root"),
 );

@@ -41,6 +41,7 @@
     "effector": "^21.8.10",
     "effector-react": "^21.2.1",
     "eth-hooks": "^1.1.2",
+    "eth-provider": "^0.6.1",
     "graphiql": "^1.0.5",
     "graphql": "^15.3.0",
     "isomorphic-fetch": "^3.0.0",
@@ -53,6 +54,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.3",
     "source-map-explorer": "^2.5.2",
+    "use-wallet": "^0.8.1",
+    "web3": "^1.3.4",
     "web3modal": "^1.9.1"
   },
   "devDependencies": {
