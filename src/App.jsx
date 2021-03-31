@@ -48,7 +48,7 @@ function App(props) {
   //Grab user address and balance when they connect a wallet
   useEffect(() => {
     getAddressFx({ account: wallet.account, balance: wallet.balance});
-  }, [wallet])
+  }, [wallet.status])
   //I don't believe we need this, as we use eth-provider to load providers
   //Right now all this does is return the provider we pass in.
   const userProvider = useUserProvider(eth_hooks.provider);
@@ -82,6 +82,9 @@ function App(props) {
             <Title level={3}>Welcome to the Idea Factory App!</Title>
             <Paragraph>
             Now Deployed to MATIC (Polygon)!
+            </Paragraph>
+            <Paragraph>
+              Work in Progress on version 0.1
             </Paragraph>
           </Route>
           <Suspense fallback={<Spin />}>

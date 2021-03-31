@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, List, Card, Layout, PageHeader, Form, Statistic, InputNumber } from "antd";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useParams } from "react-router-dom";
-
+//Move these contract calls to effector and make it a Effect or an Event
 export default function Ideas({userProvider, poolCoordinator, ideaFactory, userAddress }) {
     const { address } = useParams();
     const { Header, Content, Footer, Sider } = Layout;

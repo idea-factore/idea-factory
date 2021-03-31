@@ -4,111 +4,8 @@ import { Button, List, Input, Card, Layout, Menu, PageHeader, Modal, Form, Tag, 
 import { EllipsisOutlined } from '@ant-design/icons';
 import { parseBytes32String } from "@ethersproject/strings";
 import { useParams } from "react-router-dom";
-//TODO: Move this into component
+import { Popup } from "../components";
 //TODO: Change contract calls to effector effects or events
-const PoolCreateForm = ({ visible, onCreate, onCancel }) => {
-    const [form] = Form.useForm();
-    return (
-      <Modal
-        visible={visible}
-        title="Create a new child pool"
-        okText="Create"
-        cancelText="Cancel"
-        onCancel={onCancel}
-        onOk={() => {
-          form
-            .validateFields()
-            .then((values) => {
-              form.resetFields();
-              onCreate(values);
-            })
-            .catch((info) => {
-              console.log('Validate Failed:', info);
-            });
-        }}
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          name="form_in_modal"
-        >
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[
-              {
-                required: true,
-                message: 'Please add a name for the pool',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="description" label="Description">
-            <Input type="textarea" />
-          </Form.Item>
-        </Form>
-      </Modal>
-    );
-  };
-  const IdeaCreateForm = ({ visible, onCreate, onCancel }) => {
-    const [form] = Form.useForm();
-    return (
-      <Modal
-        visible={visible}
-        title="Create a new Idea"
-        okText="Create"
-        cancelText="Cancel"
-        onCancel={onCancel}
-        onOk={() => {
-          form
-            .validateFields()
-            .then((values) => {
-              form.resetFields();
-              onCreate(values);
-            })
-            .catch((info) => {
-              console.log('Validate Failed:', info);
-            });
-        }}
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          name="form_in_modal"
-        >
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[
-              {
-                required: true,
-                message: 'Please add a name for the idea',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="description" label="Description">
-            <Input type="textarea" />
-          </Form.Item>
-          <Form.Item 
-            name="stake" 
-            label="VOTE tokens"
-            rules={[
-              {
-                required: true,
-                message: 'You must submit vote tokens in order to create an idea'
-              }
-            ]}
-          >
-            <InputNumber min={0.001} />
-          </Form.Item>
-        </Form>
-      </Modal>
-    );
-  };
-
 export default function ChildPools({purpose, events, mainnetProvider, userProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, poolCoordinator, ideaFactory }) {
     const { address } = useParams();
     const { Header, Content, Footer, Sider } = Layout;
@@ -182,20 +79,64 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
     //implement idea view page and idea add
     return (
         <Layout>
-        <PoolCreateForm
-            visible={visible}
-            onCreate={createChildPool}
-            onCancel={() => {
-            setVisible(false);
-            }}
-        />
-        <IdeaCreateForm
-            visible={visibleIdea}
-            onCreate={createdIdea}
-            onCancel={() => {
-            setVisibleIdea(false);
-            }}
-        />
+        <Popup 
+              visible={visible}
+              onCancel={() => {
+              setVisible(false);
+              }}
+              title={"Create a new Child Pool"}
+              onCreate={createChildPool}
+              fields={[{
+                name: "name",
+                label: "Name",
+                rules: [
+                  {
+                    required: true,
+                    message: 'Please add a name for the pool',
+                  },
+                ],
+              input: <Input />
+              }, {
+                name: "description",
+                label: "Description",
+                input: <Input type="textarea" />
+              }
+            ]}
+            />
+            <Popup 
+              visible={visibleIdea}
+              onCancel={() => {
+              setVisibleIdea(false);
+              }}
+              title={"Create a new category"}
+              onCreate={createdIdea}
+              fields={[{
+                name: "name",
+                label: "Name",
+                rules: [
+                  {
+                    required: true,
+                    message: 'Please add a name for the idea',
+                  },
+                ],
+              input: <Input />
+              }, {
+                name: "description",
+                label: "Description",
+                input: <Input type="textarea" />
+              }, {
+                name: "stake",
+                label: "VOTE Tokens",
+                rules: [
+                  {
+                    required: true,
+                    message: 'You must submit vote tokens in order to create an idea'
+                  }
+                ],
+                input: <InputNumber min={0.01} />
+              }
+            ]}
+            />
     <Layout>
       <Content>
             <PageHeader

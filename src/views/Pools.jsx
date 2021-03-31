@@ -1,58 +1,15 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button, List, Input, Card, Layout, PageHeader, Modal, Form, notification, Spin } from "antd";
+import { Button, List, Input, Card, Layout, PageHeader, Modal, Form, notification } from "antd";
 import { parseBytes32String, formatBytes32String} from "@ethersproject/strings";
 import Meta from "antd/lib/card/Meta";
+import { Popup } from "../components";
 /**
  * TODO:
  * Move form into component
  * Monitor events with effector
  */
-const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
-    const [form] = Form.useForm();
-    return (
-      <Modal
-        visible={visible}
-        title="Create a new category"
-        okText="Create"
-        cancelText="Cancel"
-        onCancel={onCancel}
-        onOk={() => {
-          form
-            .validateFields()
-            .then((values) => {
-              form.resetFields();
-              onCreate(values);
-            })
-            .catch((info) => {
-              console.log('Validate Failed:', info);
-            });
-        }}
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          name="form_in_modal"
-        >
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[
-              {
-                required: true,
-                message: 'Please add a name for the category',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="description" label="Description">
-            <Input type="textarea" />
-          </Form.Item>
-        </Form>
-      </Modal>
-    );
-  };
+
 export default function Pools({purpose, events, address, mainnetProvider, userProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, poolCoordinator }) {
     const { Header, Content, Footer, Sider } = Layout;
     const [pools, setPools] = useState([]); 
@@ -96,16 +53,33 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
           })
         }
     }
-    //Add card for pool showing the amount of VOTE staked in the pool. When a Card is clicked take them to child pool page
+
     return(
 
         <Layout>
-            <CollectionCreateForm
-                visible={visible}
-                onCreate={createPool}
-                onCancel={() => {
-                setVisible(false);
-                }}
+            <Popup 
+              visible={visible}
+              onCancel={() => {
+              setVisible(false);
+              }}
+              title={"Create a new category"}
+              onCreate={createPool}
+              fields={[{
+                name: "name",
+                label: "Name",
+                rules: [
+                  {
+                      required: true,
+                      message: 'Please add a name for the category',
+                  },
+              ],
+              input: <Input />
+              }, {
+                name: "description",
+                label: "Description",
+                input: <Input type="textarea" />
+              }
+            ]}
             />
         <Layout>
           <Content>
