@@ -64,10 +64,27 @@ function App(props) {
 
   return (
     <div className="App">
-      <Header />
+      <Header address={eth_hooks.address} userProvider={userProvider} localProvider={eth_hooks.provider} wallet={wallet} />
 
       <BrowserRouter>
-
+        {
+          /**
+           * TODO: 
+           * Make mui menu and move this there
+           * Make better homepage
+           * Add above to storybook
+           * fix bugs
+           * etc...
+           * 
+           * 
+           * Potential new pages:
+           * Portfolio
+           * Market
+           * Use pools as a search tool and have a pools page
+           * */
+        }
+        {
+          /**
         <Menu style={{ textAlign:"center" }} selectedKeys={[route]} mode="horizontal">
           <Menu.Item key="/">
             <Link onClick={()=>{setRoute("/")}} to="/">idea-factory</Link>
@@ -76,6 +93,8 @@ function App(props) {
             <Link onClick={()=>{setRoute("/pools")}} to="/pools">Pools</Link>
           </Menu.Item>
         </Menu>
+        */
+        }
 
         <Switch>
           <Route exact path="/">
@@ -125,19 +144,6 @@ function App(props) {
           </Suspense>
         </Switch>
       </BrowserRouter>
-
-
-      {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
-      <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
-         <Account
-           address={eth_hooks.address}
-           localProvider={eth_hooks.provider}
-           userProvider={userProvider}
-           wallet={wallet}
-           isMenu={true}
-         />
-
-      </div>
     </div>
   );
 }

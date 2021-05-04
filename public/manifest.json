@@ -4,17 +4,17 @@
   "name": "Web App for Idea Factory",
   "icons": [
     {
-      "src": "3e15bceff0d3d48cda0040168ad997e6_Ti8_icon.ico",
+      "src": "Idea-Factory.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "Idea-Factory.ico",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "3e15bceff0d3d48cda0040168ad997e6.png",
+      "src": "Idea-Factory.jpgS",
       "type": "image/png",
       "sizes": "512x512"
     }

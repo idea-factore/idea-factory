@@ -46,6 +46,7 @@ const CollectionCreateForm = ({ visible, onCreate, onCancel }) => {
     </Modal>
   );
 };
+//should just have wallet connect buttons that show current balance of VOTE
 export default function Account({
   address,
   userProvider,
@@ -73,41 +74,11 @@ export default function Account({
     console.log("Data: ", data);
     voteToken.connect(userProvider.getSigner()).create(data.collateral, data.tokens);
   }
-  if (web3Modal) {
-    if (web3Modal.cachedProvider) {
-      modalButtons.push(
-        <Button
-          key="logoutbutton"
-          style={{ verticalAlign: "top", marginLeft: 8, marginTop: 4 }}
-          shape="round"
-          size="large"
-          onClick={logoutOfWeb3Modal}
-        >
-          logout
-        </Button>,
-      );
-    } else {
-      modalButtons.push(
-        <Button
-          key="loginbutton"
-          style={{ verticalAlign: "top", marginLeft: 8, marginTop: 4 }}
-          shape="round"
-          size="large"
-          /*type={minimized ? "default" : "primary"}     too many people just defaulting to MM and having a bad time*/
-          onClick={loadWeb3Modal}
-        >
-          connect
-        </Button>,
-      );
-    }
-  }
-
   const display = minimized ? (
     ""
   ) : (
     <span>
       <TokenBalance address={address} contract={tokenKovan} />
-      <h1>Wallet</h1>
       {wallet.status === 'connected' ? (
         <div>
           <div>Account: {wallet.account}</div>
@@ -118,8 +89,12 @@ export default function Account({
         <div>
           Connect:
           <button onClick={() => wallet.connect()}>MetaMask</button>
+          {
+          /**
           <button onClick={() => wallet.connect('frame')}>Frame</button>
           <button onClick={() => wallet.connect('portis')}>Portis</button>
+          */
+          }
         </div>
       )}
     </span>
@@ -127,29 +102,7 @@ export default function Account({
 
   return (
     <div>
-      {isMenu && 
-      <span>
-      <CollectionCreateForm
-                visible={visible}
-                onCreate={createTokens}
-                onCancel={() => {
-                setVisible(false);
-                }}
-      />
-      <Button
-        key="addVoteButton"
-        style={{ verticalAlign: "top", marginLeft: 8, marginTop: 4 }}
-        shape="round"
-        size="large"
-        onClick={() => {
-          setVisible(true);
-        }}
-      >
-        Add VOTE tokens
-      </Button>
-      </span>}
       {display}
-      {modalButtons}
     </div>
   );
 }
