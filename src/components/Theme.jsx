@@ -1,5 +1,11 @@
 import { createMuiTheme } from '@material-ui/core/styles';
-
+/**
+ * TODO:
+ * 
+ * Add light/dark theme toggle
+ * Play around with changing some things depending on light/dark
+ * etc
+ */
 export const themeOptions = createMuiTheme({
   palette: {
     type: 'dark',
@@ -8,6 +14,11 @@ export const themeOptions = createMuiTheme({
     },
     secondary: {
       main: '#616161',
+    },
+  },
+  props: {
+    MuiButtonBase: {
+      disableRipple: true,
     },
   },
 });

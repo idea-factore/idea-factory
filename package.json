@@ -40,6 +40,7 @@
     "axios": "^0.20.0",
     "bnc-notify": "^1.5.0",
     "burner-provider": "^1.0.38",
+    "clsx": "^1.1.1",
     "dotenv": "^8.2.0",
     "effector": "^21.8.10",
     "effector-react": "^21.2.1",
@@ -72,6 +73,7 @@
     "@storybook/react": "^6.2.9",
     "@testing-library/dom": "^6.12.2",
     "@types/react": "^17.0.3",
+    "babel-loader": "8.1.0",
     "chalk": "^4.1.0",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "^6.11.0",
@@ -80,8 +82,7 @@
     "ipfs-http-client": "^45.0.0",
     "prettier": "^2.0.5",
     "s3-folder-upload": "^2.3.1",
-    "surge": "^0.21.5",
-    "babel-loader": "8.1.0"
+    "surge": "^0.21.5"
   },
   "eslintConfig": {
     "extends": "react-app",

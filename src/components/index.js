@@ -11,4 +11,5 @@ export { default as Blockie } from "./Blockie";
 export { default as Header } from "./Header";
 export { default as GasGauge } from "./GasGauge";
 export { default as Popup } from "./Popup";
+export { default as Menu } from "./Menu";
 export { themeOptions } from  "./Theme";

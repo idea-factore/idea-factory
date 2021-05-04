@@ -1,8 +1,8 @@
 import React, { useEffect, useState, Suspense } from "react";
-import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 import "antd/dist/antd.css";
 import "./App.css";
-import { Menu, Typography, Spin } from "antd";
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Web3Modal from "web3modal";
 import { useGasPrice, useUserProvider, useContractLoader, useBalance, useExternalContractLoader } from "./hooks";
 import { Header, Account } from "./components";
@@ -13,14 +13,17 @@ import { getProviderFx, getGasPriceFx, getAddressFx } from './models/eth-hooks/i
 import { $eth_hooks } from './models/eth-hooks/init';
 import { useStore } from "effector-react";
 import { useWallet } from 'use-wallet'
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 // 😬 Sorry for all the console logging 🤡
 const DEBUG = true
-const { Paragraph, Title } = Typography;
 
 const Pools = React.lazy(() => import('./views/Pools'));
 const ChildPool = React.lazy(() => import('./views/ChildPool'));
 const Ideas = React.lazy(() => import ('./views/Ideas'));
+const Home = React.lazy(() => import ('./views/Home'));
 /**
  * TODO:
  *  Get rid of unused imports
@@ -29,7 +32,6 @@ const Ideas = React.lazy(() => import ('./views/Ideas'));
  *  Refactor UI
  *  Better Wallet connecting experience
  */
-
 
 
 function App(props) {
@@ -63,88 +65,77 @@ function App(props) {
   }, [setRoute]);
 
   return (
-    <div className="App">
-      <Header address={eth_hooks.address} userProvider={userProvider} localProvider={eth_hooks.provider} wallet={wallet} />
-
       <BrowserRouter>
-        {
-          /**
-           * TODO: 
-           * Make mui menu and move this there
-           * Make better homepage
-           * Add above to storybook
-           * fix bugs
-           * etc...
-           * 
-           * 
-           * Potential new pages:
-           * Portfolio
-           * Market
-           * Use pools as a search tool and have a pools page
-           * */
-        }
-        {
-          /**
-        <Menu style={{ textAlign:"center" }} selectedKeys={[route]} mode="horizontal">
-          <Menu.Item key="/">
-            <Link onClick={()=>{setRoute("/")}} to="/">idea-factory</Link>
-          </Menu.Item>
-          <Menu.Item key="/pools">
-            <Link onClick={()=>{setRoute("/pools")}} to="/pools">Pools</Link>
-          </Menu.Item>
-        </Menu>
-        */
-        }
-
-        <Switch>
-          <Route exact path="/">
-            <Title level={3}>Welcome to the Idea Factory App!</Title>
-            <Paragraph>
-            Now Deployed to MATIC (Polygon)!
-            </Paragraph>
-            <Paragraph>
-              Work in Progress on version 0.1
-            </Paragraph>
-          </Route>
-          <Suspense fallback={<Spin />}>
-          <Route path="/pools">
-            { contracts.poolCoordinator && 
-              <Pools
-                address={eth_hooks.address}
-                userProvider={userProvider}
-                localProvider={eth_hooks.provider}
-                tx={tx}
-                poolCoordinator={contracts.poolCoordinator}
-              />
-            }
-          </Route>
-          <Route path="/childpools/:address">
-          { contracts.poolCoordinator && contracts.ideaFactory &&
-            <ChildPool
-              userProvider={userProvider}
-              localProvider={eth_hooks.provider}
-              tx={tx}
-              poolCoordinator={contracts.poolCoordinator}
-              ideaFactory={contracts.ideaFactory}
-            />
+        <Paper className="app">
+        <CssBaseline/>
+        <Grid container direction="column" wrap="nowrap">
+          <Grid item>
+            <Header address={eth_hooks.address} userProvider={userProvider} localProvider={eth_hooks.provider} wallet={wallet} />
+          </Grid>
+          {
+            /**
+             * TODO: 
+             * Make mui menu and move this there
+             * Make better homepage
+             * Add above to storybook
+             * fix bugs
+             * etc...
+             * 
+             * 
+             * Potential new pages:
+             * Portfolio
+             * Market
+             * Use pools as a search tool and have a pools page
+             * */
           }
-          </Route>
-          <Route path="/ideas/:address">
-          { contracts.poolCoordinator && contracts.ideaFactory && 
-            <Ideas
-              userAddress={eth_hooks.address}
-              userProvider={userProvider}
-              localProvider={eth_hooks.provider}
-              tx={tx}
-              poolCoordinator={contracts.poolCoordinator}
-              ideaFactory={contracts.ideaFactory}
-            />
-          }
-          </Route>
-          </Suspense>
-        </Switch>
+          <Grid item>
+            <ul>
+            <Switch>
+            <Suspense fallback={<CircularProgress />}>
+              <Route exact path="/">
+                <Home />
+              </Route>
+              <Route path="/pools">
+                { contracts.poolCoordinator && 
+                  <Pools
+                    address={eth_hooks.address}
+                    userProvider={userProvider}
+                    localProvider={eth_hooks.provider}
+                    tx={tx}
+                    poolCoordinator={contracts.poolCoordinator}
+                  />
+                }
+              </Route>
+              <Route path="/childpools/:address">
+              { contracts.poolCoordinator && contracts.ideaFactory &&
+                <ChildPool
+                  userProvider={userProvider}
+                  localProvider={eth_hooks.provider}
+                  tx={tx}
+                  poolCoordinator={contracts.poolCoordinator}
+                  ideaFactory={contracts.ideaFactory}
+                />
+              }
+              </Route>
+              <Route path="/ideas/:address">
+              { contracts.poolCoordinator && contracts.ideaFactory && 
+                <Ideas
+                  userAddress={eth_hooks.address}
+                  userProvider={userProvider}
+                  localProvider={eth_hooks.provider}
+                  tx={tx}
+                  poolCoordinator={contracts.poolCoordinator}
+                  ideaFactory={contracts.ideaFactory}
+                />
+              }
+              </Route>
+              </Suspense>
+            </Switch>
+            </ul>
+          </Grid>
+        </Grid>
+        </Paper>
       </BrowserRouter>
-    </div>
   );
 }
 
