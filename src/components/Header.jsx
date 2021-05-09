@@ -67,7 +67,7 @@ drawer: {
   
 }));
 
-
+//TODO: Shift content over when menu open?
 export default function Header({ address, provider, userProvider, wallet }) {
   const classes = useStyles(themeOptions);
   const [open, setOpen] = useState(false);

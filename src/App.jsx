@@ -16,6 +16,8 @@ import { useWallet } from 'use-wallet'
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { AccountCircle, Code, Email } from '@material-ui/icons';
+import { Footer } from 'components-extra';
 
 // 😬 Sorry for all the console logging 🤡
 const DEBUG = true
@@ -134,6 +136,19 @@ function App(props) {
             </ul>
           </Grid>
         </Grid>
+        <Footer title="Idea Factory">
+          <Footer.Column isInline>
+            <Footer.Item icon={<AccountCircle />} href="#">
+              My Account
+            </Footer.Item>
+            <Footer.Item icon={<Code />} onClick={() => console.log('Starting coding now!')}>
+              Start Coding
+            </Footer.Item>
+            <Footer.Item icon={<Email />} href="lelain-dot-alexandre-at-gmail-dot-com">
+              Contact Us
+            </Footer.Item>
+          </Footer.Column>
+        </Footer>
         </Paper>
       </BrowserRouter>
   );

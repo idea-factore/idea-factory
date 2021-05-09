@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { ThemeProvider } from '@material-ui/core/styles';
+import { StyledProvider } from 'components-extra';
 import { UseWalletProvider } from "use-wallet";
 import "./index.css";
 import './models/init';
@@ -15,12 +15,12 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 ReactDOM.render(
-  <ThemeProvider theme={themeOptions} >
+  <StyledProvider theme={themeOptions} >
   <UseWalletProvider chainId={80001}>
   <ApolloProvider client={client}>
     <App subgraphUri={subgraphUri}/>
   </ApolloProvider>
   </UseWalletProvider>
-  </ThemeProvider>,
+  </StyledProvider>,
   document.getElementById("root"),
 );
