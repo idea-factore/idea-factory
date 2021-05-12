@@ -1,37 +1,74 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button, List, Input, Card, Layout, PageHeader, Modal, Form, notification } from "antd";
+import Container from "@material-ui/core/Container";
+import { makeStyles } from '@material-ui/core/styles';
+import Input from "@material-ui/core/Input";
+import Grid from "@material-ui/core/Grid";
 import { parseBytes32String, formatBytes32String} from "@ethersproject/strings";
-import Meta from "antd/lib/card/Meta";
-import { Popup } from "../components";
+import Image from 'material-ui-image';
+import SearchBar from 'material-ui-search-bar';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import Button from '@material-ui/core/Button';
+import DialogActions from "@material-ui/core/DialogActions";
+import { themeOptions  } from '../components/Theme';
+import { TextField } from 'mui-rff';
+import { Popup, DashboardCard } from "../components";
 /**
  * TODO:
  * Move form into component
  * Monitor events with effector
  */
+ const useStyles = makeStyles((theme)=> ({
+  root: {
+    justifyItems: "center",
+    minHeight: "100%",
+  },
+  content: {
+      minHeight: "100vh"
+  },
+  media: {
+      height: 140,
+      width: 300
+    },
+  search: {
+    backgroundColor: theme.palette.primary.dark,
+  },
+    fab: {
+      position: 'absolute',
+      bottom: theme.spacing(2),
+      right: theme.spacing(2),
+  }
+}));
 
 export default function Pools({purpose, events, address, mainnetProvider, userProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, poolCoordinator }) {
-    const { Header, Content, Footer, Sider } = Layout;
-    const [pools, setPools] = useState([]); 
+    const [pools, setPools] = useState(null); 
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(true);
     const [event, setEvent] = useState({});
+    const classes = useStyles(themeOptions);
 
     const listener= (event) => {
       setEvent(event);
     }
     poolCoordinator.on("createdPool", listener);
-    const getPools = () => {poolCoordinator.getPools().then(res => {
-        console.log("Tried to get pools");
-        console.log(res);
-        const data = res.map(pool => {
-            return poolCoordinator.getPoolData(pool.pool).then(data =>{ return {...data}});
-        });
-        Promise.allSettled(data).then((result) => {
-            console.log("Got result ", result);
-            setPools(result);
-        });
-    })};
+    const getPools = () => {
+      try {
+        poolCoordinator.getPools().then(res => {
+          console.log("Tried to get pools");
+          console.log(res);
+          const data = res.map(pool => {
+              return poolCoordinator.getPoolData(pool.pool).then(data =>{ return {...data}});
+          });
+          Promise.allSettled(data).then((result) => {
+              console.log("Got result ", result);
+              setPools(result);
+          });
+      })
+      } catch(e) {
+        console.log(e);
+        console.log("No web3 :(")
+      }};
     useEffect(() => {
         getPools();
         setLoading(false);
@@ -41,22 +78,20 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
         setVisible(false);
         try { 
         poolCoordinator.connect(userProvider.getSigner()).createPool(formatBytes32String(values.name), formatBytes32String(values.description));
-        notification.success({
-          message: "Success!",
-          description: `The category, ${formatBytes32String(values.name)} was created successfully`
-        });
         } catch(e) {
           console.log("oh noes! something broke :(");
-          notification.error({
-            message: 'Error: Something broke',
-            description: `Something went wrong while trying to create the category ${formatBytes32String(values.name)}`
-          })
         }
+    }
+    async function validate(values) {
+      if (!values.name) {
+        return { name: 'Name is required to create pool.' };
+      }
+      return;
     }
 
     return(
 
-        <Layout>
+        <Container className={classes.root}>
             <Popup 
               visible={visible}
               onCancel={() => {
@@ -64,63 +99,80 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
               }}
               title={"Create a new category"}
               onCreate={createPool}
-              fields={[{
-                name: "name",
-                label: "Name",
-                rules: [
-                  {
-                      required: true,
-                      message: 'Please add a name for the category',
-                  },
-              ],
-              input: <Input />
-              }, {
-                name: "description",
-                label: "Description",
-                input: <Input type="textarea" />
-              }
-            ]}
+              render={({ handleSubmit, values }) => (
+                <form onSubmit={handleSubmit}>
+                  <TextField label="Name" name="name" required={true} />
+                  <TextField label="Description" name="description" required={false} />
+                    <Button autoFocus onClick={() => {
+                      setVisible(false);
+                    }} color="primary">
+                      Cancel
+                    </Button>
+                    <Button type="submit" color="primary">
+                      Create
+                    </Button>
+                </form>
+              )}
+              validate={validate}
             />
-        <Layout>
-          <Content>
-                <PageHeader
-                    onBack={() => window.history.back()}
-                    title="Categories"
-                    subTitle={
-                        <Button 
-                            type="primary"
-                            onClick={() => {
-                                setVisible(true); 
-                            }}
-                        >
-                          New Category
-                        </Button>
-                    }
-                />
-                <List
-                grid={{ gutter: 16, column: 4 }}
-                dataSource={pools}
-                renderItem={item => (
-                    <List.Item>
-                        <Card 
-                          loading={loading}
-                          actions={[
-                            <Link to={`/childpools/${item.value.pool}`} key="view">
-                              <Button>View Children</Button>
-                            </Link>
-                          ]}
-                        >
-                          <Meta
-                            title={parseBytes32String(item.value.name)}
-                            description={parseBytes32String(item.value.description)}
-                          />
-                        </Card>
-                    </List.Item>
-                )}
-                />
-          </Content>
-        </Layout>
-      </Layout>
+                {
+                  (pools && pools.length >= 1) &&
+                  <Grid container className={classes.content}
+                    direction="column"
+                    justify="flex-start"
+                    alignItems="stretch"
+                  >
+                    <Grid item>
+                      <SearchBar
+                        className={classes.search}
+                        onChange={() => console.log('onChange')}
+                        onRequestSearch={() => console.log('onRequestSearch')}
+                        style={{
+                          margin: '0 auto',
+                          minWidth: '100%'
+                        }}
+                      />
+                    </Grid>
+                    {/**
+                     * Use DashboardCard component? 
+                     */}
+                    <Grid item>
+                      <DashboardCard 
+                        header={false}
+                        data={pools.map(item => {
+                          return {
+                            name: parseBytes32String(item.value.name),
+                            description: parseBytes32String(item.value.description)
+                          }
+                        })}
+                        type={"list"}
+                      />
+                    </Grid>
+                  </Grid>
+                }
+                {
+                   (pools && pools.length == 0 ) &&
+                   <Grid 
+                      container 
+                      direction="row"
+                      justify="center"
+                      alignItems="center"
+                      className={classes.content}
+                  >
+                  <Grid item>
+                    <Image src={"assets/empty.svg"} className={classes.media}/>
+                    <p>Oh noes :( No pools found</p>
+                    <p>Add a pool with the button below</p>
+                  </Grid>
+                  </Grid>
+                }
+                {/**
+                 * Add tooltip
+                 */}
+                <Fab color="primary" aria-label="add" className={classes.fab} onClick={() => {setVisible(true)}}>
+                  <AddIcon />
+                </Fab>
+      </Container>
 
     )
 

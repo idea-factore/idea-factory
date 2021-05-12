@@ -1,13 +1,10 @@
 import React, { useEffect, useState, Suspense } from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import "antd/dist/antd.css";
 import "./App.css";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Web3Modal from "web3modal";
-import { useGasPrice, useUserProvider, useContractLoader, useBalance, useExternalContractLoader } from "./hooks";
-import { Header, Account } from "./components";
+import { useUserProvider } from "./hooks";
+import { Header } from "./components";
 import { Transactor } from "./helpers";
-import { formatEther } from "@ethersproject/units";
 import {loadContractFx, $contracts } from './models/contracts/index';
 import { getProviderFx, getGasPriceFx, getAddressFx } from './models/eth-hooks/index';
 import { $eth_hooks } from './models/eth-hooks/init';
@@ -16,8 +13,26 @@ import { useWallet } from 'use-wallet'
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { AccountCircle, Code, Email } from '@material-ui/icons';
+import { FaDiscord, FaTwitter } from 'react-icons/fa';
 import { Footer } from 'components-extra';
+import styled from 'styled-components';
+import {
+  getHeader,
+  getContent,
+  getDrawerSidebar,
+  getSidebarContent,
+  getFooter,
+  getSidebarTrigger,
+  getCollapseBtn,
+} from '@mui-treasury/layout';
+
+const HeaderLayout = getHeader(styled);
+const Content = getContent(styled);
+const DrawerSidebar = getDrawerSidebar(styled);
+const SidebarContent = getSidebarContent(styled);
+const FooterLayout = getFooter(styled);
+const SidebarTrigger = getSidebarTrigger(styled);
+const CollapseBtn = getCollapseBtn(styled);
 
 // 😬 Sorry for all the console logging 🤡
 const DEBUG = true
@@ -33,6 +48,10 @@ const Home = React.lazy(() => import ('./views/Home'));
  *  More state stuff as needed
  *  Refactor UI
  *  Better Wallet connecting experience
+ * 
+ * Look at using mui-treasury for better Layout
+ * 
+ * Need to remove antd next I think
  */
 
 
@@ -72,7 +91,9 @@ function App(props) {
         <CssBaseline/>
         <Grid container direction="column" wrap="nowrap">
           <Grid item>
+            <HeaderLayout>
             <Header address={eth_hooks.address} userProvider={userProvider} localProvider={eth_hooks.provider} wallet={wallet} />
+            </HeaderLayout>
           </Grid>
           {
             /**
@@ -91,7 +112,7 @@ function App(props) {
              * */
           }
           <Grid item>
-            <ul>
+            <Content>
             <Switch>
             <Suspense fallback={<CircularProgress />}>
               <Route exact path="/">
@@ -133,22 +154,21 @@ function App(props) {
               </Route>
               </Suspense>
             </Switch>
-            </ul>
+            </Content>
           </Grid>
         </Grid>
+        <FooterLayout>
         <Footer title="Idea Factory">
           <Footer.Column isInline>
-            <Footer.Item icon={<AccountCircle />} href="#">
-              My Account
+            <Footer.Item icon={<FaTwitter />} href="https://twitter.com/IdeaFactoryIdea">
+              Twitter
             </Footer.Item>
-            <Footer.Item icon={<Code />} onClick={() => console.log('Starting coding now!')}>
-              Start Coding
-            </Footer.Item>
-            <Footer.Item icon={<Email />} href="lelain-dot-alexandre-at-gmail-dot-com">
-              Contact Us
+            <Footer.Item icon={<FaDiscord />} href="https://discord.gg/rv9sJxSuWs">
+              Discord
             </Footer.Item>
           </Footer.Column>
         </Footer>
+        </FooterLayout>
         </Paper>
       </BrowserRouter>
   );

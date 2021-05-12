@@ -29,18 +29,21 @@ const useStyles = makeStyles(()=> ({
       }
   }));
 
-const DashboardCard = ({title, type, data}) => {
+const DashboardCard = ({title, type, data, header=true}) => {
     const classes = useStyles();
     /**
      * TODO:
      * How to handle different data views?
      * etc
+     * add default value for header
      */
     return (
         <Card raised={false}>
-            <CardHeader 
-                title={title}
-            />
+            { header && 
+                <CardHeader 
+                    title={title}
+                />
+            }
             <CardContent>
             <Grid 
                 container 
@@ -50,10 +53,10 @@ const DashboardCard = ({title, type, data}) => {
                 alignItems="stretch"
             >
                 { type === "list" &&
-                    data.map((item) => {
+                    data.map((item, index) => {
                         return (
                             <Grid item>
-                            <Card className={classes.card}>
+                            <Card className={classes.card} key={index}>
                                 <CardActionArea>
                                     <CardMedia
                                     className={classes.media}
@@ -61,7 +64,7 @@ const DashboardCard = ({title, type, data}) => {
                                     title={item.name}
                                     />
                                     <CardContent>
-                                    <Typography gutterBottom variant="h5" component="h2">
+                                    <Typography gutterBottom variant="h5" component="h2" color="secondary">
                                         {item.name}
                                     </Typography>
                                     <Typography variant="body2" color="secondary" component="p">
@@ -84,9 +87,9 @@ const DashboardCard = ({title, type, data}) => {
                 }
                 {
                     type === "list-vote" &&
-                        data.map((item) => {
+                        data.map((item, index) => {
                             return (
-                                <Card className={classes.card}>
+                                <Card className={classes.card} key={index}>
                                     <CardActionArea>
                                         <CardMedia
                                             className={classes.media}
@@ -101,12 +104,12 @@ const DashboardCard = ({title, type, data}) => {
                                         >
                                             <Grid item>
                                                 <CardContent>
-                                                 <CircularProgressWithLabel value={"75"} size={60} />
+                                                 <CircularProgressWithLabel value={75} size={60} />
                                                 </CardContent>
                                             </Grid>
                                             <Grid item>
                                                 <CardContent>
-                                                    <Typography gutterBottom variant="h5" component="h2">
+                                                    <Typography gutterBottom variant="h5" component="h2" color="secondary">
                                                         {item.name}
                                                     </Typography>
                                                     <Typography variant="body2" color="secondary" component="p">
@@ -120,7 +123,7 @@ const DashboardCard = ({title, type, data}) => {
                                         <Button size="small" color="secondary">
                                              Vote
                                         </Button>
-                                        <Button size="small" color="secondasry">
+                                        <Button size="small" color="secondary">
                                             Learn More
                                         </Button>
                                     </CardActions>

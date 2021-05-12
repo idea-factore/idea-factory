@@ -1,48 +1,31 @@
 import React  from "react";
-import { Modal, Form } from "antd";
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent"
+import DialogActions from "@material-ui/core/DialogActions";
+import { DialogTitle } from "@material-ui/core";
+import { Form } from 'react-final-form';
+import Button from "@material-ui/core/Button";
 
 
 
 
-export default function Popup({ title, ok, onCreate, visible, onCancel, fields}) {
-    const [form] = Form.useForm();
+export default function Popup({ title, confirmText, onCreate, visible, onCancel, render, validate}) {
+
     return (
-      <Modal
-        visible={visible}
-        title={title}
-        okText={ok || "Confirm"}
-        cancelText="Cancel"
-        onCancel={onCancel}
-        onOk={() => {
-            form
-              .validateFields()
-              .then((values) => {
-                form.resetFields();
-                onCreate(values);
-              })
-              .catch((info) => {
-                console.log('Validate Failed:', info);
-              });
-          }}
+      <Dialog
+        open={visible}
+        onClose={onCancel}
       >
+        <DialogTitle>
+          {title}
+        </DialogTitle>
+        <DialogContent>
         <Form
-            form={form}
-            layout="vertical"
-            name="form_in_modal"
-        >
-            {fields.map((field, index) => {
-                return (
-                    <Form.Item
-                        key={index}
-                        name={field.name}
-                        label={field.label}
-                        rules={field.rules}
-                    >
-                        {field.input}
-                    </Form.Item>
-                )
-            })}
-        </Form>
-      </Modal>
+          onSubmit={onCreate}
+          validate={validate}
+          render={render}
+        />
+        </DialogContent>
+      </Dialog>
     );
   };

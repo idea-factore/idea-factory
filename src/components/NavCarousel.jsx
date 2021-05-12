@@ -155,7 +155,7 @@ export default function NavCarousel() {
                 alignItems="center"
                 margin="auto"
             >
-            <Carousel timeout="900" navButtonsAlwaysVisible>
+            <Carousel timeout={900} navButtonsAlwaysVisible>
             {
                         items.map((item, index) => {
                             return <Banner item={item} key={index} contentPosition={item.contentPosition} />
