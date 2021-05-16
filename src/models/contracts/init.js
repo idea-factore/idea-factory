@@ -1,5 +1,7 @@
 import {loadContractFx, $contracts } from './';
 import { Contract } from "@ethersproject/contracts";
+import { combine, forward } from "effector";
+import { loadContractEventsFx } from '../events';
 
 loadContractFx.use(async ({provider, address, ABI, name}) => {
     //load contract
@@ -17,7 +19,10 @@ loadContractFx.use(async ({provider, address, ABI, name}) => {
           }
           const contract = await new Contract(address, ABI, signer);
           return {
-              [name]: contract,
+              name,
+              [name]: { 
+                contract 
+              },
           }
         } catch (e) {
           console.log("ERROR LOADING EXTERNAL CONTRACT AT "+address+" (check provider, address, and ABI)!!", e);
@@ -37,3 +42,12 @@ $contracts.on(
         ...params
     })
 );
+
+forward({
+  from: loadContractFx.doneData.map((result) => ({
+      name: result.name,
+      contract: result[result.name].contract
+  })),
+  to: loadContractEventsFx
+});
+

@@ -1,51 +1,88 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Button, List, Input, Card, Layout, Menu, PageHeader, Modal, Form, Tag, Dropdown, InputNumber } from "antd";
-import { EllipsisOutlined } from '@ant-design/icons';
 import { parseBytes32String } from "@ethersproject/strings";
 import { useParams } from "react-router-dom";
-import { Popup } from "../components";
+import Container from "@material-ui/core/Container";
+import { makeStyles } from '@material-ui/core/styles';
+import Input from "@material-ui/core/Input";
+import Grid from "@material-ui/core/Grid";
+import Image from 'material-ui-image';
+import SearchBar from 'material-ui-search-bar';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import Button from '@material-ui/core/Button';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import Typography from '@material-ui/core/Typography';
+import { themeOptions  } from '../components/Theme';
+import { TextField } from 'mui-rff';
+import { Popup, DashboardCard } from "../components";
+
+const useStyles = makeStyles((theme)=> ({
+  root: {
+    justifyItems: "center",
+    minHeight: "100%",
+    minWidth: "100%"
+  },
+  content: {
+      position: "relative",
+      minHeight: "100vh",
+      top: theme.spacing(2)
+
+  },
+  media: {
+      height: 140,
+      width: 300
+    },
+  search: {
+    backgroundColor: theme.palette.primary.dark,
+  },
+    fab: {
+      position: 'absolute',
+      bottom: theme.spacing(2),
+      right: theme.spacing(2),
+  },
+  link: {
+  color: theme.palette.primary.main,
+  textDecoration: 'none',
+  '&:hover': {
+    color: theme.palette.primary.dark
+  },
+  '&:active': {
+      color: '#616161',
+  }
+}
+}
+));
+
 //TODO: Change contract calls to effector effects or events
 export default function ChildPools({purpose, events, mainnetProvider, userProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, poolCoordinator, ideaFactory }) {
     const { address } = useParams();
-    const { Header, Content, Footer, Sider } = Layout;
     const [visible, setVisible] = useState(false);
     const [visibleIdea, setVisibleIdea] = useState(false);
     const [childPools, setChildPool] = useState([]);
-    const [category, setCategory] = useState({});
+    const [category, setCategory] = useState(null);
     const [event, setEvent]=useState({});
     const [currentPool, setCurrentPool] = useState()
+    const classes = useStyles(themeOptions);
 
 
-    const menu = (child) => {
-      return (<Menu>
-        <Menu.Item key="1">
-          <Link to={`/ideas/${child}`} key="view">
-            <Button>View Ideas</Button>                   
-          </Link>
-        </Menu.Item>
-        <Menu.Item key="2">
-          <Button onClick={() => {setVisibleIdea(true); setCurrentPool(child);}}>Add Idea</Button>
-        </Menu.Item>
-      </Menu>
-    )};
     const listener= (event) => {
       console.log("Event happened: ", event)
       setEvent(event);
     }
-    poolCoordinator.on("createdChildPool", listener);
-    poolCoordinator.on("addedIdeaToChild", listener);
+    poolCoordinator.contract.on("createdChildPool", listener);
+    poolCoordinator.contract.on("addedIdeaToChild", listener);
     useEffect(() => {
-      const data = poolCoordinator.getPoolData(address).then(data =>{ return {...data}});
+      const data = poolCoordinator.contract.getPoolData(address).then(data =>{ return {...data}});
       Promise.resolve(data).then(result => {
         console.log("Got data ", result)
         setCategory(result);
       })
     }, [])
     useEffect(() => {
-        poolCoordinator.getChildPools(address).then(res => {
+        poolCoordinator.contract.getChildPools(address).then(res => {
           const data = res.map(pool => {
-            return poolCoordinator.getChildPoolData(pool.child).then(data =>{ return {...data}});
+            return poolCoordinator.contract.getChildPoolData(pool.child).then(data =>{ return {...data}});
           });
           Promise.allSettled(data).then((result) => {
             console.log("Got result ", result);
@@ -54,7 +91,7 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
         })
       }, [event]);
     const createChildPool = (values) => {
-        poolCoordinator.connect(userProvider.getSigner()).createChildPool(values.name, values.description, address); 
+        poolCoordinator.contract.connect(userProvider.getSigner()).createChildPool(values.name, values.description, address); 
         setVisible(false);
     }
 
@@ -64,7 +101,7 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
         res.wait(1).then(res2 => {
           ideaFactory.queryFilter("mintedIdea", res2.blockHash).then(idea => {
             console.log("Got idea ", idea[0].args.id.toNumber());
-            poolCoordinator.connect(userProvider.getSigner()).addIdeaToChild(currentPool, idea[0].args.id.toNumber());
+            poolCoordinator.contract.connect(userProvider.getSigner()).addIdeaToChild(currentPool, idea[0].args.id.toNumber());
           })
         })
       });
@@ -75,109 +112,156 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
       setVisibleIdea(false);
     }
 
+    async function validate(values) {
+      if (!values.name) {
+        return { name: 'Name is required to create a child pool.' };
+      }
+      return;
+    }
     //todo Change popover to dropdown and add notifications on success or failure
     //implement idea view page and idea add
     return (
-        <Layout>
-        <Popup 
+      <Container className={classes.root}>
+            <Popup 
               visible={visible}
               onCancel={() => {
               setVisible(false);
               }}
-              title={"Create a new Child Pool"}
+              title={"Add a new Child Pool"}
               onCreate={createChildPool}
-              fields={[{
-                name: "name",
-                label: "Name",
-                rules: [
-                  {
-                    required: true,
-                    message: 'Please add a name for the pool',
-                  },
-                ],
-              input: <Input />
-              }, {
-                name: "description",
-                label: "Description",
-                input: <Input type="textarea" />
-              }
-            ]}
-            />
-            <Popup 
-              visible={visibleIdea}
-              onCancel={() => {
-              setVisibleIdea(false);
-              }}
-              title={"Create a new category"}
-              onCreate={createdIdea}
-              fields={[{
-                name: "name",
-                label: "Name",
-                rules: [
-                  {
-                    required: true,
-                    message: 'Please add a name for the idea',
-                  },
-                ],
-              input: <Input />
-              }, {
-                name: "description",
-                label: "Description",
-                input: <Input type="textarea" />
-              }, {
-                name: "stake",
-                label: "VOTE Tokens",
-                rules: [
-                  {
-                    required: true,
-                    message: 'You must submit vote tokens in order to create an idea'
-                  }
-                ],
-                input: <InputNumber min={0.01} />
-              }
-            ]}
-            />
-    <Layout>
-      <Content>
-            <PageHeader
-                onBack={() => window.history.back()}
-                title="Child Pools"
-                subTitle={
-                    <Button 
-                        type="primary"
-                        onClick={() => {
-                            setVisible(true); 
-                        }}
-                    >
-                      New Child Pool
+              render={({ handleSubmit, values }) => (
+                <form onSubmit={handleSubmit}>
+                  <TextField label="Name" name="name" required={true} />
+                  <TextField label="Description" name="description" required={false} />
+                    <Button autoFocus onClick={() => {
+                      setVisible(false);
+                    }} color="primary">
+                      Cancel
                     </Button>
-                }
-                tags={ category.name !== undefined && 
-                      
-                    <Tag color="blue">Category: {parseBytes32String(category.name)}</Tag>
-                }
+                    <Button type="submit" color="primary">
+                      Create
+                    </Button>
+                </form>
+              )}
+              validate={validate}
             />
-            <List
-            grid={{ gutter: 16, column: 4 }}
-            dataSource={childPools}
-            renderItem={item => (
-                <List.Item>
-                    <Card
-                      extra={
-                        <Dropdown.Button icon={<EllipsisOutlined />} overlay={menu(item.value.child)} trigger={["click"]}/>
-                      }
-                      title={item.value.name}
-                    >
-                      <Card.Meta
-                        title={item.value.description}
-                        description={`${item.value.name} has ${item.value.ideas.length} ideas`}
+                {
+                  (childPools && childPools.length >= 1) &&
+                  <Grid container className={classes.content}
+                    direction="column"
+                    justify="flex-start"
+                    alignItems="stretch"
+                  >
+                    <Grid 
+                    item 
+                    container
+                    direction="column"
+                    justify="flex-end"
+                    alignItems="stretch"
+                  >
+                    { category &&
+                      <Grid item>
+                      <Breadcrumbs aria-label="breadcrumb">
+                      <Link className={classes.link} to={"/"}>
+                          Home
+                        </Link>
+                        <Link className={classes.link} to={"/pools"}>
+                          Pools
+                        </Link>
+                        <Typography color="textPrimary">{parseBytes32String(category.name)}</Typography>
+                      </Breadcrumbs>
+                      </Grid>
+                    }
+                      <Grid item>
+                      <SearchBar
+                        className={classes.search}
+                        onChange={() => console.log('onChange')}
+                        onRequestSearch={() => console.log('onRequestSearch')}
+                        style={{
+                          margin: '0 auto',
+                          minWidth: '100%'
+                        }}
                       />
-                    </Card>
-                </List.Item>
-            )}
-            />
-      </Content>
-    </Layout>
-  </Layout>
+                      </Grid>
+                  </Grid>
+                    {/**
+                     * Use DashboardCard component? 
+                     */}
+                    <Grid item>
+                      <DashboardCard 
+                        header={false}
+                        data={childPools.map(item => {
+                          return {
+                            name: parseBytes32String(item.value.name),
+                            description: parseBytes32String(item.value.description),
+                            actions:
+                              <span>
+                                <Button component={Link} size="small" color="secondary">
+                                  Learn More
+                                </Button>
+                              </span>
+                          }
+                        })}
+                        type={"list"}
+                      />
+                    </Grid>
+                  </Grid>
+                }
+                {
+                   (childPools && childPools.length == 0 ) &&
+                   <Grid 
+                      container 
+                      direction="column"
+                      justify="flex-start"
+                      alignItems="center"
+                      className={classes.content}
+                      spacing={3}
+                  >
+                  <Grid 
+                    item 
+                    container
+                    direction="column"
+                    justify="flex-end"
+                    alignItems="stretch"
+                  >
+                    { category &&
+                      <Grid item>
+                      <Breadcrumbs aria-label="breadcrumb">
+                      <Link className={classes.link} to={"/"}>
+                          Home
+                        </Link>
+                        <Link className={classes.link} to={"/pools"}>
+                          Pools
+                        </Link>
+                        <Typography color="textPrimary">{parseBytes32String(category.name)}</Typography>
+                      </Breadcrumbs>
+                      </Grid>
+                    }
+                      <Grid item>
+                      <SearchBar
+                        className={classes.search}
+                        onChange={() => console.log('onChange')}
+                        onRequestSearch={() => console.log('onRequestSearch')}
+                        style={{
+                          margin: '0 auto',
+                          minWidth: '100%'
+                        }}
+                      />
+                      </Grid>
+                  </Grid>
+                  <Grid item>
+                    <Image src={"/assets/empty.svg"} className={classes.media}/>
+                    <p>Oh noes :( No Child Pools found</p>
+                    <p>Add a child Pool with the button below</p>
+                  </Grid>
+                  </Grid>
+                }
+                {/**
+                 * Add tooltip
+                 */}
+                <Fab color="primary" aria-label="add" className={classes.fab} onClick={() => {setVisible(true)}}>
+                  <AddIcon />
+                </Fab>
+      </Container>
     )
 }

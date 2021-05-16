@@ -1,4 +1,4 @@
-import React  from "react";
+import React from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
@@ -29,7 +29,7 @@ const useStyles = makeStyles(()=> ({
       }
   }));
 
-const DashboardCard = ({title, type, data, header=true}) => {
+const DashboardCard = ({title, type, data, header=true, actions}) => {
     const classes = useStyles();
     /**
      * TODO:
@@ -73,12 +73,20 @@ const DashboardCard = ({title, type, data, header=true}) => {
                                     </CardContent>
                                 </CardActionArea>
                                 <CardActions>
-                                    <Button size="small" color="secondary">
+                                 {
+                                    item.actions
+                                 }
+                                 {
+                                     !item.actions &&
+                                     <span>
+                                     <Button size="small" color="secondary">
                                     Share
                                     </Button>
                                     <Button size="small" color="secondary">
                                     Learn More
                                     </Button>
+                                    </span>
+                                 }
                                 </CardActions>
                             </Card>
                             </Grid>
@@ -120,12 +128,20 @@ const DashboardCard = ({title, type, data, header=true}) => {
                                         </Grid>
                                     </CardActionArea>
                                     <CardActions>
-                                        <Button size="small" color="secondary">
-                                             Vote
-                                        </Button>
-                                        <Button size="small" color="secondary">
-                                            Learn More
-                                        </Button>
+                                    {
+                                    item.actions
+                                 }
+                                 {
+                                     !item.actions &&
+                                     <span>
+                                     <Button size="small" color="secondary">
+                                    Share
+                                    </Button>
+                                    <Button size="small" color="secondary">
+                                    Learn More
+                                    </Button>
+                                    </span>
+                                 }
                                     </CardActions>
                                 </Card>
                             )

@@ -10,7 +10,8 @@ import SearchBar from 'material-ui-search-bar';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
-import DialogActions from "@material-ui/core/DialogActions";
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import Typography from '@material-ui/core/Typography';
 import { themeOptions  } from '../components/Theme';
 import { TextField } from 'mui-rff';
 import { Popup, DashboardCard } from "../components";
@@ -23,9 +24,12 @@ import { Popup, DashboardCard } from "../components";
   root: {
     justifyItems: "center",
     minHeight: "100%",
+    minWidth: "100%"
   },
   content: {
-      minHeight: "100vh"
+    position: "relative",
+    minHeight: "100vh",
+    top: theme.spacing(2)
   },
   media: {
       height: 140,
@@ -38,6 +42,16 @@ import { Popup, DashboardCard } from "../components";
       position: 'absolute',
       bottom: theme.spacing(2),
       right: theme.spacing(2),
+  },
+  link: {
+    color: theme.palette.primary.main,
+    textDecoration: 'none',
+    '&:hover': {
+      color: theme.palette.primary.dark
+    },
+    '&:active': {
+        color: '#616161',
+    }
   }
 }));
 
@@ -51,14 +65,14 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
     const listener= (event) => {
       setEvent(event);
     }
-    poolCoordinator.on("createdPool", listener);
+    poolCoordinator.contract.on("createdPool", listener);
     const getPools = () => {
       try {
-        poolCoordinator.getPools().then(res => {
+        poolCoordinator.contract.getPools().then(res => {
           console.log("Tried to get pools");
           console.log(res);
           const data = res.map(pool => {
-              return poolCoordinator.getPoolData(pool.pool).then(data =>{ return {...data}});
+              return poolCoordinator.contract.getPoolData(pool.pool).then(data =>{ return {...data}});
           });
           Promise.allSettled(data).then((result) => {
               console.log("Got result ", result);
@@ -77,7 +91,7 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
         console.log('Received values of form: ', values);
         setVisible(false);
         try { 
-        poolCoordinator.connect(userProvider.getSigner()).createPool(formatBytes32String(values.name), formatBytes32String(values.description));
+        poolCoordinator.contract.connect(userProvider.getSigner()).createPool(formatBytes32String(values.name), formatBytes32String(values.description));
         } catch(e) {
           console.log("oh noes! something broke :(");
         }
@@ -97,7 +111,7 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
               onCancel={() => {
               setVisible(false);
               }}
-              title={"Create a new category"}
+              title={"Create a new Pool"}
               onCreate={createPool}
               render={({ handleSubmit, values }) => (
                 <form onSubmit={handleSubmit}>
@@ -122,7 +136,22 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
                     justify="flex-start"
                     alignItems="stretch"
                   >
-                    <Grid item>
+                    <Grid 
+                    item 
+                    container
+                    direction="column"
+                    justify="flex-end"
+                    alignItems="stretch"
+                  >
+                      <Grid item>
+                      <Breadcrumbs aria-label="breadcrumb">
+                        <Link className={classes.link} to={"/"}>
+                          Home
+                        </Link>
+                        <Typography color="textPrimary">Pools</Typography>
+                      </Breadcrumbs>
+                      </Grid>
+                      <Grid item>
                       <SearchBar
                         className={classes.search}
                         onChange={() => console.log('onChange')}
@@ -132,7 +161,8 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
                           minWidth: '100%'
                         }}
                       />
-                    </Grid>
+                      </Grid>
+                  </Grid>
                     {/**
                      * Use DashboardCard component? 
                      */}
@@ -142,7 +172,16 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
                         data={pools.map(item => {
                           return {
                             name: parseBytes32String(item.value.name),
-                            description: parseBytes32String(item.value.description)
+                            description: parseBytes32String(item.value.description),
+                            actions:
+                              <span>
+                                <Button component={Link} size="small" color="secondary" to={`/childpools/${item.value.pool}`}>
+                                  View Ideas
+                                </Button>
+                                <Button component={Link} size="small" color="secondary" to={`/pools`}>
+                                  Learn More
+                                </Button>
+                              </span>
                           }
                         })}
                         type={"list"}
@@ -159,6 +198,33 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
                       alignItems="center"
                       className={classes.content}
                   >
+                    <Grid 
+                    item 
+                    container
+                    direction="column"
+                    justify="flex-end"
+                    alignItems="stretch"
+                  >
+                      <Grid item>
+                      <Breadcrumbs aria-label="breadcrumb">
+                        <Link className={classes.link} to={"/"}>
+                          Home
+                        </Link>
+                        <Typography color="textPrimary">Pools</Typography>
+                      </Breadcrumbs>
+                      </Grid>
+                      <Grid item>
+                      <SearchBar
+                        className={classes.search}
+                        onChange={() => console.log('onChange')}
+                        onRequestSearch={() => console.log('onRequestSearch')}
+                        style={{
+                          margin: '0 auto',
+                          minWidth: '100%'
+                        }}
+                      />
+                      </Grid>
+                  </Grid>
                   <Grid item>
                     <Image src={"assets/empty.svg"} className={classes.media}/>
                     <p>Oh noes :( No pools found</p>
