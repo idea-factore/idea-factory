@@ -18,6 +18,11 @@ loadContractFx.use(async ({provider, address, ABI, name}) => {
             signer = provider;
           }
           const contract = await new Contract(address, ABI, signer);
+          /**
+           * Probably change this to just return the contract
+           * Since we manually pass in contracts to components?
+           * Will look into it
+           */
           return {
               name,
               [name]: { 

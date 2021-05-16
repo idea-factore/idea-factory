@@ -14,11 +14,6 @@ import { loadContractEventsFx, $events } from './';
  */
 
 loadContractEventsFx.use((contract) => {
-    console.log("Got contract....");
-    console.log(contract.contract);
-    console.log(contract.name);
-    console.log(contract);
-
     return {
         [contract.name]: contract.contract.interface.events
     }

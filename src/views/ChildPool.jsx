@@ -90,6 +90,12 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
         });
         })
       }, [event]);
+
+    /**
+     * TODO
+     * Change this to formatBytes32String(values.name), formatBytes32String(values.description)
+     * Doing this will need a contract redeploy so not going to do this now
+     */
     const createChildPool = (values) => {
         poolCoordinator.contract.connect(userProvider.getSigner()).createChildPool(values.name, values.description, address); 
         setVisible(false);
@@ -118,8 +124,6 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
       }
       return;
     }
-    //todo Change popover to dropdown and add notifications on success or failure
-    //implement idea view page and idea add
     return (
       <Container className={classes.root}>
             <Popup 
@@ -192,11 +196,14 @@ export default function ChildPools({purpose, events, mainnetProvider, userProvid
                         header={false}
                         data={childPools.map(item => {
                           return {
-                            name: parseBytes32String(item.value.name),
-                            description: parseBytes32String(item.value.description),
+                            name: item.value.name,
+                            description: item.value.description,
                             actions:
                               <span>
-                                <Button component={Link} size="small" color="secondary">
+                                <Button component={Link} size="small" color="secondary" to={`/ideas/${item.value.child}`}>
+                                  View Ideas
+                                </Button>
+                                <Button size="small" color="secondary">
                                   Learn More
                                 </Button>
                               </span>

@@ -176,7 +176,7 @@ export default function Pools({purpose, events, address, mainnetProvider, userPr
                             actions:
                               <span>
                                 <Button component={Link} size="small" color="secondary" to={`/childpools/${item.value.pool}`}>
-                                  View Ideas
+                                  View Child Pools
                                 </Button>
                                 <Button component={Link} size="small" color="secondary" to={`/pools`}>
                                   Learn More
