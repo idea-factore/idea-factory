@@ -36,6 +36,7 @@
     "axios": "^0.20.0",
     "bnc-notify": "^1.5.0",
     "burner-provider": "^1.0.38",
+    "codecov": "^3.8.2",
     "dotenv": "^8.2.0",
     "effector": "^21.8.10",
     "effector-react": "^21.2.1",
