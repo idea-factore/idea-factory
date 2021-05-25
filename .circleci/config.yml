@@ -51,7 +51,7 @@ jobs:
            pkg-manager: yarn
       - run:
           name: Code Coverage
-          command: istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
+          command: yarn add mocha instanbul && istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
       - codecov/upload:
           token: c1fa0bc9-b439-4986-b9f9-2e59a05f217b
 
