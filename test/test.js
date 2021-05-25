@@ -1,4 +1,5 @@
 var expect = require('expect.js');
+var app = require('../src/app.jsx');
 
 describe("simple", function(){
   it("should return true", function(){
