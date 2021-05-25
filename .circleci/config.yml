@@ -47,6 +47,8 @@ jobs:
   code-coverage:
     docker:
       - image: cimg/node:15.1
+    environment:
+      CODECOV_TOKEN: 'c1fa0bc9-b439-4986-b9f9-2e59a05f217b'
     steps:
       - checkout
       - node/install-packages:
@@ -55,8 +57,6 @@ jobs:
       - run:
           name: Code Coverage
           command: yarn add mocha nyc && yarn run nyc --reporter=lcov mocha && yarn run codecov
-      - codecov/upload:
-          token: c1fa0bc9-b439-4986-b9f9-2e59a05f217b
 
 
 workflows:
