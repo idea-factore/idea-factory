@@ -54,7 +54,7 @@ jobs:
            override-ci-command: yarn install
       - run:
           name: Code Coverage
-          command: yarn add mocha nyc && yarn run nyc --reporter=lcov mocha
+          command: yarn add mocha nyc && yarn run nyc --reporter=lcov mocha && codecov
       - codecov/upload:
           token: c1fa0bc9-b439-4986-b9f9-2e59a05f217b
 
