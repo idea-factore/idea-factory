@@ -57,6 +57,8 @@ jobs:
       - run:
           name: Code Coverage
           command: yarn add mocha nyc && yarn run nyc --reporter=lcov mocha && yarn run codecov
+      - store_artifacts:
+          path: /home/circleci/project/coverage/
 
 
 workflows:
