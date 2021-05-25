@@ -29,6 +29,7 @@ jobs:
       # If you are using yarn instead npm, remove the line above and uncomment the two lines below.
       - node/install-packages:
            pkg-manager: yarn
+           override-ci-command: yarn install
       - run:
           name: Eslint
           command: yarn lint
@@ -39,6 +40,7 @@ jobs:
       - checkout
       - node/install-packages:
            pkg-manager: yarn
+           override-ci-command: yarn install
       - run:
           name: build
           command: yarn build 
@@ -49,6 +51,7 @@ jobs:
       - checkout
       - node/install-packages:
            pkg-manager: yarn
+           override-ci-command: yarn install
       - run:
           name: Code Coverage
           command: yarn add mocha nyc && yarn run nyc --reporter=lcov mocha
