@@ -29,7 +29,7 @@ jobs:
       - node/install-packages:
            pkg-manager: yarn
            cache-path: ~/project/node_modules
-           override-ci-command: npm install 
+           override-ci-command: npm install --force
       - run:
           name: Run tests
           command: npm --version
