@@ -1,9 +1,11 @@
-"nyc": {
+{
     "extension": [
       ".ts",
-      ".tsx"
+      ".tsx",
+      ".jsx",
+      ".js"
     ],
     "exclude": [
       "**/test/**"
     ]
-  },
+}
