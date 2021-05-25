@@ -27,10 +27,12 @@ jobs:
       # node/install-packages
       # If you are using yarn instead npm, remove the line above and uncomment the two lines below.
       - node/install-packages:
-           pkg-manager: yarn 
+           pkg-manager: yarn
+           cache-path: ~/project/node_modules
+           override-ci-command: npm install 
       - run:
           name: Run tests
-          command: npm test
+          command: npm --version
 
 workflows:
   # Below is the definition of your workflow.
