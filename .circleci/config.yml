@@ -56,7 +56,7 @@ jobs:
            override-ci-command: yarn install
       - run:
           name: Code Coverage
-          command: yarn add mocha nyc && yarn run nyc --reporter=lcov mocha && yarn run codecov
+          command: yarn add mocha nyc && yarn run react-scripts test --coverage && yarn run codecov
       - store_artifacts:
           path: /home/circleci/project/coverage/
 
