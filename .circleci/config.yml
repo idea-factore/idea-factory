@@ -11,7 +11,7 @@ orbs:
 
 jobs:
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
-  build-and-test:  
+  build-and-lint:  
     # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
     # You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/node
@@ -28,11 +28,16 @@ jobs:
       # If you are using yarn instead npm, remove the line above and uncomment the two lines below.
       - node/install-packages:
            pkg-manager: yarn
-           cache-path: ~/project/node_modules
-           override-ci-command: yarn install
       - run:
-          name: Run tests
-          command: npm --version
+          name: Eslint
+          command: yarn lint
+  build:
+    docker:
+      - image: cimg/node:15.1
+    steps:
+      - run:
+          name: build
+          command: yarn build
 
 workflows:
   # Below is the definition of your workflow.
@@ -41,6 +46,7 @@ workflows:
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
   sample: 
     jobs:
-      - build-and-test
+      - build-and-lint
+      - build
       # For running simple node tests, you could optionally use the node/test job from the orb to replicate and replace the job above in fewer lines.
       # - node/test
