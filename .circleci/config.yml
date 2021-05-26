@@ -73,7 +73,9 @@ workflows:
             - lint
       - cypress/install
       - cypress/run:
+            executor: cypress/browsers-chrome77
             install-command: npm install
+            browser: chrome
             start: yarn start
             post-steps:
               - store_artifacts:
