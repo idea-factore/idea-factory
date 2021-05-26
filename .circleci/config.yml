@@ -72,6 +72,7 @@ workflows:
           requires:
             - lint
       - cypress/run:
+            yarn: true
             start: yarn start
             wait-on: "http://localhost:3000"
             post-steps:
