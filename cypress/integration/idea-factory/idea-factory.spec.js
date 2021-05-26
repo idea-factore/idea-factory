@@ -2,7 +2,7 @@
 
 context('Actions', () => {
     beforeEach(() => {
-      cy.visit('http://localhost:3000')
+      cy.visit(`http://:${require('ip').address()}:3000`)
     })
     it('renders home page', () => {
         cy.get('.app').as('app');
