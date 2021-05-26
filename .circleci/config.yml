@@ -76,7 +76,7 @@ workflows:
             executor: cypress/browsers-chrome77
             install-command: npm install
             browser: chrome
-            start: yarn start
+            start: npm start
             post-steps:
               - store_artifacts:
                   path: /coverage
