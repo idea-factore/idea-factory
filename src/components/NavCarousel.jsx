@@ -10,8 +10,9 @@ import Button from '@material-ui/core/Button';
 import Carousel from "react-material-ui-carousel";
 import Box from '@material-ui/core/Box';
 import { Grid } from "@material-ui/core";
+import { themeOptions } from './index.js';
 
-const useStyles = makeStyles(()=> ({
+const useStyles = makeStyles((theme)=> ({
     card: {
       display: "grid",
       gridTemplateRows: "1fr auto",
@@ -32,11 +33,20 @@ const useStyles = makeStyles(()=> ({
       display: "flex",
       justifyContent: "space-between",
       maxWidth: 400
+    },
+    box: {
+        top: theme.spacing(4),
+        position: "relative",
+        minWidth: "100vh"
+    },
+    carousel: {
+        minWidth: "60%",
+        minHeight: "50%"
     }
   }));
 
 function Banner(props) {
-    const classes = useStyles();
+    const classes = useStyles(themeOptions);
     const contentPosition = props.contentPosition ? props.contentPosition : "left"
     const totalItems = props.length ? props.length : 3;
     const mediaLength = totalItems - 1;
@@ -98,7 +108,7 @@ function Banner(props) {
 const items = [
     {
         Name: "Ideas",
-        Caption: "Explore",
+        Caption: "Explore Ideas",
         contentPosition: "left",
         logo: "/assets/explore.svg",
         Items: [
@@ -114,7 +124,7 @@ const items = [
     },
     {
         Name: "Create",
-        Caption: "Create",
+        Caption: "Create an Idea",
         logo: "/assets/create.svg",
         contentPosition: "middle",
         Items: [
@@ -130,7 +140,7 @@ const items = [
     },
     {
         Name: "Fund",
-        Caption: "Fund",
+        Caption: "Fund an Idea",
         logo: "/assets/fund.svg",
         contentPosition: "right",
         Items: [
@@ -147,15 +157,16 @@ const items = [
 ]
 
 export default function NavCarousel() {
-    const classes = useStyles();
+    const classes = useStyles(themeOptions);
     return (
         <Box
                 display="flex"
                 justifyContent="center"
                 alignItems="center"
                 margin="auto"
+                className={classes.box}
             >
-            <Carousel timeout={900} navButtonsAlwaysVisible>
+            <Carousel interval={10000} navButtonsAlwaysVisible className={classes.carousel}>
             {
                         items.map((item, index) => {
                             return <Banner item={item} key={index} contentPosition={item.contentPosition} />

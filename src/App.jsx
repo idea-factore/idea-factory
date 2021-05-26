@@ -158,8 +158,8 @@ function App(props) {
           </Grid>
         </Grid>
         <FooterLayout>
-        <Footer title="Idea Factory">
-          <Footer.Column isInline>
+        <Footer title="Connect with Us">
+          <Footer.Column>
             <Footer.Item icon={<FaTwitter />} href="https://twitter.com/IdeaFactoryIdea">
               Twitter
             </Footer.Item>

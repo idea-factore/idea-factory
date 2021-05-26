@@ -1,7 +1,7 @@
 {
-  "short_name": "idea-factory App",
+  "short_name": "Idea Factory App",
   "start_url": ".",
-  "name": "Web App for Idea Factory",
+  "name": "Frontend for Idea Factory, allowing users to create and fund the next big idea...",
   "icons": [
     {
       "src": "Idea-Factory.ico",
@@ -14,12 +14,10 @@
       "sizes": "192x192"
     },
     {
-      "src": "Idea-Factory.jpgS",
+      "src": "Idea-Factory.jpg",
       "type": "image/png",
       "sizes": "512x512"
     }
   ],
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "display": "standalone"
 }

@@ -16,6 +16,9 @@ export const themeOptions = createMuiTheme({
       main: '#616161',
     },
   },
+  typography: {
+    fontFamily: 'Titillium Web'
+  },
   props: {
     MuiButtonBase: {
       disableRipple: true,
