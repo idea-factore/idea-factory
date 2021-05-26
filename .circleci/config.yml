@@ -77,6 +77,7 @@ workflows:
             install-command: npm install
             browser: chrome
             start: npm start
+            spec: 'cypress/idea-factory/**'
             post-steps:
               - store_artifacts:
                   path: /coverage
