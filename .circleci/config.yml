@@ -8,6 +8,7 @@ orbs:
   # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/node
   node: circleci/node@4.1
   codecov: codecov/codecov@1.2.1
+  cypress: cypress-io/cypress@1.28.0
 
 
 jobs:
@@ -57,8 +58,6 @@ jobs:
       - run:
           name: Code Coverage
           command:  yarn run codecov
-      - store_artifacts:
-          path: /home/circleci/project/coverage/
 
 
 workflows:
@@ -72,6 +71,18 @@ workflows:
       - build:
           requires:
             - lint
-      - code-coverage
+      - cypress/run:
+            start: yarn start
+            wait-on: "http://localhost:3000"
+            post-steps:
+            - store_artifacts:
+                path: /coverage
+            - persist_to_workspace:
+                root: /
+                paths:
+                  - coverage
+      - code-coverage:
+          requires:
+            - cypress/run
       # For running simple node tests, you could optionally use the node/test job from the orb to replicate and replace the job above in fewer lines.
       # - node/test
