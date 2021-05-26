@@ -76,12 +76,12 @@ workflows:
             start: yarn start
             wait-on: "http-get://localhost:3000"
             post-steps:
-            - store_artifacts:
-                path: /coverage
-            - persist_to_workspace:
-                root: /
-                paths:
-                  - coverage
+              - store_artifacts:
+                  path: /coverage
+              - persist_to_workspace:
+                  root: /
+                  paths:
+                    - coverage
       - code-coverage:
           requires:
             - cypress/run
