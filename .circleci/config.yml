@@ -74,7 +74,7 @@ workflows:
       - cypress/run:
             install-command: npm install
             start: yarn start
-            wait-on: "http-get://172.20.0.3/"
+            wait-on: "http-get://localhost:3000"
             post-steps:
             - store_artifacts:
                 path: /coverage
