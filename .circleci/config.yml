@@ -71,7 +71,7 @@ workflows:
             executor: cypress/browsers-chrome77
             browser: chrome
             start: npm start
-            wait-on: http://$(node -p "require('ip').address()")
+            wait-on: '-c ./wo-config.js'
             spec: '**/idea-factory/**'
             post-steps:
               - store_artifacts:
