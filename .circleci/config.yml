@@ -70,7 +70,7 @@ workflows:
       - cypress/run:
             executor: cypress/browsers-chrome77
             browser: chrome
-            start: npm start
+            start: pm2 --name idea-factory start npm -- start
             wait-on: '-c ./wo-config.js'
             spec: '**/idea-factory/**'
             post-steps:
@@ -83,6 +83,8 @@ workflows:
             requires:
               - cypress/install
             attach-workspace: true
+            environment:
+                PORT: 3000
       # - code-coverage:
          # requires:
          #   - cypress/run
