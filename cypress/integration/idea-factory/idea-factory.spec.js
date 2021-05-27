@@ -2,6 +2,8 @@
 
 context('Actions', () => {
     beforeEach(() => {
+      cy.log(require('ip').address());
+      console.log(require('ip').address())
       cy.visit(`http://:${require('ip').address()}:3000`)
     })
     it('renders home page', () => {
