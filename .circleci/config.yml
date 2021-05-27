@@ -83,8 +83,6 @@ workflows:
             requires:
               - cypress/install
             attach-workspace: true
-            environment:
-                PORT: 3000
       # - code-coverage:
          # requires:
          #   - cypress/run
