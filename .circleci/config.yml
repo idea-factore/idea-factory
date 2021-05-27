@@ -66,11 +66,7 @@ workflows:
       # - build:
           # requires:
           #  - lint
-      - cypress/install:
-            post-install: 
-              steps:
-                name: Install Packages
-                command: npm install
+      - cypress/install
       - cypress/run:
             executor: cypress/browsers-chrome77
             browser: chrome
@@ -86,6 +82,7 @@ workflows:
                     - coverage
             requires:
               - cypress/install
+            attach-workspace: true
       # - code-coverage:
          # requires:
          #   - cypress/run
