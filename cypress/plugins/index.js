@@ -18,6 +18,9 @@
 // eslint-disable-next-line no-unused-vars
 module.exports = (on, config) => {
   require('@cypress/code-coverage/task')(on, config)
+  const ip = require('ip').address();
+
+  config.baseUrl = `http://${ip}`;
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 
