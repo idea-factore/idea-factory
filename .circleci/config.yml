@@ -81,7 +81,7 @@ workflows:
             post-checkout:
                - run:
                   name: storing local IP address
-                  command: node -p "require('ip').address()" > logs/ip.log
+                  command: mkdir logs && node -p "require('ip').address()" > logs/ip.log
                - store_artifacts:
                   path: logs
             post-steps:
