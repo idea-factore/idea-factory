@@ -19,8 +19,9 @@
 module.exports = (on, config) => {
   require('@cypress/code-coverage/task')(on, config)
   const ip = require('ip').address();
-
-  config.baseUrl = `http://${ip}:3000`;
+  const url = `http://${ip}:3000`;
+  console.log(url);
+  config.baseUrl = url;
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 
