@@ -74,16 +74,18 @@ workflows:
       - cypress/install
       - cypress/run:
             executor: cypress/browsers-chrome77
-            install-command: npm install
             browser: chrome
             start: npm start
             spec: '**/idea-factory/**'
             post-checkout:
                - run:
                   name: storing local IP address
-                  command: echo 'export IP=$(node -p "require('ip').address()")' >> $BASH_ENV && echo ${IP}
-            config: 'baseUrl=${IP}' 
+                  command: echo 'export IP=$(node -p "require('ip').address()")' >> $BASH_ENV
+            config: 'baseUrl=$IP'
             post-steps:
+              - run:
+                  name: echo IP
+                  command: echo $IP
               - store_artifacts:
                   path: /coverage
               - persist_to_workspace:
