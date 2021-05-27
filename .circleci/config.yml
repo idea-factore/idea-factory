@@ -81,9 +81,8 @@ workflows:
             post-checkout:
                - run:
                   name: storing local IP address
-                  command: mkdir logs && node -p "require('ip').address()" > logs/ip.log
-               - store_artifacts:
-                  path: logs
+                  command: echo 'export IP=$(node -p "require('ip').address()")' >> $BASH_ENV && echo ${IP}
+            config: 'baseUrl=${IP}' 
             post-steps:
               - store_artifacts:
                   path: /coverage
