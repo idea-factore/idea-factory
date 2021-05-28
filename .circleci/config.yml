@@ -75,11 +75,7 @@ workflows:
             spec: '**/idea-factory/**'
             post-steps:
               - store_artifacts:
-                  path: /coverage
-              - persist_to_workspace:
-                  root: /
-                  paths:
-                    - coverage
+                  path: $CIRCLE_WORKING_DIRECTORY/coverage
             requires:
               - cypress/install
             attach-workspace: true
