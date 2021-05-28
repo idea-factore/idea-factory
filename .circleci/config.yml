@@ -29,8 +29,8 @@ jobs:
       - node/install-packages
       # If you are using yarn instead npm, remove the line above and uncomment the two lines below.
       - run:
-          name: Eslint
-          command: yarn lint
+          name: Check Styling
+          command: yarn check-styling
   build:
     docker:
       - image: cimg/node:15.1

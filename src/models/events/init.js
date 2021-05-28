@@ -1,9 +1,8 @@
-import { loadContractEventsFx, $events } from './';
-
+import { loadContractEventsFx, $events } from './'
 
 /**
  * Create effector store for contract events
- * 
+ *
  *  1. Create store for events of form:
  *      {
  *      contractName: {
@@ -14,18 +13,15 @@ import { loadContractEventsFx, $events } from './';
  */
 
 loadContractEventsFx.use((contract) => {
-    return {
-        [contract.name]: contract.contract.interface.events
-    }
-});
-
+  return {
+    [contract.name]: contract.contract.interface.events
+  }
+})
 
 loadContractEventsFx.done.watch(payload => {
-    console.log("Events loaded: ", payload);
-  })
+  console.log('Events loaded: ', payload)
+})
 
-  loadContractEventsFx.fail.watch(({params, error}) => {
-    console.log('Fail with params', params, 'and error', error)
-  })
-  
-
+loadContractEventsFx.fail.watch(({ params, error }) => {
+  console.log('Fail with params', params, 'and error', error)
+})

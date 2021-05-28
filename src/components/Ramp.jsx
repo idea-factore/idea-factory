@@ -1,76 +1,76 @@
-import React, { useState } from "react";
-import { Button, Modal, Divider } from "antd";
-import { DollarCircleOutlined } from "@ant-design/icons";
-import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk";
+import React, { useState } from 'react'
+import { Button, Modal, Divider } from 'antd'
+import { DollarCircleOutlined } from '@ant-design/icons'
+import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 
-export default function Ramp(props) {
-  const [modalUp, setModalUp] = useState("down");
+export default function Ramp (props) {
+  const [modalUp, setModalUp] = useState('down')
 
-  const type = "default";
+  const type = 'default'
 
   return (
     <div>
       <Button
-        size="large"
-        shape="round"
+        size='large'
+        shape='round'
         onClick={() => {
-          setModalUp("up");
+          setModalUp('up')
         }}
       >
-        <DollarCircleOutlined style={{ color: "#52c41a" }} /> {props.price.toFixed(2)}
+        <DollarCircleOutlined style={{ color: '#52c41a' }} /> {props.price.toFixed(2)}
       </Button>
       <Modal
-        title="Buy ETH"
-        visible={modalUp === "up"}
+        title='Buy ETH'
+        visible={modalUp === 'up'}
         onCancel={() => {
-          setModalUp("down");
+          setModalUp('down')
         }}
         footer={[
           <Button
-            key="back"
+            key='back'
             onClick={() => {
-              setModalUp("down");
+              setModalUp('down')
             }}
           >
             cancel
-          </Button>,
+          </Button>
         ]}
       >
         <p>
           <Button
             type={type}
-            size="large"
-            shape="round"
+            size='large'
+            shape='round'
             onClick={() => {
-              window.open("https://pay.sendwyre.com/purchase?destCurrency=ETH&sourceAmount=25&dest=" + props.address);
+              window.open('https://pay.sendwyre.com/purchase?destCurrency=ETH&sourceAmount=25&dest=' + props.address)
             }}
           >
-            <span style={{ paddingRight: 15 }} role="img">
-              <span role="img" aria-label="flag-us">🇺🇸</span>
+            <span style={{ paddingRight: 15 }} role='img'>
+              <span role='img' aria-label='flag-us'>🇺🇸</span>
             </span>
             Wyre
           </Button>
         </p>
         <p>
-          {" "}
+          {' '}
           <Button
             type={type}
-            size="large"
-            shape="round"
+            size='large'
+            shape='round'
             onClick={() => {
               new RampInstantSDK({
-                hostAppName: "scaffold-eth",
-                hostLogoUrl: "https://scaffoldeth.io/scaffold-eth.png",
-                swapAmount: "100000000000000000", // 0.1 ETH in wei  ?
-                swapAsset: "ETH",
-                userAddress: props.address,
+                hostAppName: 'scaffold-eth',
+                hostLogoUrl: 'https://scaffoldeth.io/scaffold-eth.png',
+                swapAmount: '100000000000000000', // 0.1 ETH in wei  ?
+                swapAsset: 'ETH',
+                userAddress: props.address
               })
-                .on("*", event => console.log(event))
-                .show();
+                .on('*', event => console.log(event))
+                .show()
             }}
           >
-            <span style={{ paddingRight: 15 }} role="img">
-            <span role="img" aria-label="flag-gb">🇬🇧</span>
+            <span style={{ paddingRight: 15 }} role='img'>
+              <span role='img' aria-label='flag-gb'>🇬🇧</span>
             </span>
             Ramp
           </Button>
@@ -79,13 +79,13 @@ export default function Ramp(props) {
         <p>
           <Button
             type={type}
-            size="large"
-            shape="round"
+            size='large'
+            shape='round'
             onClick={() => {
-              window.open("https://www.coinbase.com/buy-ethereum");
+              window.open('https://www.coinbase.com/buy-ethereum')
             }}
           >
-            <span style={{ paddingRight: 15 }} role="img" aria-label="bank">
+            <span style={{ paddingRight: 15 }} role='img' aria-label='bank'>
               🏦
             </span>
             Coinbase
@@ -97,15 +97,15 @@ export default function Ramp(props) {
         <p>
           <Button
             type={type}
-            size="large"
-            shape="round"
+            size='large'
+            shape='round'
             onClick={() => {
-              window.open("https://faucet.rinkeby.io/");
+              window.open('https://faucet.rinkeby.io/')
             }}
           >
-            <span style={{ paddingRight: 15 }} role="img" aria-label="rinkeby">
+            <span style={{ paddingRight: 15 }} role='img' aria-label='rinkeby'>
               🟨
-            </span>{" "}
+            </span>{' '}
             Rinkeby
           </Button>
         </p>
@@ -113,15 +113,15 @@ export default function Ramp(props) {
         <p>
           <Button
             type={type}
-            size="large"
-            shape="round"
+            size='large'
+            shape='round'
             onClick={() => {
-              window.open("https://faucet.ropsten.be/");
+              window.open('https://faucet.ropsten.be/')
             }}
           >
-            <span style={{ paddingRight: 15 }} role="img" aria-label="ropsten">
+            <span style={{ paddingRight: 15 }} role='img' aria-label='ropsten'>
               🟠
-            </span>{" "}
+            </span>{' '}
             Ropsten
           </Button>
         </p>
@@ -129,15 +129,15 @@ export default function Ramp(props) {
         <p>
           <Button
             type={type}
-            size="large"
-            shape="round"
+            size='large'
+            shape='round'
             onClick={() => {
-              window.open("https://faucet.kovan.network/");
+              window.open('https://faucet.kovan.network/')
             }}
           >
-            <span style={{ paddingRight: 15 }} role="img" aria-label="kovan">
+            <span style={{ paddingRight: 15 }} role='img' aria-label='kovan'>
               🟣
-            </span>{" "}
+            </span>{' '}
             Kovan
           </Button>
         </p>
@@ -145,19 +145,19 @@ export default function Ramp(props) {
         <p>
           <Button
             type={type}
-            size="large"
-            shape="round"
+            size='large'
+            shape='round'
             onClick={() => {
-              window.open("https://faucet.goerli.mudit.blog/");
+              window.open('https://faucet.goerli.mudit.blog/')
             }}
           >
-            <span style={{ paddingRight: 15 }} role="img" aria-label="goerli">
+            <span style={{ paddingRight: 15 }} role='img' aria-label='goerli'>
               🔵
-            </span>{" "}
+            </span>{' '}
             Goerli
           </Button>
         </p>
       </Modal>
     </div>
-  );
+  )
 }

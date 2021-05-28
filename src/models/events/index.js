@@ -1,6 +1,5 @@
-import {createStore, createEffect} from 'effector';
+import { createStore, createEffect } from 'effector'
 
+export const loadContractEventsFx = createEffect()
 
-export const loadContractEventsFx = createEffect();
-
-export const $events = createStore(null);
+export const $events = createStore(null)

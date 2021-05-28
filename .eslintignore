@@ -1,3 +1,8 @@
 # folders
 build/
 node_modules/
+.nyc_output
+.circleci
+.github
+public
+.storybook
