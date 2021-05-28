@@ -55,7 +55,7 @@ import Grid from '@material-ui/core/Grid';
     position: "relative"
   },
   logoTitle: {
-    maxWidth: "8%"
+    minWidth: "10%"
   },
 drawer: {
     width: drawerWidth,
@@ -115,7 +115,7 @@ export default function Header({ address, provider, userProvider, wallet }) {
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
       })}>
-        <Toolbar className={classes.toolbar}>
+        <Toolbar className={classes.toolbar} disableGutters={true}>
         <Grid 
           container
           direction="row"
@@ -125,15 +125,15 @@ export default function Header({ address, provider, userProvider, wallet }) {
           {
             //<Menu classes={classes} handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen} open={open}/> 
           }
-          <Grid item container direction="row" className={classes.logoTitle}>
-          <Grid item>
-          <img src={"/image.png"} className={classes.logo}/>
-          </Grid>
-          <Grid item>
-          <Typography align="left" variant="h6" className={classes.title}>
-            Idea Factory
-          </Typography> 
-          </Grid>
+          <Grid item container direction="row" className={classes.logoTitle} xs={2}>
+            <Grid item>
+              <img src={"/image.png"} className={classes.logo}/>
+            </Grid>
+            <Grid item>
+              <Typography align="left" variant="h6" className={classes.title}>
+                Idea Factory
+              </Typography> 
+            </Grid>
           </Grid>
           <Grid item>
           <TabList

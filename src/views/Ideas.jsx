@@ -251,16 +251,10 @@ export default function Ideas({userProvider, poolCoordinator, ideaFactory, userA
                   <Grid item>
                     <Image src={"/assets/empty.svg"} className={classes.media}/>
                     <p>Oh noes :( No Ideas found</p>
-                    <p>Add an Idea  with the button below</p>
+                    <p>Add an Idea on the Idea Page</p>
                   </Grid>
                   </Grid>
                 }
-                {/**
-                 * Add tooltip
-                 */}
-                <Fab color="primary" aria-label="add" className={classes.fab} onClick={() => {console.log('Adding Idea')}}>
-                  <AddIcon />
-                </Fab>
       </Container>
     )
 }
