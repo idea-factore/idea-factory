@@ -49,10 +49,10 @@ workflows:
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
   sample: 
     jobs:
-      # - lint
-      # - build:
-          # requires:
-          #  - lint
+      - lint
+      - build:
+          requires:
+            - lint
       - cypress/install
       - cypress/run:
             executor: cypress/browsers-chrome77
@@ -66,8 +66,3 @@ workflows:
             requires:
               - cypress/install
             attach-workspace: true
-      # - code-coverage:
-         # requires:
-         #   - cypress/run
-      # For running simple node tests, you could optionally use the node/test job from the orb to replicate and replace the job above in fewer lines.
-      # - node/test
