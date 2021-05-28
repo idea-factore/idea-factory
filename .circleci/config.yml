@@ -61,7 +61,7 @@ workflows:
             wait-on: '-c ./wo-config.js'
             spec: '**/idea-factory/**'
             post-steps:
-              - codecov:
+              - codecov/upload:
                   file: ./coverage/lcov.info
             requires:
               - cypress/install
