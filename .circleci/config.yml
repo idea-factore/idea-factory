@@ -40,19 +40,6 @@ jobs:
       - run:
           name: build
           command: yarn build 
-  code-coverage:
-    docker:
-      - image: cimg/node:15.1
-    environment:
-      CODECOV_TOKEN: 'c1fa0bc9-b439-4986-b9f9-2e59a05f217b'
-    steps:
-      - checkout
-      - node/install-packages:
-           pkg-manager: yarn
-           override-ci-command: yarn install
-      - run:
-          name: Code Coverage
-          command:  yarn run codecov
 
 
 workflows:
@@ -74,9 +61,8 @@ workflows:
             wait-on: '-c ./wo-config.js'
             spec: '**/idea-factory/**'
             post-steps:
-              - run: cd coverage && ls && npx nyc report --reporter=text-summary
-              - store_artifacts:
-                  path: /coverage
+              - codecov:
+                  file: ./coverage/lcov.info
             requires:
               - cypress/install
             attach-workspace: true
