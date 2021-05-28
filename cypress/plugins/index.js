@@ -20,8 +20,6 @@ module.exports = (on, config) => {
   require('@cypress/code-coverage/task')(on, config)
   const ip = require('ip').address();
   const url = `http://${ip}:3000`;
-  console.log(url);
-  console.log(config.baseUrl);
   
   config.baseUrl = config.baseUrl || url;
   // `on` is used to hook into various events Cypress emits

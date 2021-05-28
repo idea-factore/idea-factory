@@ -74,8 +74,9 @@ workflows:
             wait-on: '-c ./wo-config.js'
             spec: '**/idea-factory/**'
             post-steps:
+              - run: cd coverage && ls && npx nyc report --reporter=text-summary
               - store_artifacts:
-                  path: $CIRCLE_WORKING_DIRECTORY/coverage
+                  path: /coverage
             requires:
               - cypress/install
             attach-workspace: true
