@@ -155,10 +155,10 @@ function App (props) {
         <FooterLayout>
           <Footer title='Connect with Us'>
             <Footer.Column>
-              <Footer.Item icon={<FaTwitter />} href='https://twitter.com/IdeaFactoryIdea'>
+              <Footer.Item data-cy="twitter" icon={<FaTwitter />} href='https://twitter.com/IdeaFactoryIdea'>
                 Twitter
               </Footer.Item>
-              <Footer.Item icon={<FaDiscord />} href='https://discord.gg/rv9sJxSuWs'>
+              <Footer.Item data-cy="discord" icon={<FaDiscord />} href='https://discord.gg/rv9sJxSuWs'>
                 Discord
               </Footer.Item>
             </Footer.Column>
