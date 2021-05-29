@@ -9,6 +9,7 @@ import Button from '@material-ui/core/Button'
 export default function Popup ({ title, confirmText, onCreate, visible, onCancel, render, validate }) {
   return (
     <Dialog
+      data-cy={title}
       open={visible}
       onClose={onCancel}
     >

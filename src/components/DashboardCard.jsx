@@ -38,7 +38,7 @@ const DashboardCard = ({ title, type, data, header = true, actions }) => {
      * add default value for header
      */
   return (
-    <Card raised={false}>
+    <Card data-cy={title} raised={false}>
       {header &&
         <CardHeader
           title={title}

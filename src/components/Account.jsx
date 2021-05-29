@@ -32,11 +32,11 @@ export default function Account ({
         <div>
           <div>Account: {wallet.account}</div>
           <div>Balance: <TokenBalance address={address} contract={tokenKovan} /></div>
-          <Button onClick={() => wallet.reset()}>disconnect</Button>
+          <Button data-cy="wallet" onClick={() => wallet.reset()}>disconnect</Button>
         </div>
       ) : (
         <div>
-          <Button color='secondary' variant='outlined' onClick={() => wallet.connect()}>Connect</Button>
+          <Button data-cy="wallet" color='secondary' variant='outlined' onClick={() => wallet.connect()}>Connect</Button>
         </div>
       )}
     </span>

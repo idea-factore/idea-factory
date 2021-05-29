@@ -164,6 +164,7 @@ export default function NavCarousel () {
       alignItems='center'
       margin='auto'
       className={classes.box}
+      data-cy="carosel"
     >
       <Carousel interval={10000} navButtonsAlwaysVisible className={classes.carousel}>
         {

@@ -143,10 +143,10 @@ export default function Header ({ address, provider, userProvider, wallet }) {
                   aria-label='nav tabs example'
                   className='navbar'
                 >
-                  <Tab component={Link} label='Home' value='1' to='/' />
-                  <Tab component={Link} label='Portfolio' value='2' to='/' />
-                  <Tab component={Link} label='Market' value='3' to='/' />
-                  <Tab component={Link} label='Pools' value='4' to='/pools' />
+                  <Tab data-cy="home" component={Link} label='Home' value='1' to='/' />
+                  <Tab data-cy="portfolio" component={Link} label='Portfolio' value='2' to='/' />
+                  <Tab data-cy="market" component={Link} label='Market' value='3' to='/' />
+                  <Tab data-cy="pools" component={Link} label='Pools' value='4' to='/pools' />
                 </TabList>
               </Grid>
               <Grid item>

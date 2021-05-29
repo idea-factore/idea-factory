@@ -105,7 +105,7 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
 
   return (
 
-    <Container className={classes.root}>
+    <Container data-cy="pools-page" className={classes.root}>
       <Popup
         visible={visible}
         onCancel={() => {
@@ -118,13 +118,14 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
             <TextField label='Name' name='name' required />
             <TextField label='Description' name='description' required={false} />
             <Button
+              data-cy="cancel"
               autoFocus onClick={() => {
                 setVisible(false)
               }} color='primary'
             >
               Cancel
             </Button>
-            <Button type='submit' color='primary'>
+            <Button data-cy="submit" type='submit' color='primary'>
               Create
             </Button>
           </form>
@@ -156,6 +157,7 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
                         </Grid>
                         <Grid item>
                           <SearchBar
+                            data-cy="searchbar"
                             className={classes.search}
                             onChange={() => console.log('onChange')}
                             onRequestSearch={() => console.log('onRequestSearch')}
@@ -169,7 +171,7 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
                       {/**
                      * Use DashboardCard component?
                      */}
-                      <Grid item>
+                      <Grid item data-cy="search-result">
                         <DashboardCard
                           header={false}
                           data={pools.map(item => {
@@ -238,7 +240,7 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
       {/**
                  * Add tooltip
                  */}
-      <Fab color='primary' aria-label='add' className={classes.fab} onClick={() => { setVisible(true) }}>
+      <Fab data-cy="add-pool" color='primary' aria-label='add' className={classes.fab} onClick={() => { setVisible(true) }}>
         <AddIcon />
       </Fab>
     </Container>

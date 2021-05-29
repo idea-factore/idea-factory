@@ -21,7 +21,7 @@ module.exports = (on, config) => {
   const ip = require('ip').address();
   const url = `http://${ip}:3000`;
   
-  config.baseUrl = config.baseUrl || url;
+  config.baseUrl = process.env.CI ? url : 'http://localhost:3000';
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 
