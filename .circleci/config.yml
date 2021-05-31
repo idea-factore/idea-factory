@@ -69,9 +69,5 @@ workflows:
               - cypress/install
             attach-workspace: true
       - stackhawk/hawkscan-local:
-          steps:
-            - run:
-                command: yarn install && npx pm2 --name idea-factory start npm -- start
-                name: Start localhost
           requires:
               - cypress/install
