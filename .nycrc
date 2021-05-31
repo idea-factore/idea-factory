@@ -1,0 +1,11 @@
+{
+    "extension": [
+      ".ts",
+      ".tsx",
+      ".jsx",
+      ".js"
+    ],
+    "exclude": [
+      "**/test/**"
+    ]
+}
