@@ -2,7 +2,6 @@ import { getAddressFx, getGasPriceFx, getProviderFx, $gasPrice, $address, $provi
 import { loadContractFx } from '../contracts/index'
 import { combine, forward } from 'effector'
 import provider from 'eth-provider'
-import web3 from 'web3'
 import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers'
 import { FACTORY_ABI, pool_abi } from '../../constants'
 
