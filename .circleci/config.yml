@@ -68,6 +68,6 @@ workflows:
             requires:
               - cypress/install
             attach-workspace: true
-      - stackhawk/hawkscan-local:
-          requires:
-              - cypress/install
+      - stackhawk/hawkscan-remote:
+          configuration-files: stackhawk.yml
+          host: 'https://idea-factory-v01.onrender.com/'
