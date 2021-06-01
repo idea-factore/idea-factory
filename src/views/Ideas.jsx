@@ -91,7 +91,7 @@ export default function Ideas ({ userProvider, poolCoordinator, ideaFactory, use
         setIdea(res)
       })
     })
-  }, [event])
+  }, [event, address, poolCoordinator, ideaFactory])
 
   const voteOnIdea = (values) => {
     console.log('Voting on idea: ', values)

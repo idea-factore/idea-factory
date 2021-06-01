@@ -74,7 +74,7 @@ export default function ChildPools ({ purpose, events, mainnetProvider, userProv
       console.log('Got data ', result)
       setCategory(result)
     })
-  }, [])
+  }, [address, poolCoordinator])
   useEffect(() => {
     poolCoordinator.contract.getChildPools(address).then(res => {
       const data = res.map(pool => {
@@ -85,7 +85,7 @@ export default function ChildPools ({ purpose, events, mainnetProvider, userProv
         setChildPool(result)
       })
     })
-  }, [event])
+  }, [event, address, poolCoordinator])
 
   /**
      * TODO

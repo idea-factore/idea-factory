@@ -59,7 +59,7 @@ function App (props) {
   // Grab user address and balance when they connect a wallet
   useEffect(() => {
     getAddressFx({ account: wallet.account, balance: wallet.balance })
-  }, [wallet.status])
+  }, [wallet])
   // I don't believe we need this, as we use eth-provider to load providers
   // Right now all this does is return the provider we pass in.
   const userProvider = useUserProvider(ethHooks.provider)

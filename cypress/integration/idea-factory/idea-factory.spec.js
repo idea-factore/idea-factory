@@ -59,7 +59,7 @@ context('App Rendering', () => {
       cy.get('[data-cy=add-pool]').click()
       cy.get('[data-cy="Create a new Pool"]').as('popup')
       cy.get('@popup').should('be.visible').contains("Create a new Pool")
-      cy.get('[data-cy=pools]').click({force: true})
+      cy.get('[data-cy=cancel]').click()
       cy.get('@popup').should('not.exist')
     })
   })

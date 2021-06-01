@@ -55,7 +55,7 @@ function Banner (props) {
   const content = (
     <Grid item xs={12 / totalItems} key='content'>
       <CardContent className={classes.body}>
-        <img src={props.item.logo} height='100' width='350' />
+        <img src={props.item.logo} height='100' width='350' alt={props.item.Caption} />
       </CardContent>
       <CardActions className={classes.actions}>
         <br />

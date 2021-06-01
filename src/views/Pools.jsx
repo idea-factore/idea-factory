@@ -87,7 +87,7 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
   useEffect(() => {
     getPools()
     setLoading(false)
-  }, [event])
+  }, [event, getPools])
   const createPool = (values) => {
     console.log('Received values of form: ', values)
     setVisible(false)
