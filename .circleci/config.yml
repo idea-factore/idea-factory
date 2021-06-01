@@ -42,6 +42,11 @@ jobs:
       - run:
           name: build
           command: yarn build
+  deploy:
+      steps:
+        - run:
+            name: deploy
+            command: curl https://api.render.com/deploy/srv-c2qipjb2v8p1q1jmcom0?key=PDeA5VT8bdQ
 
 
 workflows:
@@ -68,6 +73,12 @@ workflows:
             requires:
               - cypress/install
             attach-workspace: true
+      - deploy:
+          requires:
+            - build
+            - cypress/run
       - stackhawk/hawkscan-remote:
           configuration-files: stackhawk.yml
-          host: 'https://idea-factory-v01.onrender.com/'
+          host: 'https://beta.idea-factory.co'
+          requires:
+            - deploy
