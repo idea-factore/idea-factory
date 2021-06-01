@@ -62,7 +62,8 @@ workflows:
       - build:
           requires:
             - lint
-      - cypress/install
+      - cypress/install:
+          yarn: true
       - cypress/run:
             executor: cypress/browsers-chrome77
             browser: chrome
