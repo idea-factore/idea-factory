@@ -127,7 +127,7 @@ export default function Header ({ address, provider, userProvider, wallet }) {
           }
               <Grid item container direction='row' className={classes.logoTitle} xs={2}>
                 <Grid item>
-                  <img src='/image.png' className={classes.logo} alt="idea-factory logo"/>
+                  <img src='/image.png' className={classes.logo} alt='idea-factory logo' />
                 </Grid>
                 <Grid item>
                   <Typography align='left' variant='h6' className={classes.title}>
