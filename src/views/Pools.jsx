@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import Container from '@material-ui/core/Container'
 import { makeStyles } from '@material-ui/core/styles'
@@ -84,10 +84,13 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
       console.log('No web3 :(')
     }
   }
-  useEffect(() => {
+  const poolCallback = useCallback(() => {
     getPools()
     setLoading(false)
-  }, [event, getPools])
+  }, [])
+  useEffect(() => {
+      poolCallback()
+  }, [event])
   const createPool = (values) => {
     console.log('Received values of form: ', values)
     setVisible(false)
