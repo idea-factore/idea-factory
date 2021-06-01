@@ -560,7 +560,7 @@ export const FACTORY_ABI = [
     type: 'function'
   }
 ]
-export const pool_abi = [
+export const POOL_ABI = [
   {
     inputs: [
       {

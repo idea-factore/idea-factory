@@ -1,6 +1,6 @@
 import { loadContractFx, $contracts } from './'
 import { Contract } from '@ethersproject/contracts'
-import { combine, forward } from 'effector'
+import { forward } from 'effector'
 import { loadContractEventsFx } from '../events'
 
 loadContractFx.use(async ({ provider, address, ABI, name }) => {
@@ -33,7 +33,7 @@ loadContractFx.use(async ({ provider, address, ABI, name }) => {
     }
   }
 })
-const unsub = loadContractFx.watch(payload => {
+loadContractFx.watch(payload => {
   console.log('Load contract called with ', payload)
 })
 loadContractFx.doneData.watch(payload => {

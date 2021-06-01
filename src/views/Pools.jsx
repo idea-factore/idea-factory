@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Container from '@material-ui/core/Container'
 import { makeStyles } from '@material-ui/core/styles'
-import Input from '@material-ui/core/Input'
 import Grid from '@material-ui/core/Grid'
 import { parseBytes32String, formatBytes32String } from '@ethersproject/strings'
 import Image from 'material-ui-image'
@@ -64,6 +63,7 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
 
   const listener = (event) => {
     setEvent(event)
+    console.log(loading)
   }
   poolCoordinator.contract.on('createdPool', listener)
   const getPools = () => {
@@ -105,7 +105,7 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
 
   return (
 
-    <Container data-cy="pools-page" className={classes.root}>
+    <Container data-cy='pools-page' className={classes.root}>
       <Popup
         visible={visible}
         onCancel={() => {
@@ -118,14 +118,14 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
             <TextField label='Name' name='name' required />
             <TextField label='Description' name='description' required={false} />
             <Button
-              data-cy="cancel"
+              data-cy='cancel'
               autoFocus onClick={() => {
                 setVisible(false)
               }} color='primary'
             >
               Cancel
             </Button>
-            <Button data-cy="submit" type='submit' color='primary'>
+            <Button data-cy='submit' type='submit' color='primary'>
               Create
             </Button>
           </form>
@@ -157,7 +157,7 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
                         </Grid>
                         <Grid item>
                           <SearchBar
-                            data-cy="searchbar"
+                            data-cy='searchbar'
                             className={classes.search}
                             onChange={() => console.log('onChange')}
                             onRequestSearch={() => console.log('onRequestSearch')}
@@ -171,7 +171,7 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
                       {/**
                      * Use DashboardCard component?
                      */}
-                      <Grid item data-cy="search-result">
+                      <Grid item data-cy='search-result'>
                         <DashboardCard
                           header={false}
                           data={pools.map(item => {
@@ -195,7 +195,7 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
                     </Grid>
                 }
       {
-                   (pools && pools.length == 0) &&
+                   (pools && pools.length === 0) &&
                      <Grid
                        container
                        direction='row'
@@ -240,7 +240,7 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
       {/**
                  * Add tooltip
                  */}
-      <Fab data-cy="add-pool" color='primary' aria-label='add' className={classes.fab} onClick={() => { setVisible(true) }}>
+      <Fab data-cy='add-pool' color='primary' aria-label='add' className={classes.fab} onClick={() => { setVisible(true) }}>
         <AddIcon />
       </Fab>
     </Container>

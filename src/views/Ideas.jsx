@@ -2,14 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { parseBytes32String } from '@ethersproject/strings'
 import { BigNumber } from '@ethersproject/bignumber'
-
 import Container from '@material-ui/core/Container'
 import { makeStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import Image from 'material-ui-image'
 import SearchBar from 'material-ui-search-bar'
-import Fab from '@material-ui/core/Fab'
-import AddIcon from '@material-ui/icons/Add'
 import Button from '@material-ui/core/Button'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import Typography from '@material-ui/core/Typography'
@@ -204,7 +201,7 @@ export default function Ideas ({ userProvider, poolCoordinator, ideaFactory, use
                     </Grid>
                 }
       {
-                   (ideas && ideas.length == 0) &&
+                   (ideas && ideas.length === 0) &&
                      <Grid
                        container
                        direction='column'

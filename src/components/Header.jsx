@@ -4,13 +4,13 @@ import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import { themeOptions } from './Theme'
-import { Account, Menu } from './index'
+import { Account } from './index'
 import clsx from 'clsx'
 import Tab from '@material-ui/core/Tab'
 import TabContext from '@material-ui/lab/TabContext'
 import TabList from '@material-ui/lab/TabList'
-import TabPanel from '@material-ui/lab/TabPanel'
-import Paper from '@material-ui/core/Paper'
+// import TabPanel from '@material-ui/lab/TabPanel'
+// import Paper from '@material-ui/core/Paper'
 import { Link } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid'
 
@@ -86,22 +86,21 @@ const useStyles = makeStyles((theme) => ({
 // TODO: Shift content over when menu open?
 export default function Header ({ address, provider, userProvider, wallet }) {
   const classes = useStyles(themeOptions)
-  const [open, setOpen] = useState(false)
+  const open = false
   const [value, setValue] = useState(1)
 
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
-
-  const handleDrawerOpen = () => {
-    setOpen(true)
-  }
-
-  const handleDrawerClose = () => {
-    console.log('Closing drawer from Link')
-    setOpen(false)
-  }
   /**
+    const handleDrawerOpen = () => {
+      setOpen(true)
+    }
+
+    const handleDrawerClose = () => {
+      console.log('Closing drawer from Link')
+      setOpen(false)
+    }
    * TOODO:
    *
    * Look at using Tabbed Navigation instead
@@ -143,10 +142,10 @@ export default function Header ({ address, provider, userProvider, wallet }) {
                   aria-label='nav tabs example'
                   className='navbar'
                 >
-                  <Tab data-cy="home" component={Link} label='Home' value='1' to='/' />
-                  <Tab data-cy="portfolio" component={Link} label='Portfolio' value='2' to='/' />
-                  <Tab data-cy="market" component={Link} label='Market' value='3' to='/' />
-                  <Tab data-cy="pools" component={Link} label='Pools' value='4' to='/pools' />
+                  <Tab data-cy='home' component={Link} label='Home' value='1' to='/' />
+                  <Tab data-cy='portfolio' component={Link} label='Portfolio' value='2' to='/' />
+                  <Tab data-cy='market' component={Link} label='Market' value='3' to='/' />
+                  <Tab data-cy='pools' component={Link} label='Pools' value='4' to='/pools' />
                 </TabList>
               </Grid>
               <Grid item>

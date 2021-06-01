@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
@@ -11,7 +11,7 @@ import clsx from 'clsx'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
-import Button from '@material-ui/core/Button'
+// import Button from '@material-ui/core/Button'
 import List from '@material-ui/core/List'
 import { Link as RouterLink } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles'
@@ -52,10 +52,6 @@ ListItemLink.propTypes = {
 }
 
 export default function Menu ({ classes, open, handleDrawerOpen, handleDrawerClose }) {
-  const [route, setRoute] = useState()
-  useEffect(() => {
-    setRoute(window.location.pathname)
-  }, [setRoute])
   return (
     <span>
       <IconButton

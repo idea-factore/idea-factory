@@ -1,7 +1,6 @@
 import React from 'react'
-import { ThemeProvider } from '@material-ui/core/styles'
 
-import { Header, themeOptions } from '../components'
+import { Header } from '../components'
 
 export default {
   title: 'Idea-Factory/Header',

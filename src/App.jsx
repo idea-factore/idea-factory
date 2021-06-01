@@ -1,13 +1,13 @@
-import React, { useEffect, useState, Suspense } from 'react'
+import React, { useEffect, Suspense } from 'react'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import './App.css'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useUserProvider } from './hooks'
 import { Header } from './components'
 import { Transactor } from './helpers'
-import { loadContractFx, $contracts } from './models/contracts/index'
+import { $contracts } from './models/contracts/index'
 import { getProviderFx, getGasPriceFx, getAddressFx } from './models/eth-hooks/index'
-import { $eth_hooks } from './models/eth-hooks/init'
+import { $ethHooks } from './models/eth-hooks/init'
 import { useStore } from 'effector-react'
 import { useWallet } from 'use-wallet'
 import Paper from '@material-ui/core/Paper'
@@ -19,23 +19,12 @@ import styled from 'styled-components'
 import {
   getHeader,
   getContent,
-  getDrawerSidebar,
-  getSidebarContent,
-  getFooter,
-  getSidebarTrigger,
-  getCollapseBtn
+  getFooter
 } from '@mui-treasury/layout'
 
 const HeaderLayout = getHeader(styled)
 const Content = getContent(styled)
-const DrawerSidebar = getDrawerSidebar(styled)
-const SidebarContent = getSidebarContent(styled)
 const FooterLayout = getFooter(styled)
-const SidebarTrigger = getSidebarTrigger(styled)
-const CollapseBtn = getCollapseBtn(styled)
-
-// 😬 Sorry for all the console logging 🤡
-const DEBUG = true
 
 const Pools = React.lazy(() => import('./views/Pools'))
 const ChildPool = React.lazy(() => import('./views/ChildPool'))
@@ -56,7 +45,7 @@ const Home = React.lazy(() => import('./views/Home'))
 
 function App (props) {
   const contracts = useStore($contracts)
-  const eth_hooks = useStore($eth_hooks)
+  const ethHooks = useStore($ethHooks)
   const wallet = useWallet()
 
   useEffect(() => {
@@ -73,15 +62,10 @@ function App (props) {
   }, [wallet.status])
   // I don't believe we need this, as we use eth-provider to load providers
   // Right now all this does is return the provider we pass in.
-  const userProvider = useUserProvider(eth_hooks.provider)
+  const userProvider = useUserProvider(ethHooks.provider)
   // make our own address hook using useWallet
   // The transactor wraps transactions and provides notificiations
-  const tx = Transactor(userProvider, eth_hooks.gasPrice)
-
-  const [route, setRoute] = useState()
-  useEffect(() => {
-    setRoute(window.location.pathname)
-  }, [setRoute])
+  const tx = Transactor(userProvider, ethHooks.gasPrice)
 
   return (
     <BrowserRouter>
@@ -90,7 +74,7 @@ function App (props) {
         <Grid container direction='column' wrap='nowrap'>
           <Grid item>
             <HeaderLayout>
-              <Header address={eth_hooks.address} userProvider={userProvider} localProvider={eth_hooks.provider} wallet={wallet} />
+              <Header address={ethHooks.address} userProvider={userProvider} localProvider={ethHooks.provider} wallet={wallet} />
             </HeaderLayout>
           </Grid>
           {
@@ -119,9 +103,9 @@ function App (props) {
                   <Route path='/pools'>
                     {contracts.poolCoordinator &&
                       <Pools
-                        address={eth_hooks.address}
+                        address={ethHooks.address}
                         userProvider={userProvider}
-                        localProvider={eth_hooks.provider}
+                        localProvider={ethHooks.provider}
                         tx={tx}
                         poolCoordinator={contracts.poolCoordinator}
                       />}
@@ -130,7 +114,7 @@ function App (props) {
                     {contracts.poolCoordinator && contracts.ideaFactory &&
                       <ChildPool
                         userProvider={userProvider}
-                        localProvider={eth_hooks.provider}
+                        localProvider={ethHooks.provider}
                         tx={tx}
                         poolCoordinator={contracts.poolCoordinator}
                         ideaFactory={contracts.ideaFactory}
@@ -139,9 +123,9 @@ function App (props) {
                   <Route path='/ideas/:address'>
                     {contracts.poolCoordinator && contracts.ideaFactory &&
                       <Ideas
-                        userAddress={eth_hooks.address}
+                        userAddress={ethHooks.address}
                         userProvider={userProvider}
-                        localProvider={eth_hooks.provider}
+                        localProvider={ethHooks.provider}
                         tx={tx}
                         poolCoordinator={contracts.poolCoordinator}
                         ideaFactory={contracts.ideaFactory}
@@ -155,10 +139,10 @@ function App (props) {
         <FooterLayout>
           <Footer title='Connect with Us'>
             <Footer.Column>
-              <Footer.Item data-cy="twitter" icon={<FaTwitter />} href='https://twitter.com/IdeaFactoryIdea'>
+              <Footer.Item data-cy='twitter' icon={<FaTwitter />} href='https://twitter.com/IdeaFactoryIdea'>
                 Twitter
               </Footer.Item>
-              <Footer.Item data-cy="discord" icon={<FaDiscord />} href='https://discord.gg/rv9sJxSuWs'>
+              <Footer.Item data-cy='discord' icon={<FaDiscord />} href='https://discord.gg/rv9sJxSuWs'>
                 Discord
               </Footer.Item>
             </Footer.Column>

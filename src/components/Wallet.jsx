@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { WalletOutlined, QrcodeOutlined, SendOutlined, KeyOutlined } from '@ant-design/icons'
 import { Tooltip, Spin, Modal, Button, Typography } from 'antd'
-import QR from 'qrcode.react'
+import { QR as QrCode } from 'qrcode.react'
 import { parseEther } from '@ethersproject/units'
 import { useUserAddress } from 'eth-hooks'
 import { Transactor } from '../helpers'
@@ -35,25 +35,27 @@ export default function Wallet (props) {
   const [toAddress, setToAddress] = useState()
   const [pk, setPK] = useState()
 
-  const providerSend = props.provider ? (
-    <Tooltip title='Wallet'>
-      <WalletOutlined
-        onClick={() => {
-          setOpen(!open)
-        }}
-        rotate={-90}
-        style={{
-          padding: 7,
-          color: props.color ? props.color : '#1890ff',
-          cursor: 'pointer',
-          fontSize: 28,
-          verticalAlign: 'middle'
-        }}
-      />
-    </Tooltip>
-  ) : (
-    ''
-  )
+  const providerSend = props.provider
+    ? (
+      <Tooltip title='Wallet'>
+        <WalletOutlined
+          onClick={() => {
+            setOpen(!open)
+          }}
+          rotate={-90}
+          style={{
+            padding: 7,
+            color: props.color ? props.color : '#1890ff',
+            cursor: 'pointer',
+            fontSize: 28,
+            verticalAlign: 'middle'
+          }}
+        />
+      </Tooltip>
+      )
+    : (
+        ''
+      )
 
   let display
   let receiveButton
@@ -64,7 +66,7 @@ export default function Wallet (props) {
         <div>
           <Text copyable>{selectedAddress}</Text>
         </div>
-        <QR
+        <QrCode
           value={selectedAddress}
           size='450'
           level='H'
@@ -90,7 +92,7 @@ export default function Wallet (props) {
       </Button>
     )
   } else if (pk) {
-    const pk = localStorage.getItem('metaPrivateKey')
+    const pk = window.localStorage.getItem('metaPrivateKey')
     const wallet = new ethers.Wallet(pk)
 
     if (wallet.address !== selectedAddress) {
@@ -110,10 +112,10 @@ export default function Wallet (props) {
           </a>
         </div>
       )
-      for (const key in localStorage) {
+      for (const key in window.localStorage) {
         if (key.indexOf('metaPrivateKey_backup') >= 0) {
           console.log(key)
-          const pastpk = localStorage.getItem(key)
+          const pastpk = window.localStorage.getItem(key)
           const pastwallet = new ethers.Wallet(pastpk)
           if (!extraPkDisplayAdded[pastwallet.address] /* && selectedAddress!=pastwallet.address */) {
             extraPkDisplayAdded[pastwallet.address] = true
@@ -141,31 +143,33 @@ export default function Wallet (props) {
           <i>Point your camera phone at qr code to open in
             <a target='_blank' href={'https://xdai.io/' + pk} rel='noopener noreferrer'>burner wallet</a>:
           </i>
-          <QR value={'https://xdai.io/' + pk} size='450' level='H' includeMargin renderAs='svg' imageSettings={{ excavate: false }} />
+          <QrCode value={'https://xdai.io/' + pk} size='450' level='H' includeMargin renderAs='svg' imageSettings={{ excavate: false }} />
 
           <Paragraph style={{ fontSize: '16' }} copyable>{'https://xdai.io/' + pk}</Paragraph>
 
-          {extraPkDisplay ? (
-            <div>
-              <h3>
-                Known Private Keys:
-              </h3>
-              {extraPkDisplay}
-              <Button onClick={() => {
-                const currentPrivateKey = window.localStorage.getItem('metaPrivateKey')
-                if (currentPrivateKey) {
-                  window.localStorage.setItem('metaPrivateKey_backup' + Date.now(), currentPrivateKey)
-                }
-                const randomWallet = ethers.Wallet.createRandom()
-                const privateKey = randomWallet._signingKey().privateKey
-                window.localStorage.setItem('metaPrivateKey', privateKey)
-                window.location.reload()
-              }}
-              >
-                Generate
-              </Button>
-            </div>
-          ) : ''}
+          {extraPkDisplay
+            ? (
+              <div>
+                <h3>
+                  Known Private Keys:
+                </h3>
+                {extraPkDisplay}
+                <Button onClick={() => {
+                  const currentPrivateKey = window.localStorage.getItem('metaPrivateKey')
+                  if (currentPrivateKey) {
+                    window.localStorage.setItem('metaPrivateKey_backup' + Date.now(), currentPrivateKey)
+                  }
+                  const randomWallet = ethers.Wallet.createRandom()
+                  const privateKey = randomWallet._signingKey().privateKey
+                  window.localStorage.setItem('metaPrivateKey', privateKey)
+                  window.location.reload()
+                }}
+                >
+                  Generate
+                </Button>
+              </div>
+              )
+            : ''}
 
         </div>
       )

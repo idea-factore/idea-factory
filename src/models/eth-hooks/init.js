@@ -2,8 +2,9 @@ import { getAddressFx, getGasPriceFx, getProviderFx, $gasPrice, $address, $provi
 import { loadContractFx } from '../contracts/index'
 import { combine, forward } from 'effector'
 import provider from 'eth-provider'
-import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers'
-import { FACTORY_ABI, pool_abi } from '../../constants'
+import { Web3Provider } from '@ethersproject/providers'
+import { FACTORY_ABI, POOL_ABI } from '../../constants'
+import fetch from 'cross-fetch'
 
 /**
  * TODO:
@@ -61,13 +62,13 @@ forward({
     provider: result,
     name: 'poolCoordinator',
     address: '0x2B193D5016981EEEbd3F663aC7ecA52e85d31325',
-    ABI: pool_abi
+    ABI: POOL_ABI
   })),
   to: loadContractFx
 })
 
 // combine above stores into single store
-export const $eth_hooks = combine({
+export const $ethHooks = combine({
   gasPrice: $gasPrice,
   address: $address,
   provider: $provider

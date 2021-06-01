@@ -54,8 +54,8 @@ const DashboardCard = ({ title, type, data, header = true, actions }) => {
           {type === 'list' &&
                     data.map((item, index) => {
                       return (
-                        <Grid item>
-                          <Card className={classes.card} key={index}>
+                        <Grid item key={item.name}>
+                          <Card className={classes.card}>
                             <CardActionArea>
                               <CardMedia
                                 className={classes.media}

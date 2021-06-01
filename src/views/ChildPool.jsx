@@ -4,7 +4,6 @@ import { parseBytes32String } from '@ethersproject/strings'
 
 import Container from '@material-ui/core/Container'
 import { makeStyles } from '@material-ui/core/styles'
-import Input from '@material-ui/core/Input'
 import Grid from '@material-ui/core/Grid'
 import Image from 'material-ui-image'
 import SearchBar from 'material-ui-search-bar'
@@ -58,11 +57,9 @@ const useStyles = makeStyles((theme) => ({
 export default function ChildPools ({ purpose, events, mainnetProvider, userProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, poolCoordinator, ideaFactory }) {
   const { address } = useParams()
   const [visible, setVisible] = useState(false)
-  const [visibleIdea, setVisibleIdea] = useState(false)
   const [childPools, setChildPool] = useState([])
   const [category, setCategory] = useState(null)
   const [event, setEvent] = useState({})
-  const [currentPool, setCurrentPool] = useState()
   const classes = useStyles(themeOptions)
 
   const listener = (event) => {
@@ -99,7 +96,8 @@ export default function ChildPools ({ purpose, events, mainnetProvider, userProv
     poolCoordinator.contract.connect(userProvider.getSigner()).createChildPool(values.name, values.description, address)
     setVisible(false)
   }
-
+  /**
+   * Move to idea creation page
   const createdIdea = (values) => {
     console.log('Created idea with ', values)
     const result = ideaFactory.connect(userProvider.getSigner()).mintIdea(values.name, values.description, values.stake).then(res => {
@@ -110,12 +108,9 @@ export default function ChildPools ({ purpose, events, mainnetProvider, userProv
         })
       })
     })
-    // call PoolCoordinator to mint idea and pass in the amount of vote tokens
-    // this will deposit vote tokens to pool coordinator from the current user
-    // this will mint a new idea, and add that amount of votes to the idea
-    // this will set the inital value of an idea. For now, we will just pretend that 1 VOTE==1 dollar
     setVisibleIdea(false)
   }
+  */
 
   async function validate (values) {
     if (!values.name) {
@@ -215,7 +210,7 @@ export default function ChildPools ({ purpose, events, mainnetProvider, userProv
                     </Grid>
                 }
       {
-                   (childPools && childPools.length == 0) &&
+                   (childPools && childPools.length === 0) &&
                      <Grid
                        container
                        direction='column'

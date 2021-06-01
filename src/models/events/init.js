@@ -1,4 +1,4 @@
-import { loadContractEventsFx, $events } from './'
+import { loadContractEventsFx } from './'
 
 /**
  * Create effector store for contract events

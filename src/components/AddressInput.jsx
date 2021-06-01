@@ -71,44 +71,46 @@ export default function AddressInput (props) {
     [ensProvider, onChange]
   )
 
-  const scanner = scan ? (
-    <div
-      style={{
-        zIndex: 256,
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        width: '100%'
-      }}
-      onClick={() => {
-        setScan(false)
-      }}
-    >
-      <QrReader
-        delay={250}
-        resolution={1200}
-        onError={e => {
-          console.log('SCAN ERROR', e)
+  const scanner = scan
+    ? (
+      <div
+        style={{
+          zIndex: 256,
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          width: '100%'
+        }}
+        onClick={() => {
           setScan(false)
         }}
-        onScan={newValue => {
-          if (newValue) {
-            console.log('SCAN VALUE', newValue)
-            let possibleNewValue = newValue
-            if (possibleNewValue.indexOf('/') >= 0) {
-              possibleNewValue = possibleNewValue.substr(possibleNewValue.lastIndexOf('0x'))
-              console.log('CLEANED VALUE', possibleNewValue)
-            }
+      >
+        <QrReader
+          delay={250}
+          resolution={1200}
+          onError={e => {
+            console.log('SCAN ERROR', e)
             setScan(false)
-            updateAddress(possibleNewValue)
-          }
-        }}
-        style={{ width: '100%' }}
-      />
-    </div>
-  ) : (
-    ''
-  )
+          }}
+          onScan={newValue => {
+            if (newValue) {
+              console.log('SCAN VALUE', newValue)
+              let possibleNewValue = newValue
+              if (possibleNewValue.indexOf('/') >= 0) {
+                possibleNewValue = possibleNewValue.substr(possibleNewValue.lastIndexOf('0x'))
+                console.log('CLEANED VALUE', possibleNewValue)
+              }
+              setScan(false)
+              updateAddress(possibleNewValue)
+            }
+          }}
+          style={{ width: '100%' }}
+        />
+      </div>
+      )
+    : (
+        ''
+      )
 
   return (
     <div>

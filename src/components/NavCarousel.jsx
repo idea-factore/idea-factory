@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
@@ -164,7 +164,7 @@ export default function NavCarousel () {
       alignItems='center'
       margin='auto'
       className={classes.box}
-      data-cy="carosel"
+      data-cy='carosel'
     >
       <Carousel interval={10000} navButtonsAlwaysVisible className={classes.carousel}>
         {
