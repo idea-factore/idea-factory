@@ -28,7 +28,8 @@ jobs:
       - checkout
       # Next, the node orb's install-packages step will install the dependencies from a package.json.
       # The orb install-packages step will also automatically cache them for faster future runs.
-      - node/install-packages
+      - node/install-packages:
+          pkg-manager: yarn
       # If you are using yarn instead npm, remove the line above and uncomment the two lines below.
       - run:
           name: Check Styling
@@ -38,7 +39,8 @@ jobs:
       - image: cimg/node:15.1
     steps:
       - checkout
-      - node/install-packages
+      - node/install-packages:
+          pkg-manager: yarn
       - run:
           name: build
           command: yarn build
@@ -62,7 +64,8 @@ workflows:
       - build:
           requires:
             - lint
-      - cypress/install
+      - cypress/install:
+          yarn: true
       - cypress/run:
             executor: cypress/browsers-chrome77
             browser: chrome
