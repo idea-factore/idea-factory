@@ -43,10 +43,12 @@ jobs:
           name: build
           command: yarn build
   deploy:
-      steps:
-        - run:
-            name: deploy
-            command: curl https://api.render.com/deploy/srv-c2qipjb2v8p1q1jmcom0?key=PDeA5VT8bdQ
+    docker:
+      - image: cimg/node:15.1
+    steps:
+      - run:
+          name: deploy
+          command: curl https://api.render.com/deploy/srv-c2qipjb2v8p1q1jmcom0?key=PDeA5VT8bdQ
 
 
 workflows:
