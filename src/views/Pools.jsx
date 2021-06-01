@@ -87,10 +87,10 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
   const poolCallback = useCallback(() => {
     getPools()
     setLoading(false)
-  }, [])
+  })
   useEffect(() => {
     poolCallback()
-  }, [event])
+  }, [event, poolCallback])
   const createPool = (values) => {
     console.log('Received values of form: ', values)
     setVisible(false)
