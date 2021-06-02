@@ -44,7 +44,7 @@ jobs:
       - run:
           name: build
           command: yarn build
-  deploy-dev:
+  dev-deploy:
     docker:
       - image: cimg/node:15.1
     steps:
@@ -58,12 +58,7 @@ workflows:
   # Inside the workflow, you provide the jobs you want to run, e.g this workflow runs the build-and-test job above.
   # CircleCI will run this workflow on every commit.
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
-  deploy-dev:
-    filters:
-      branches:
-        only:
-          - dev
-          - v0.1
+  deploy:
     jobs:
       - lint
       - cypress/install:
@@ -80,11 +75,21 @@ workflows:
             requires:
               - cypress/install
             attach-workspace: true
-      - deploy-dev:
+      - dev-deploy:
+          filters:
+            branches:
+              only:
+                - dev
+                - v0.1
           requires:
             - lint
             - cypress/run
       - stackhawk/hawkscan-remote:
+          filters:
+            branches:
+              only:
+                - dev
+                - v0.1
           configuration-files: stackhawk-dev.yml
           requires:
-            - deploy-dev
+            - dev-deploy
