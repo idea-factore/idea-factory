@@ -21,7 +21,7 @@ packages/subgraph/config/config.json
 
 # testing
 coverage
-**/.nyc_output/**
+**/.nyc_output
 
 # production
 build

@@ -50,7 +50,7 @@ jobs:
     steps:
       - run:
           name: deploy
-          command: curl https://api.render.com/deploy/srv-c2qipjb2v8p1q1jmcom0?key=PDeA5VT8bdQ
+          command: curl https://api.render.com/deploy/srv-c2qipjb2v8p1q1jmcom0?key=PDeA5VT8bdQ && sleep 10
 
 
 workflows:
@@ -87,4 +87,4 @@ workflows:
       - stackhawk/hawkscan-remote:
           configuration-files: stackhawk-dev.yml
           requires:
-            - deploy
+            - deploy-dev
