@@ -61,9 +61,6 @@ workflows:
   sample: 
     jobs:
       - lint
-      - build:
-          requires:
-            - lint
       - cypress/install:
           yarn: true
       - cypress/run:
@@ -80,7 +77,7 @@ workflows:
             attach-workspace: true
       - deploy:
           requires:
-            - build
+            - lint
             - cypress/run
       - stackhawk/hawkscan-remote:
           configuration-files: stackhawk.yml
