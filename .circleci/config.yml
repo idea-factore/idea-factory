@@ -39,7 +39,7 @@ jobs:
     steps:
       - run:
           name: deploy dev
-          command: curl https://api.render.com/deploy/srv-c2qipjb2v8p1q1jmcom0?key=PDeA5VT8bdQ && sleep 10
+          command: curl https://api.render.com/deploy/srv-c2tv5oc64ckt13ktrvtg?key=B7BtDa8GjH0 && sleep 10
   release:
     docker:
       - image: cimg/node:15.1
@@ -62,12 +62,6 @@ workflows:
   deploy:
     jobs:
       - lint: 
-          filters:
-            branches:
-              only:
-                - dev
-                - qa
-                - v0.1
       - cypress/install:
           yarn: true
       - cypress/run:
@@ -87,7 +81,6 @@ workflows:
             branches:
               only:
                 - dev
-                - v0.1
           requires:
             - lint
             - cypress/run
@@ -96,7 +89,6 @@ workflows:
             branches:
               only:
                 - dev
-                - v0.1
           configuration-files: stackhawk-dev.yml
           requires:
             - dev-deploy
