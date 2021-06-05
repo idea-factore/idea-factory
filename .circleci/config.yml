@@ -47,7 +47,8 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "61:73:0c:1b:71:ae:bd:65:bf:46:8a:f5:33:af:5e:d8"
+            - '61:73:0c:1b:71:ae:bd:65:bf:46:8a:f5:33:af:5e:d8'
+            - 'c8:14:df:0a:39:0f:38:5c:b9:c8:31:3a:da:68:30:a5'
       - run:
           name: deploy prod
           command: bash decrypt.sh && npx semantic-release && curl https://api.render.com/deploy/srv-c2qh0oj2v8p1q1jmb410?key=BTn8FHQrn_k
