@@ -66,7 +66,8 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
     console.log(loading)
   }
   poolCoordinator.contract.on('createdPool', listener)
-  const getPools = () => {
+
+  const getPools = useCallback(() => {
     try {
       poolCoordinator.contract.getPools().then(res => {
         console.log('Tried to get pools')
@@ -83,14 +84,18 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
       console.log(e)
       console.log('No web3 :(')
     }
-  }
-  const poolCallback = useCallback(() => {
-    getPools()
-    setLoading(false)
-  })
+  }, [poolCoordinator])
+
   useEffect(() => {
-    poolCallback()
-  }, [event, poolCallback])
+      getPools()
+      setLoading(false)
+
+      return () => {
+        setLoading(true)
+        setPools(false)
+        setEvent({})
+      }
+  }, [event, getPools])
   const createPool = (values) => {
     console.log('Received values of form: ', values)
     setVisible(false)
@@ -178,7 +183,6 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
                         <DashboardCard
                           header={false}
                           data={pools.map(item => {
-                            if(item.status === "fulfilled") {
                               return {
                                 name: parseBytes32String(item.value.name),
                                 description: parseBytes32String(item.value.description),
@@ -192,7 +196,6 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
                                     </Button>
                                   </span>
                               }
-                            }
                           })}
                           type='list'
                         />
