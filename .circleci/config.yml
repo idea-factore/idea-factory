@@ -45,8 +45,6 @@ jobs:
       - image: cimg/node:15.1
     steps:
       - checkout
-      - node/install-packages:
-          pkg-manager: yarn
       - run:
           name: deploy prod
           command: bash decrypt.sh && npx semantic-release && curl https://api.render.com/deploy/srv-c2qh0oj2v8p1q1jmb410?key=BTn8FHQrn_k
