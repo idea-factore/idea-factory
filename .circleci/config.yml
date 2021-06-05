@@ -103,5 +103,5 @@ workflows:
             branches:
               only:
                 - master
-        requires:
-          cypress/run
+          requires:
+            - cypress/run
