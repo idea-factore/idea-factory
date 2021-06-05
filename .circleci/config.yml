@@ -39,7 +39,14 @@ jobs:
     steps:
       - run:
           name: deploy dev
-          command: curl https://api.render.com/deploy/srv-c2tv5oc64ckt13ktrvtg?key=B7BtDa8GjH0 && sleep 10
+          command: curl https://api.render.com/deploy/srv-c2tv5oc64ckt13ktrvtg?key=B7BtDa8GjH0 && sleep 100
+  qa-deploy:
+    docker:
+      - image: cimg/node:15.1
+    steps:
+      - run:
+          name: deploy qa
+          command: curl https://api.render.com/deploy/srv-c2tvvlj2v8p3j2ji2ceg?key=sDUeryggiSQ
   release:
     docker:
       - image: cimg/node:15.1
@@ -81,6 +88,14 @@ workflows:
             branches:
               only:
                 - dev
+          requires:
+            - lint
+            - cypress/run
+      - qa-deploy:
+          filters:
+            branches:
+              only:
+                - qa
           requires:
             - lint
             - cypress/run
