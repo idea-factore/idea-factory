@@ -37,6 +37,8 @@ context('App Rendering', () => {
       cy.get('[data-cy=pools]').click()
     })
     it('renders pool page', () => {
+      cy.intercept('https://rpc-mumbai.maticvigil.com/', {"jsonrpc":"2.0","id":5,"method":"eth_syncing","params":[]}).as('@eth')
+      cy.wait('@eth')
       cy.get('[data-cy=pools]').click()
       cy.url().should('include', '/pools')
       cy.get('[data-cy=pools-page]').should('be.visible')
@@ -50,6 +52,9 @@ context('App Rendering', () => {
       cy.get('@popup').should('not.exist')
     })
     it('closes popup', () => {
+      cy.intercept('https://rpc-mumbai.maticvigil.com/', {"jsonrpc":"2.0","id":5,"method":"eth_syncing","params":[]}).as('@eth')
+      cy.wait('@eth')
+      cy.wait(2000)
       cy.get('[data-cy=pools]').click()
       cy.url().should('include', '/pools')
       cy.get('[data-cy=add-pool]').click({ force: true})
