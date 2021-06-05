@@ -36,7 +36,7 @@ context('App Rendering', () => {
       cy.get('[data-cy=portfolio]').click()
       cy.get('[data-cy=pools]').click()
     })
-    it('renders pool page', () => {
+    it.skip('renders pool page', () => {
       cy.intercept('https://rpc-mumbai.maticvigil.com/', {"jsonrpc":"2.0","id":5,"method":"eth_syncing","params":[]}).as('eth')
       cy.wait('@eth')
       cy.wait(4000)
@@ -47,7 +47,7 @@ context('App Rendering', () => {
       cy.get('[data-cy=search-result]').should('be.visible').children().should('have.length', 1)
       cy.get('[data-cy=add-pool]').should('be.visible')
     })
-    it('closes popup', () => {
+    it.skip('closes popup', () => {
       cy.intercept('https://rpc-mumbai.maticvigil.com/', {"jsonrpc":"2.0","id":5,"method":"eth_syncing","params":[]}).as('eth')
       cy.wait('@eth')
       cy.wait(2000)
