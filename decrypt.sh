@@ -9,4 +9,5 @@
           eval "$(ssh-agent -s)"
           # Add the key to the authentication agent
           DISPLAY=":0.0" SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
-          export GITHUB_TOKEN = $(cat /tmp/git_deploy_key)
+          token = $(cat /tmp/git_deploy_key)
+          export GITHUB_TOKEN = echo "${token}"
