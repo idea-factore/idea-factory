@@ -1,212 +1,165 @@
-import React, { useCallback, useEffect, useState, Suspense } from "react";
-import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
-import "antd/dist/antd.css";
-import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
-import "./App.css";
-import { Menu, Typography, Steps } from "antd";
-import Web3Modal from "web3modal";
-import { useUserAddress } from "eth-hooks";
-import { useGasPrice, useUserProvider, useContractLoader, useBalance, useExternalContractLoader } from "./hooks";
-import { Header, Account } from "./components";
-import { Transactor } from "./helpers";
-import { formatEther } from "@ethersproject/units";
-import { INFURA_ID, FACTORY_ABI, pool_abi } from "./constants";
+import React, { useEffect, Suspense } from 'react'
+import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import './App.css'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import { useUserProvider } from './hooks'
+import { Header } from './components'
+import { Transactor } from './helpers'
+import { $contracts } from './models/contracts/index'
+import { getProviderFx, getGasPriceFx, getAddressFx } from './models/eth-hooks/index'
+import { $ethHooks } from './models/eth-hooks/init'
+import { useStore } from 'effector-react'
+import { useWallet } from 'use-wallet'
+import Paper from '@material-ui/core/Paper'
+import Grid from '@material-ui/core/Grid'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import { FaDiscord, FaTwitter } from 'react-icons/fa'
+import { Footer } from 'components-extra'
+import styled from 'styled-components'
+import {
+  getHeader,
+  getContent,
+  getFooter
+} from '@mui-treasury/layout'
 
-// 😬 Sorry for all the console logging 🤡
-const DEBUG = true
+const HeaderLayout = getHeader(styled)
+const Content = getContent(styled)
+const FooterLayout = getFooter(styled)
 
-// 🔭 block explorer URL
-const blockExplorer = "https://etherscan.io/" // for xdai: "https://blockscout.com/poa/xdai/"
-const { Paragraph, Title } = Typography;
+const Pools = React.lazy(() => import('./views/Pools'))
+const ChildPool = React.lazy(() => import('./views/ChildPool'))
+const Ideas = React.lazy(() => import('./views/Ideas'))
+const Home = React.lazy(() => import('./views/Home'))
+const CreateIdea = React.lazy(() => import('./views/CreateIdea'))
+/**
+ * TODO:
+ *  Get rid of unused imports
+ *  Refactor Pool view, Idea view, and ChildPool view
+ *  More state stuff as needed
+ *  Refactor UI
+ *  Better Wallet connecting experience
+ *
+ * Look at using mui-treasury for better Layout
+ *
+ * Need to remove antd next I think
+ */
 
-const { Step } = Steps;
+function App (props) {
+  const contracts = useStore($contracts)
+  const ethHooks = useStore($ethHooks)
+  const wallet = useWallet()
 
-// 🛰 providers
-if(DEBUG) console.log("📡 Connecting to Mainnet Ethereum");
-//const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 });
-// const mainnetProvider = new InfuraProvider("mainnet",INFURA_ID);
-const mainnetProvider = new JsonRpcProvider("https://mainnet.infura.io/v3/"+INFURA_ID)
-// ( ⚠️ Getting "failed to meet quorum" errors? Check your INFURA_ID)
-
-// 🏠 Your local provider is usually pointed at your local blockchain
-const localProviderUrl = "http://localhost:8545"; // for xdai: https://dai.poa.network
-// as you deploy to other networks you can set REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
-const localProviderUrlFromEnv = process.env.NODE_ENV == "production" ? "https://rpc-mumbai.maticvigil.com/" : localProviderUrl;
-if(DEBUG) console.log("🏠 Connecting to provider:", localProviderUrlFromEnv);
-const localProvider = new JsonRpcProvider("https://rpc-mumbai.maticvigil.com/");
-console.log("Our provider: ", localProvider);
-
-const Pools = React.lazy(() => import('./views/Pools'));
-const ChildPool = React.lazy(() => import('./views/ChildPool'));
-const Ideas = React.lazy(() => import ('./views/Ideas'));
-
-function App(props) {
-
-  const [injectedProvider, setInjectedProvider] = useState();
-  const [step, setStep] = useState(0);
-
-  const onChange = current => {
-    setStep(current);
-  };
-
-  /* 🔥 this hook will get the price of Gas from ⛽️ EtherGasStation */
-  const gasPrice = useGasPrice("fast"); //1000000000 for xdai
-  // For more hooks, check out 🔗eth-hooks at: https://www.npmjs.com/package/eth-hooks
-
-  // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
-  const userProvider = useUserProvider(injectedProvider, localProvider);
-  const address = useUserAddress(userProvider);
+  useEffect(() => {
+    // load contracts once on page load
+    // this should be fine, because if a new contract is deployed, we have to manually change the address and abi, etc
+    getProviderFx()
+    getGasPriceFx()
+    // loadContractFx({provider: eth_hooks.provider, address: "0x3d56083D8A42326caf31FfdE98A9A112D6080176", ABI: FACTORY_ABI, name: 'ideaFactory'});
+    // loadContractFx({provider: eth_hooks.provider, address: "0x2B193D5016981EEEbd3F663aC7ecA52e85d31325", ABI: pool_abi, name: 'poolCoordinator'});
+  }, [])
+  // Grab user address and balance when they connect a wallet
+  useEffect(() => {
+    getAddressFx({ account: wallet.account, balance: wallet.balance })
+  }, [wallet])
+  // I don't believe we need this, as we use eth-provider to load providers
+  // Right now all this does is return the provider we pass in.
+  const userProvider = useUserProvider(ethHooks.provider)
+  // make our own address hook using useWallet
   // The transactor wraps transactions and provides notificiations
-  const tx = Transactor(userProvider, gasPrice)
-
-  // 🏗 scaffold-eth is full of handy hooks like this one to get your balance:
-  const yourLocalBalance = useBalance(localProvider, address);
-  if(DEBUG) console.log("💵 yourLocalBalance",yourLocalBalance?formatEther(yourLocalBalance):"...")
-
-  // just plug in different 🛰 providers to get your balance on different chains:
-  const yourMainnetBalance = useBalance(mainnetProvider, address);
-  if(DEBUG) console.log("💵 yourMainnetBalance",yourMainnetBalance?formatEther(yourMainnetBalance):"...")
-
-  // Load in your local 📝 contract and read a value from it:
-  console.log("Loading contrats");
-  const readContracts = useContractLoader(localProvider)
-  if(DEBUG) console.log("📝 readContracts",readContracts)
-
-  // If you want to make 🔐 write transactions to your contracts, use the userProvider:
-  const writeContracts = useContractLoader(userProvider)
-  if(DEBUG) console.log("🔐 writeContracts",writeContracts)
-  //const voteToken = useExternalContractLoader(localProvider, "0xcE04a6dE48a45398836ddA9555b2cAC68e3D705c", VOTE_ABI);
-  //this should fail on local but I'm hoping it won't actually cause anything to break
-  const ideaFactoryKovan = useExternalContractLoader(localProvider, "0x3d56083D8A42326caf31FfdE98A9A112D6080176", FACTORY_ABI);
-  const poolCoordinatorKovan = useExternalContractLoader(localProvider, "0x2B193D5016981EEEbd3F663aC7ecA52e85d31325", pool_abi);
-
-  const loadWeb3Modal = useCallback(async () => {
-    const provider = await web3Modal.connect();
-    setInjectedProvider(new Web3Provider(provider));
-  }, [setInjectedProvider]);
-
-  useEffect(() => {
-    if (web3Modal.cachedProvider) {
-      loadWeb3Modal();
-    }
-  }, [loadWeb3Modal]);
-
-  const [route, setRoute] = useState();
-  useEffect(() => {
-    setRoute(window.location.pathname)
-  }, [setRoute]);
+  const tx = Transactor(userProvider, ethHooks.gasPrice)
 
   return (
-    <div className="App">
-      <Header />
-
-      <BrowserRouter>
-
-        <Menu style={{ textAlign:"center" }} selectedKeys={[route]} mode="horizontal">
-          <Menu.Item key="/">
-            <Link onClick={()=>{setRoute("/")}} to="/">idea-factory</Link>
-          </Menu.Item>
-          <Menu.Item key="/pools">
-            <Link onClick={()=>{setRoute("/pools")}} to="/pools">Pools</Link>
-          </Menu.Item>
-        </Menu>
-
-        <Switch>
-          <Route exact path="/">
-            <Title level={3}>Welcome to the Idea Factory App!</Title>
-            <Paragraph>
-            Now Deployed to MATIC (Polygon)!
-            Issue fixed maybe?
-            </Paragraph>
-            <Paragraph>
-            A fix for this is to update to latest react version and use suspense but this is a hack and that's a lot of work
-            </Paragraph>
-            <Paragraph>
-            To start, follow to short guide below. In future iterations, this will be a lot more interactive!
-            </Paragraph>
-            <Steps current={step} onChange={onChange}>
-              <Step title="Step 1" description="First, Add some VOTE tokens using Wrapped Ether" />
-              <Step title="Step 2" description="Next, Click on the Pool tab and Browse Ideas or Add your own" />
-              <Step title="Step 3" description="Last but not lest, VOTE for ideas you like using your tokens." />
-            </Steps>
-          </Route>
-          <Route path="/pools">
-            <Pools
-              address={address}
-              userProvider={userProvider}
-              mainnetProvider={mainnetProvider}
-              localProvider={localProvider}
-              yourLocalBalance={yourLocalBalance}
-              readContracts={readContracts}
-              tx={tx}
-              poolCoordinator={poolCoordinatorKovan}
-            />
-          </Route>
-          <Route path="/childpools/:address">
-            <ChildPool
-              userProvider={userProvider}
-              mainnetProvider={mainnetProvider}
-              localProvider={localProvider}
-              yourLocalBalance={yourLocalBalance}
-              readContracts={readContracts}
-              tx={tx}
-              poolCoordinator={poolCoordinatorKovan}
-              ideaFactory={ideaFactoryKovan}
-            />
-          </Route>
-          <Route path="/ideas/:address">
-            <Ideas
-              userAddress={address}
-              userProvider={userProvider}
-              mainnetProvider={mainnetProvider}
-              localProvider={localProvider}
-              yourLocalBalance={yourLocalBalance}
-              tx={tx}
-              poolCoordinator={poolCoordinatorKovan}
-              ideaFactory={ideaFactoryKovan}
-            />
-          </Route>
-        </Switch>
-      </BrowserRouter>
-
-
-      {/* 👨‍💼 Your account is in the top right with a wallet at connect options */}
-      <div style={{ position: "fixed", textAlign: "right", right: 0, top: 0, padding: 10 }}>
-         <Account
-           address={address}
-           localProvider={localProvider}
-           userProvider={userProvider}
-           mainnetProvider={mainnetProvider}
-           web3Modal={web3Modal}
-           loadWeb3Modal={loadWeb3Modal}
-           logoutOfWeb3Modal={logoutOfWeb3Modal}
-           blockExplorer={blockExplorer}
-           isMenu={true}
-         />
-
-      </div>
-    </div>
-  );
+    <BrowserRouter>
+      <Paper className='app'>
+        <CssBaseline />
+        <Grid container direction='column' wrap='nowrap'>
+          <Grid item>
+            <HeaderLayout>
+              <Header address={ethHooks.address} userProvider={userProvider} localProvider={ethHooks.provider} wallet={wallet} />
+            </HeaderLayout>
+          </Grid>
+          {
+            /**
+             * TODO:
+             * Make mui menu and move this there
+             * Make better homepage
+             * Add above to storybook
+             * fix bugs
+             * etc...
+             *
+             *
+             * Potential new pages:
+             * Portfolio
+             * Market
+             * Use pools as a search tool and have a pools page
+             * */
+          }
+          <Grid item>
+            <Content>
+              <Switch>
+                <Suspense fallback={<CircularProgress />}>
+                  <Route exact path='/'>
+                    <Home />
+                  </Route>
+                  <Route path='/pools'>
+                    {contracts.poolCoordinator &&
+                      <Pools
+                        address={ethHooks.address}
+                        userProvider={userProvider}
+                        localProvider={ethHooks.provider}
+                        tx={tx}
+                        poolCoordinator={contracts.poolCoordinator}
+                      />}
+                  </Route>
+                  <Route path='/childpools/:address'>
+                    {contracts.poolCoordinator && contracts.ideaFactory &&
+                      <ChildPool
+                        userProvider={userProvider}
+                        localProvider={ethHooks.provider}
+                        tx={tx}
+                        poolCoordinator={contracts.poolCoordinator}
+                        ideaFactory={contracts.ideaFactory}
+                      />}
+                  </Route>
+                  <Route path='/ideas/:address'>
+                    {contracts.poolCoordinator && contracts.ideaFactory &&
+                      <Ideas
+                        userAddress={ethHooks.address}
+                        userProvider={userProvider}
+                        localProvider={ethHooks.provider}
+                        tx={tx}
+                        poolCoordinator={contracts.poolCoordinator}
+                        ideaFactory={contracts.ideaFactory}
+                      />}
+                  </Route>
+                  <Route path='/createidea'>
+                    {contracts.ideaFactory &&
+                      <CreateIdea
+                        address={ethHooks.address}
+                        userProvider={userProvider}
+                        ideaFactory={contracts.ideaFactory}
+                      />}
+                  </Route>
+                </Suspense>
+              </Switch>
+            </Content>
+          </Grid>
+        </Grid>
+        <FooterLayout>
+          <Footer title='Connect with Us'>
+            <Footer.Column>
+              <Footer.Item data-cy='twitter' icon={<FaTwitter />} href='https://twitter.com/IdeaFactoryIdea'>
+                Twitter
+              </Footer.Item>
+              <Footer.Item data-cy='discord' icon={<FaDiscord />} href='https://discord.gg/rv9sJxSuWs'>
+                Discord
+              </Footer.Item>
+            </Footer.Column>
+          </Footer>
+        </FooterLayout>
+      </Paper>
+    </BrowserRouter>
+  )
 }
 
-
-/*
-  Web3 modal helps us "connect" external wallets:
-*/
-const web3Modal = new Web3Modal({
-  cacheProvider: true, // optional
-  providerOptions: {
-    injected: {
-      package: null, // required
-    },
-  },
-});
-
-const logoutOfWeb3Modal = async () => {
-  await web3Modal.clearCachedProvider();
-  setTimeout(() => {
-    window.location.reload();
-  }, 1);
-};
-
-export default App;
+export default App

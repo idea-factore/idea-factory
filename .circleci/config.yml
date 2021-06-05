@@ -7,11 +7,14 @@ orbs:
   # Orbs reduce the amount of configuration required for common tasks. 
   # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/node
   node: circleci/node@4.1
+  codecov: codecov/codecov@1.2.1
+  cypress: cypress-io/cypress@1.28.0
+  stackhawk: stackhawk/stackhawk@1.0.2
 
 
 jobs:
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
-  build-and-lint:  
+  lint:  
     # These next lines define a Docker executor: https://circleci.com/docs/2.0/executor-types/
     # You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # A list of available CircleCI Docker Convenience Images are available here: https://circleci.com/developer/images/image/cimg/node
@@ -24,34 +27,90 @@ jobs:
       - checkout
       # Next, the node orb's install-packages step will install the dependencies from a package.json.
       # The orb install-packages step will also automatically cache them for faster future runs.
-      # node/install-packages
-      # If you are using yarn instead npm, remove the line above and uncomment the two lines below.
       - node/install-packages:
-           pkg-manager: yarn
+          pkg-manager: yarn
+      # If you are using yarn instead npm, remove the line above and uncomment the two lines below.
       - run:
-          name: Eslint
-          command: yarn lint
-  build:
+          name: Check Styling
+          command: yarn check-styling
+  dev-deploy:
+    docker:
+      - image: cimg/node:15.1
+    steps:
+      - run:
+          name: deploy dev
+          command: curl https://api.render.com/deploy/srv-c2tv5oc64ckt13ktrvtg?key=B7BtDa8GjH0 && sleep 100
+  qa-deploy:
+    docker:
+      - image: cimg/node:15.1
+    steps:
+      - run:
+          name: deploy qa
+          command: curl https://api.render.com/deploy/srv-c2tvvlj2v8p3j2ji2ceg?key=sDUeryggiSQ
+  release:
     docker:
       - image: cimg/node:15.1
     steps:
       - checkout
-      - node/install-packages:
-           pkg-manager: yarn
+      - add_ssh_keys:
+          fingerprints:
+            - '61:73:0c:1b:71:ae:bd:65:bf:46:8a:f5:33:af:5e:d8'
+            - 'c8:14:df:0a:39:0f:38:5c:b9:c8:31:3a:da:68:30:a5'
       - run:
-          name: build
-          command: yarn build
+          name: deploy prod
+          command: bash decrypt.sh && export  GITHUB_TOKEN="$(cat /tmp/git_deploy_key)" && npx semantic-release && curl https://api.render.com/deploy/srv-c2qh0oj2v8p1q1jmb410?key=BTn8FHQrn_k
+
 
 workflows:
   # Below is the definition of your workflow.
   # Inside the workflow, you provide the jobs you want to run, e.g this workflow runs the build-and-test job above.
   # CircleCI will run this workflow on every commit.
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
-  sample: 
+  deploy:
     jobs:
-      - build-and-lint
-      - build:
+      - lint 
+      - cypress/install:
+          yarn: true
+      - cypress/run:
+            executor: cypress/browsers-chrome77
+            browser: chrome
+            start: npx pm2 --name idea-factory start npm -- start
+            wait-on: '-c ./wo-config.js'
+            spec: '**/idea-factory/**'
+            post-steps:
+              - codecov/upload:
+                  file: ./coverage/lcov.info
+            requires:
+              - cypress/install
+            attach-workspace: true
+      - dev-deploy:
+          filters:
+            branches:
+              only:
+                - dev
           requires:
-            - build-and-lint
-      # For running simple node tests, you could optionally use the node/test job from the orb to replicate and replace the job above in fewer lines.
-      # - node/test
+            - lint
+            - cypress/run
+      - qa-deploy:
+          filters:
+            branches:
+              only:
+                - qa
+          requires:
+            - lint
+            - cypress/run
+      - stackhawk/hawkscan-remote:
+          filters:
+            branches:
+              only:
+                - dev
+          configuration-files: stackhawk-dev.yml
+          requires:
+            - dev-deploy
+      - release:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - cypress/run
