@@ -1,21 +1,28 @@
-import React, { Suspense } from "react";
-import ReactDOM from "react-dom";
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { Spin } from 'antd';
-import "./index.css";
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { StyledProvider } from 'components-extra'
+import { UseWalletProvider } from 'use-wallet'
+import { SnackbarProvider } from 'notistack'
+import './index.css'
+import './models/init'
+import App from './App'
+import { themeOptions } from './components/Theme'
+import {
+  Root,
+  getContentBasedScheme
+} from '@mui-treasury/layout'
 
-let subgraphUri = "http://localhost:8000/subgraphs/name/scaffold-eth/your-contract"
+const contentBasedScheme = getContentBasedScheme()
 
-const client = new ApolloClient({
-  uri: subgraphUri,
-  cache: new InMemoryCache()
-});
-const App = React.lazy(() => import('./App'));
 ReactDOM.render(
-  <ApolloProvider client={client}>
-    <Suspense fallback={<Spin />}>
-    <App subgraphUri={subgraphUri}/>
-    </Suspense>
-  </ApolloProvider>,
-  document.getElementById("root"),
-);
+  <StyledProvider theme={themeOptions}>
+    <UseWalletProvider chainId={80001}>
+      <SnackbarProvider>
+        <Root theme={themeOptions} scheme={contentBasedScheme}>
+          <App />
+        </Root>
+      </SnackbarProvider>
+    </UseWalletProvider>
+  </StyledProvider>,
+  document.getElementById('root')
+)

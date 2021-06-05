@@ -8,6 +8,8 @@ orbs:
   # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/node
   node: circleci/node@4.1
   codecov: codecov/codecov@1.2.1
+  cypress: cypress-io/cypress@1.28.0
+  stackhawk: stackhawk/stackhawk@1.0.2
 
 
 jobs:
@@ -25,40 +27,29 @@ jobs:
       - checkout
       # Next, the node orb's install-packages step will install the dependencies from a package.json.
       # The orb install-packages step will also automatically cache them for faster future runs.
-      # node/install-packages
+      - node/install-packages:
+          pkg-manager: yarn
       # If you are using yarn instead npm, remove the line above and uncomment the two lines below.
-      - node/install-packages:
-           pkg-manager: yarn
-           override-ci-command: yarn install
       - run:
-          name: Eslint
-          command: yarn lint
-  build:
+          name: Check Styling
+          command: yarn check-styling
+  dev-deploy:
+    docker:
+      - image: cimg/node:15.1
+    steps:
+      - run:
+          name: deploy dev
+          command: curl https://api.render.com/deploy/srv-c2qipjb2v8p1q1jmcom0?key=PDeA5VT8bdQ && sleep 10
+  release:
     docker:
       - image: cimg/node:15.1
     steps:
       - checkout
       - node/install-packages:
-           pkg-manager: yarn
-           override-ci-command: yarn install
+          pkg-manager: yarn
       - run:
-          name: build
-          command: yarn build 
-  code-coverage:
-    docker:
-      - image: cimg/node:15.1
-    environment:
-      CODECOV_TOKEN: 'c1fa0bc9-b439-4986-b9f9-2e59a05f217b'
-    steps:
-      - checkout
-      - node/install-packages:
-           pkg-manager: yarn
-           override-ci-command: yarn install
-      - run:
-          name: Code Coverage
-          command: yarn add mocha nyc && yarn run react-scripts test --coverage && yarn run codecov
-      - store_artifacts:
-          path: /home/circleci/project/coverage/
+          name: deploy prod
+          command: npx semantic-release && curl https://api.render.com/deploy/srv-c2qh0oj2v8p1q1jmb410?key=BTn8FHQrn_k
 
 
 workflows:
@@ -66,12 +57,51 @@ workflows:
   # Inside the workflow, you provide the jobs you want to run, e.g this workflow runs the build-and-test job above.
   # CircleCI will run this workflow on every commit.
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
-  sample: 
+  deploy:
     jobs:
-      - lint
-      - build:
+      - lint: 
+          filters:
+            branches:
+              only:
+                - dev
+                - qa
+                - v0.1
+      - cypress/install:
+          yarn: true
+      - cypress/run:
+            executor: cypress/browsers-chrome77
+            browser: chrome
+            start: npx pm2 --name idea-factory start npm -- start
+            wait-on: '-c ./wo-config.js'
+            spec: '**/idea-factory/**'
+            post-steps:
+              - codecov/upload:
+                  file: ./coverage/lcov.info
+            requires:
+              - cypress/install
+            attach-workspace: true
+      - dev-deploy:
+          filters:
+            branches:
+              only:
+                - dev
+                - v0.1
           requires:
             - lint
-      - code-coverage
-      # For running simple node tests, you could optionally use the node/test job from the orb to replicate and replace the job above in fewer lines.
-      # - node/test
+            - cypress/run
+      - stackhawk/hawkscan-remote:
+          filters:
+            branches:
+              only:
+                - dev
+                - v0.1
+          configuration-files: stackhawk-dev.yml
+          requires:
+            - dev-deploy
+      - release:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - cypress/run
