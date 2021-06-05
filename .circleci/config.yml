@@ -61,7 +61,7 @@ workflows:
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
   deploy:
     jobs:
-      - lint: 
+      - lint 
       - cypress/install:
           yarn: true
       - cypress/run:

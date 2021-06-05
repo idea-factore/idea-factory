@@ -87,14 +87,14 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
   }, [poolCoordinator])
 
   useEffect(() => {
-      getPools()
-      setLoading(false)
+    getPools()
+    setLoading(false)
 
-      return () => {
-        setLoading(true)
-        setPools(false)
-        setEvent({})
-      }
+    return () => {
+      setLoading(true)
+      setPools(false)
+      setEvent({})
+    }
   }, [event, getPools])
   const createPool = (values) => {
     console.log('Received values of form: ', values)
@@ -183,19 +183,19 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
                         <DashboardCard
                           header={false}
                           data={pools.map(item => {
-                              return {
-                                name: parseBytes32String(item.value.name),
-                                description: parseBytes32String(item.value.description),
-                                actions:
-                                  <span>
-                                    <Button component={Link} size='small' color='secondary' to={`/childpools/${item.value.pool}`}>
-                                      View Child Pools
-                                    </Button>
-                                    <Button component={Link} size='small' color='secondary' to='/pools'>
-                                      Learn More
-                                    </Button>
-                                  </span>
-                              }
+                            return {
+                              name: parseBytes32String(item.value.name),
+                              description: parseBytes32String(item.value.description),
+                              actions:
+  <span>
+    <Button component={Link} size='small' color='secondary' to={`/childpools/${item.value.pool}`}>
+      View Child Pools
+    </Button>
+    <Button component={Link} size='small' color='secondary' to='/pools'>
+      Learn More
+    </Button>
+  </span>
+                            }
                           })}
                           type='list'
                         />
