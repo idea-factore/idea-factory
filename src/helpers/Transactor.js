@@ -1,7 +1,6 @@
 import { hexlify } from '@ethersproject/bytes'
 import { parseUnits } from '@ethersproject/units'
-import { notification } from 'antd'
-
+import { useSnackbar } from 'notistack'
 import Notify from 'bnc-notify'
 
 // this should probably just be renamed to "notifier"
@@ -9,6 +8,7 @@ import Notify from 'bnc-notify'
 // https://docs.blocknative.com/notify
 
 export default function Transactor (provider, gasPrice, etherscan) {
+  const { enqueueSnackbar } = useSnackbar()
   if (typeof provider !== 'undefined') {
     // eslint-disable-next-line consistent-return
     return async tx => {
@@ -65,10 +65,8 @@ export default function Transactor (provider, gasPrice, etherscan) {
             }
           })
         } else {
-          notification.info({
-            message: 'Local Transaction Sent',
-            description: result.hash,
-            placement: 'bottomRight'
+          enqueueSnackbar(`Local Transaction Sent: ${result.hash}`, {
+            variant: 'success'
           })
         }
 
@@ -76,9 +74,8 @@ export default function Transactor (provider, gasPrice, etherscan) {
       } catch (e) {
         console.log(e)
         console.log('Transaction Error:', e.message)
-        notification.error({
-          message: 'Transaction Error',
-          description: e.message
+        enqueueSnackbar(`Transaction Error: ${e.message}`, {
+          variant: 'error'
         })
       }
     }

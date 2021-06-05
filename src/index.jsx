@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { StyledProvider } from 'components-extra'
 import { UseWalletProvider } from 'use-wallet'
+import { SnackbarProvider } from 'notistack'
 import './index.css'
 import './models/init'
 import App from './App'
@@ -16,9 +17,11 @@ const contentBasedScheme = getContentBasedScheme()
 ReactDOM.render(
   <StyledProvider theme={themeOptions}>
     <UseWalletProvider chainId={80001}>
-      <Root theme={themeOptions} scheme={contentBasedScheme}>
-        <App />
-      </Root>
+      <SnackbarProvider>
+        <Root theme={themeOptions} scheme={contentBasedScheme}>
+          <App />
+        </Root>
+      </SnackbarProvider>
     </UseWalletProvider>
   </StyledProvider>,
   document.getElementById('root')

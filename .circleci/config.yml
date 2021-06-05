@@ -9,7 +9,6 @@ orbs:
   node: circleci/node@4.1
   codecov: codecov/codecov@1.2.1
   cypress: cypress-io/cypress@1.28.0
-
   stackhawk: stackhawk/stackhawk@1.0.2
 
 
@@ -34,7 +33,14 @@ jobs:
       - run:
           name: Check Styling
           command: yarn check-styling
-  build:
+  dev-deploy:
+    docker:
+      - image: cimg/node:15.1
+    steps:
+      - run:
+          name: deploy dev
+          command: curl https://api.render.com/deploy/srv-c2qipjb2v8p1q1jmcom0?key=PDeA5VT8bdQ && sleep 10
+  release:
     docker:
       - image: cimg/node:15.1
     steps:
@@ -42,15 +48,8 @@ jobs:
       - node/install-packages:
           pkg-manager: yarn
       - run:
-          name: build
-          command: yarn build
-  dev-deploy:
-    docker:
-      - image: cimg/node:15.1
-    steps:
-      - run:
-          name: deploy
-          command: curl https://api.render.com/deploy/srv-c2qipjb2v8p1q1jmcom0?key=PDeA5VT8bdQ && sleep 10
+          name: deploy prod
+          command: npx semantic-release && curl https://api.render.com/deploy/srv-c2qh0oj2v8p1q1jmb410?key=BTn8FHQrn_k
 
 
 workflows:
@@ -60,7 +59,13 @@ workflows:
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
   deploy:
     jobs:
-      - lint
+      - lint: 
+          filters:
+            branches:
+              only:
+                - dev
+                - qa
+                - v0.1
       - cypress/install:
           yarn: true
       - cypress/run:
@@ -93,3 +98,10 @@ workflows:
           configuration-files: stackhawk-dev.yml
           requires:
             - dev-deploy
+      - release:
+          filters:
+            branches:
+              only:
+                - master
+        requires:
+          cypress/run

@@ -30,6 +30,7 @@ const Pools = React.lazy(() => import('./views/Pools'))
 const ChildPool = React.lazy(() => import('./views/ChildPool'))
 const Ideas = React.lazy(() => import('./views/Ideas'))
 const Home = React.lazy(() => import('./views/Home'))
+const CreateIdea = React.lazy(() => import('./views/CreateIdea'))
 /**
  * TODO:
  *  Get rid of unused imports
@@ -128,6 +129,14 @@ function App (props) {
                         localProvider={ethHooks.provider}
                         tx={tx}
                         poolCoordinator={contracts.poolCoordinator}
+                        ideaFactory={contracts.ideaFactory}
+                      />}
+                  </Route>
+                  <Route path='/createidea'>
+                    {contracts.ideaFactory &&
+                      <CreateIdea
+                        address={ethHooks.address}
+                        userProvider={userProvider}
                         ideaFactory={contracts.ideaFactory}
                       />}
                   </Route>

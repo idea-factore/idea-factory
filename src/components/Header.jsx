@@ -13,6 +13,7 @@ import TabList from '@material-ui/lab/TabList'
 // import Paper from '@material-ui/core/Paper'
 import { Link } from 'react-router-dom'
 import Grid from '@material-ui/core/Grid'
+import Button from '@material-ui/core/Button'
 
 const drawerWidth = 240
 
@@ -87,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Header ({ address, provider, userProvider, wallet }) {
   const classes = useStyles(themeOptions)
   const open = false
-  const [value, setValue] = useState(1)
+  const [value, setValue] = useState('1')
 
   const handleChange = (event, newValue) => {
     setValue(newValue)
@@ -149,6 +150,7 @@ export default function Header ({ address, provider, userProvider, wallet }) {
                 </TabList>
               </Grid>
               <Grid item>
+                <Button color='secondary' variant='outlined' component={Link} to='/createidea'> Create an Idea </Button>
                 <Account
                   address={address}
                   localProvider={provider}
