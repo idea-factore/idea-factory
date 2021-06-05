@@ -178,18 +178,20 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
                         <DashboardCard
                           header={false}
                           data={pools.map(item => {
-                            return {
-                              name: parseBytes32String(item.value.name),
-                              description: parseBytes32String(item.value.description),
-                              actions:
-  <span>
-    <Button component={Link} size='small' color='secondary' to={`/childpools/${item.value.pool}`}>
-      View Child Pools
-    </Button>
-    <Button component={Link} size='small' color='secondary' to='/pools'>
-      Learn More
-    </Button>
-  </span>
+                            if(item.status === "fulfilled") {
+                              return {
+                                name: parseBytes32String(item.value.name),
+                                description: parseBytes32String(item.value.description),
+                                actions:
+                                  <span>
+                                    <Button component={Link} size='small' color='secondary' to={`/childpools/${item.value.pool}`}>
+                                      View Child Pools
+                                    </Button>
+                                    <Button component={Link} size='small' color='secondary' to='/pools'>
+                                      Learn More
+                                    </Button>
+                                  </span>
+                              }
                             }
                           })}
                           type='list'
