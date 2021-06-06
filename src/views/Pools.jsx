@@ -66,7 +66,8 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
     console.log(loading)
   }
   poolCoordinator.contract.on('createdPool', listener)
-  const getPools = () => {
+
+  const getPools = useCallback(() => {
     try {
       poolCoordinator.contract.getPools().then(res => {
         console.log('Tried to get pools')
@@ -83,14 +84,18 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
       console.log(e)
       console.log('No web3 :(')
     }
-  }
-  const poolCallback = useCallback(() => {
+  }, [poolCoordinator])
+
+  useEffect(() => {
     getPools()
     setLoading(false)
-  })
-  useEffect(() => {
-    poolCallback()
-  }, [event, poolCallback])
+
+    return () => {
+      setLoading(true)
+      setPools(false)
+      setEvent({})
+    }
+  }, [event, getPools])
   const createPool = (values) => {
     console.log('Received values of form: ', values)
     setVisible(false)

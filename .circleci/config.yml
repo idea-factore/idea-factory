@@ -121,7 +121,14 @@ workflows:
             branches:
               only:
                 - dev
-                - v0.1
+          requires:
+            - lint
+            - cypress/run
+      - qa-deploy:
+          filters:
+            branches:
+              only:
+                - qa
           requires:
             - lint
             - cypress/run
@@ -130,7 +137,6 @@ workflows:
             branches:
               only:
                 - dev
-                - v0.1
           configuration-files: stackhawk-dev.yml
           requires:
             - dev-deploy
