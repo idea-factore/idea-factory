@@ -40,6 +40,29 @@ jobs:
       - run:
           name: deploy dev
           command: curl https://api.render.com/deploy/srv-c2qipjb2v8p1q1jmcom0?key=PDeA5VT8bdQ && sleep 10
+  test:
+    # docker, working_dir, etc
+    docker:
+      - image: cimg/node:15.1
+    steps:
+      - run:
+          # Decrypt the git_deploy_key.enc key into /tmp/git_deploy_key
+          - openssl aes-256-cbc -d -K $REPO_ENC_KEY -iv $REPO_ENC_IV -in git_deploy_key.enc -out /tmp/git_deploy_key
+          # Make sure only the current user can read the private key
+          - chmod 600 /tmp/git_deploy_key
+          # Create a script to return the passphrase environment variable to ssh-add
+          - echo 'echo ${SSL_PASSPHRASE}' > /tmp/askpass && chmod +x /tmp/askpass
+          # Start the authentication agent
+          - eval "$(ssh-agent -s)"
+          # Add the key to the authentication agent
+          - DISPLAY=":0.0" SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
+  test-release:
+    docker:
+      - image: cimg/node:15.1
+    steps:
+      - checkout
+      - npx semantic-release -d
+
   release:
     docker:
       - image: cimg/node:15.1
@@ -61,6 +84,17 @@ workflows:
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
   deploy:
     jobs:
+      - test: 
+          filters: 
+            branches:
+              only:
+                master
+      - test-release:
+          filters:
+            branches:
+              only:
+                master
+          attach-workspace: true
       - lint: 
           filters:
             branches:
@@ -68,20 +102,20 @@ workflows:
                 - dev
                 - qa
                 - v0.1
-      - cypress/install:
-          yarn: true
-      - cypress/run:
-            executor: cypress/browsers-chrome77
-            browser: chrome
-            start: npx pm2 --name idea-factory start npm -- start
-            wait-on: '-c ./wo-config.js'
-            spec: '**/idea-factory/**'
-            post-steps:
-              - codecov/upload:
-                  file: ./coverage/lcov.info
-            requires:
-              - cypress/install
-            attach-workspace: true
+      #- cypress/install:
+       #   yarn: true
+      #- cypress/run:
+       #     executor: cypress/browsers-chrome77
+        #    browser: chrome
+         #   start: npx pm2 --name idea-factory start npm -- start
+          #  wait-on: '-c ./wo-config.js'
+          #  spec: '**/idea-factory/**'
+           # post-steps:
+            #  - codecov/upload:
+             #     file: ./coverage/lcov.info
+            #requires:
+            #  - cypress/install
+            #attach-workspace: true
       - dev-deploy:
           filters:
             branches:
@@ -100,10 +134,10 @@ workflows:
           configuration-files: stackhawk-dev.yml
           requires:
             - dev-deploy
-      - release:
-          filters:
-            branches:
-              only:
-                - master
-          requires:
-            - cypress/run
+      #- release:
+       #   filters:
+        #    branches:
+         #     only:
+          #      - master
+          #requires:
+           # - cypress/run

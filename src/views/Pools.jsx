@@ -178,7 +178,6 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
                         <DashboardCard
                           header={false}
                           data={pools.map(item => {
-                            if(item.status === "fulfilled") {
                               return {
                                 name: parseBytes32String(item.value.name),
                                 description: parseBytes32String(item.value.description),
@@ -192,7 +191,6 @@ export default function Pools ({ purpose, events, address, mainnetProvider, user
                                     </Button>
                                   </span>
                               }
-                            }
                           })}
                           type='list'
                         />
