@@ -78,8 +78,8 @@ workflows:
           browser: chrome
           start: npx pm2 --name idea-factory start npm -- start
           wait-on: '-c ./wo-config.js'
-            spec: '**/idea-factory/**'
-            post-steps:
+          spec: '**/idea-factory/**'
+          post-steps:
              - codecov/upload:
                   file: ./coverage/lcov.info
           requires:
