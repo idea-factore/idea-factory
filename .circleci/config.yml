@@ -94,6 +94,8 @@ workflows:
             branches:
               only:
                 master
+          requires: 
+            - test
       - lint: 
           filters:
             branches:
