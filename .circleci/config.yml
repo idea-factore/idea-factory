@@ -40,28 +40,27 @@ jobs:
       - run:
           name: deploy dev
           command: curl https://api.render.com/deploy/srv-c2qipjb2v8p1q1jmcom0?key=PDeA5VT8bdQ && sleep 10
+  qa-deploy:
+    docker:
+      - image: cimg/node:15.1
+    steps:
+      - run:
+          name: deploy qa
+          command: curl https://api.render.com/deploy/srv-c2tvvlj2v8p3j2ji2ceg?key=sDUeryggiSQ
   test:
     # docker, working_dir, etc
     docker:
       - image: cimg/node:15.1
     steps:
       - run:
-          # Decrypt the git_deploy_key.enc key into /tmp/git_deploy_key
-          - openssl aes-256-cbc -d -K $REPO_ENC_KEY -iv $REPO_ENC_IV -in git_deploy_key.enc -out /tmp/git_deploy_key
-          # Make sure only the current user can read the private key
-          - chmod 600 /tmp/git_deploy_key
-          # Create a script to return the passphrase environment variable to ssh-add
-          - echo 'echo ${SSL_PASSPHRASE}' > /tmp/askpass && chmod +x /tmp/askpass
-          # Start the authentication agent
-          - eval "$(ssh-agent -s)"
-          # Add the key to the authentication agent
-          - DISPLAY=":0.0" SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
+          command: openssl aes-256-cbc -d -K $REPO_ENC_KEY -iv $REPO_ENC_IV -in git_deploy_key.enc -out /tmp/git_deploy_key && chmod 600 /tmp/git_deploy_key && echo 'echo ${SSL_PASSPHRASE}' > /tmp/askpass && chmod +x /tmp/askpass && eval "$(ssh-agent -s)" && DISPLAY=":0.0" SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
   test-release:
     docker:
       - image: cimg/node:15.1
     steps:
       - checkout
-      - npx semantic-release -d
+      - run: 
+          command: npx semantic-release -d
 
   release:
     docker:
@@ -94,7 +93,6 @@ workflows:
             branches:
               only:
                 master
-          attach-workspace: true
       - lint: 
           filters:
             branches:
@@ -123,7 +121,7 @@ workflows:
                 - dev
           requires:
             - lint
-            - cypress/run
+            # - cypress/run
       - qa-deploy:
           filters:
             branches:
@@ -131,7 +129,7 @@ workflows:
                 - qa
           requires:
             - lint
-            - cypress/run
+            # - cypress/run
       - stackhawk/hawkscan-remote:
           filters:
             branches:
