@@ -47,34 +47,14 @@ jobs:
       - run:
           name: deploy qa
           command: curl https://api.render.com/deploy/srv-c2tvvlj2v8p3j2ji2ceg?key=sDUeryggiSQ
-  test:
-    # docker, working_dir, etc
-    docker:
-      - image: cimg/node:15.1
-    steps:
-      - checkout
-      - run:
-          command: openssl aes-256-cbc -d -K $REPO_ENC_KEY -iv $REPO_ENC_IV -in git_deploy_key.enc -out /tmp/git_deploy_key && chmod 600 /tmp/git_deploy_key && echo 'echo ${SSL_PASSPHRASE}' > /tmp/askpass && chmod +x /tmp/askpass && eval "$(ssh-agent -s)" && DISPLAY=":0.0" SSH_ASKPASS="/tmp/askpass" setsid ssh-add /tmp/git_deploy_key </dev/null
-  test-release:
-    docker:
-      - image: cimg/node:15.1
-    steps:
-      - checkout
-      - run: 
-          command: npx semantic-release -d
-
   release:
     docker:
       - image: cimg/node:15.1
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - '61:73:0c:1b:71:ae:bd:65:bf:46:8a:f5:33:af:5e:d8'
-            - 'c8:14:df:0a:39:0f:38:5c:b9:c8:31:3a:da:68:30:a5'
       - run:
           name: deploy prod
-          command: bash decrypt.sh && export  GITHUB_TOKEN="$(cat /tmp/git_deploy_key)" && npx semantic-release && curl https://api.render.com/deploy/srv-c2qh0oj2v8p1q1jmb410?key=BTn8FHQrn_k
+          command: npx semantic-release && curl https://api.render.com/deploy/srv-c2qh0oj2v8p1q1jmb410?key=BTn8FHQrn_k
 
 
 workflows:
@@ -84,18 +64,6 @@ workflows:
   # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows
   deploy:
     jobs:
-      - test: 
-          filters: 
-            branches:
-              only:
-                master
-      - test-release:
-          filters:
-            branches:
-              only:
-                master
-          requires: 
-            - test
       - lint: 
           filters:
             branches:
@@ -103,20 +71,20 @@ workflows:
                 - dev
                 - qa
                 - v0.1
-      #- cypress/install:
-       #   yarn: true
-      #- cypress/run:
-       #     executor: cypress/browsers-chrome77
-        #    browser: chrome
-         #   start: npx pm2 --name idea-factory start npm -- start
-          #  wait-on: '-c ./wo-config.js'
-          #  spec: '**/idea-factory/**'
-           # post-steps:
-            #  - codecov/upload:
-             #     file: ./coverage/lcov.info
-            #requires:
-            #  - cypress/install
-            #attach-workspace: true
+      - cypress/install:
+          yarn: true
+      - cypress/run:
+          executor: cypress/browsers-chrome77
+          browser: chrome
+          start: npx pm2 --name idea-factory start npm -- start
+          wait-on: '-c ./wo-config.js'
+            spec: '**/idea-factory/**'
+            post-steps:
+             - codecov/upload:
+                  file: ./coverage/lcov.info
+          requires:
+              - cypress/install
+          attach-workspace: true
       - dev-deploy:
           filters:
             branches:
@@ -124,7 +92,7 @@ workflows:
                 - dev
           requires:
             - lint
-            # - cypress/run
+            - cypress/run
       - qa-deploy:
           filters:
             branches:
@@ -132,7 +100,7 @@ workflows:
                 - qa
           requires:
             - lint
-            # - cypress/run
+            - cypress/run
       - stackhawk/hawkscan-remote:
           filters:
             branches:
@@ -141,10 +109,10 @@ workflows:
           configuration-files: stackhawk-dev.yml
           requires:
             - dev-deploy
-      #- release:
-       #   filters:
-        #    branches:
-         #     only:
-          #      - master
-          #requires:
-           # - cypress/run
+      - release:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - cypress/run
